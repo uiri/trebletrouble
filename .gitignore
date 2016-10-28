@@ -5,3 +5,5 @@ screenshot.pnm
 screenshot.png
 pseudo_1.7.5.bb
 poky-krogoth/meta/recipes-devtools/pseudo/files/pseudo-glibc-rtld-next-workaround.patch
+bbb/build/conf/sanity_info
+
