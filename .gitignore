@@ -3,3 +3,4 @@ bbb/meta-bbb/recipes-core/trebletrouble/files/bin/*
 bin/
 screenshot.pnm
 screenshot.png
+bbb/build/conf/sanity_info
