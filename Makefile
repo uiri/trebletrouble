@@ -1,9 +1,11 @@
 CFLAGS=-Wall
 SD=sdb
 
+
 LIBS=-lc -lasound -lsndfile -lm
 
-bin/app: package/src/app.c bin/display.o bin/simpleAlsa.o bin/metronome.o bin/input.o bin/menu.o
+
+bin/app: package/src/app.c bin/display.o bin/simpleAlsa.o bin/metronome.o bin/input.o bin/menu.o bin/tone.o bin/libfft.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 bin/%.o: package/src/%.c
