@@ -9,7 +9,6 @@ SRC_URI = "file://LICENSE \
 	   file://share/* \
 	  "
 ALSA_TOOLS = " \ 
-
     alsa-plugins \
     alsa-state \
     alsa-lib \ 

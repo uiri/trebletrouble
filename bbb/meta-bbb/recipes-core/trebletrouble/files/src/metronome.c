@@ -10,12 +10,12 @@
 
 struct timeval start, last;
  
-inline int64_t tv_to_u(struct timeval s)
+int64_t tv_to_u(struct timeval s)
 {
 	return s.tv_sec * 1000000 + s.tv_usec;
 }
  
-inline struct timeval u_to_tv(int64_t x)
+struct timeval u_to_tv(int64_t x)
 {
 	struct timeval s;
 	s.tv_sec = x / 1000000;

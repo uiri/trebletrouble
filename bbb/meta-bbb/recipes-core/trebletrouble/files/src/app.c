@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 #include "metronome.h"
+#include "tone.h"
+#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 
@@ -55,6 +57,7 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 
+
 	get_lcd_input(&fd.ts, &sb);
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
@@ -66,9 +69,13 @@ int main(int argc, char** argv) {
 	}
 
 	get_lcd_input(&fd.ts, &sb);
+	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
 	cleanup_display(fbp, &fd.fb);
 	metronome();
+
+	// Added tone.c which will generate a wav file with 44.1 Khz sampling rate and a 880 Hz tone.
+	tone();
 
 	return 0;
 }
