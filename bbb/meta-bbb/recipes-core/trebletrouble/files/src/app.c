@@ -5,6 +5,8 @@
 #include "display.h"
 #include "input.h"
 #include "metronome.h"
+#include "tone.h"
+#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 
@@ -56,6 +58,7 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 
+
 	get_lcd_input(&fd.ts, &sb);
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
@@ -71,4 +74,11 @@ int main(int argc, char** argv) {
 	metronome(100);
 	return 0; 
 	
+	cleanup_display(fbp, &fbfd);
+	while(1); /* fuck it */
+	cleanup_display(fbp, &fd.fb);
+	metronome();
+
+	return 0;
+
 }
