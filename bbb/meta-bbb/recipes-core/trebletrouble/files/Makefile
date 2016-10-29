@@ -1,6 +1,6 @@
 CFLAGS="-Wall"
 
-LIBS=-lc -lasound
+LIBS=-lc -lasound -lm
 
 bin/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
