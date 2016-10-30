@@ -5,7 +5,11 @@
 #include "display.h"
 #include "input.h"
 
+#include <stdio.h>
+#include "metronome.h"
+
 int main(int argc, char** argv) {
+
 	char* fbp;
 	int err, i;
 	struct {
@@ -64,5 +68,7 @@ int main(int argc, char** argv) {
 	get_lcd_input(&fd.ts, &sb);
 	while(1); /* fuck it */
 	cleanup_display(fbp, &fd.fb);
+	metronome();
+
 	return 0;
 }
