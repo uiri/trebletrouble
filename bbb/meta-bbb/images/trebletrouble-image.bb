@@ -5,7 +5,14 @@ IMAGE_LINGUAS = "en-us"
 
 require qt5-image.bb
 
+ALSA_TOOLS = " \ 
+    alsa-lib \ 
+    alsa-tools \ 
+    alsa-utils \ 
+ " 
+
 IMAGE_INSTALL += " \
+    ${ALSA_TOOLS} \
     trebletrouble \
  "
 

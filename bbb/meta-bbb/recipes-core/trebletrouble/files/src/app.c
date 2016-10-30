@@ -6,7 +6,11 @@
 
 #define NUM_NOTES 16
 
+#include <stdio.h>
+#include "metronome.h"
+
 int main(int argc, char** argv) {
+
 	char* fbp;
 	int fbfd, err, i;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
@@ -41,5 +45,6 @@ int main(int argc, char** argv) {
 	}
 	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
+	metronome();
 	return 0;
 }
