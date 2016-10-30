@@ -3,8 +3,12 @@
 
 #include "display.h"
 #include "colours.h"
+#include <stdio.h>
+#include "metronome.h"
+
 
 int main(int argc, char** argv) {
+
 	char* fbp;
 	int fbfd, err;
 
@@ -30,5 +34,6 @@ int main(int argc, char** argv) {
 	FILE *song = fopen(SONG, "rb");
 	load_song(song, fbp);	
 	cleanup_display(fbp, &fbfd);
-	return 0;
+	metronome();
+	return 0; 
 }
