@@ -2,8 +2,11 @@
 #include <unistd.h>
 
 #include "display.h"
+#include <stdio.h>
+#include "metronome.h"
 
 int main(int argc, char** argv) {
+
 	char* fbp;
 	int fbfd, err;
 
@@ -30,5 +33,6 @@ int main(int argc, char** argv) {
 	display_frequency(28.0, fbp);
 	sleep(10);
 	cleanup_display(fbp, &fbfd);
-	return 0;
+	metronome();
+	return 0; 
 }
