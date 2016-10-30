@@ -1,7 +1,9 @@
 CFLAGS=-Wall
 
-bin/app: package/src/app.c bin/display.o bin/input.o
-	$(CC) $(CFLAGS) $^ -o $@
+LIBS=-lc -lasound
+
+bin/app: package/src/app.c bin/display.o bin/loadWave.o bin/metronome.o bin/input.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 bin/%.o: package/src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
