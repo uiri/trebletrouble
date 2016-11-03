@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "display.h"
 #include "colours.h"
 #include "display.h"
 #include "input.h"
@@ -74,10 +75,7 @@ int main(int argc, char** argv) {
 	metronome(100);
 	return 0; 
 	
-	cleanup_display(fbp, &fbfd);
-	while(1); /* fuck it */
-	cleanup_display(fbp, &fd.fb);
-	metronome();
+	tone();
 
 	return 0;
 
