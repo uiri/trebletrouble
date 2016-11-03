@@ -12,13 +12,6 @@ const uint16_t bit_depth;
 const uint16_t channels;
 const int fd;
 
-//int audio_recorder(void) {
-
-  
-//return 0;
-
-//}
-
 
 WaveHeader *genericWAVHeader(uint32_t sample_rate, uint16_t bit_depth, uint16_t channels) {
   WaveHeader *hdr;
