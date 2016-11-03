@@ -228,13 +228,14 @@ int tone(void){
   // Define some variables fro the sound
   float sampleRate = 44100.0; // hertz
   float freq = 880.0;         // hertz
-  float duration = 0.3;       // seconds
+  //float duration = 0.3;       // seconds
+  float duration = 5.0; 
 
   int nSamples = (int)(duration*sampleRate);
 
   // Create a mono(1), 32-bit sound and set the duration
   Wave mySound = makeWave((int)sampleRate,1,32);
-  waveSetDuration (&mySound, duration);
+  waveSetDuration(&mySound, duration);
   
   // Add all of the data
   int i;
