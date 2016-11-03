@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <unistd.h>
-
 #include "display.h"
 #include "colours.h"
 
@@ -48,10 +47,9 @@ int main(int argc, char** argv) {
 
 	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
-	metronome();
-
 	// Added tone.c which will generate a wav file with 44.1 Khz sampling rate and a 880 Hz tone.
 	tone();
+	metronome();
 
 	return 0;
 }
