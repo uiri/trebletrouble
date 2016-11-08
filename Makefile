@@ -1,4 +1,4 @@
-CFLAGS="-Wall"
+CFLAGS=-Wall
 
 bin/app: package/src/app.c bin/display.o
 	$(CC) $(CFLAGS) $^ -o $@

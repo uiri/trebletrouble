@@ -25,23 +25,6 @@ char *TIME_STAMP[10] = {"","","/srv/trebletrouble/2_ts.pnm","/srv/trebletrouble/
 
 /* Internal functions */
 
-void colour_screen(char* fbp, short colour) {
-	int i;
-
-	for (i = 0; i < SCREENSIZE/2; i++) {
-		/*
-		 * So, we have 16-bits per pixel. It is split up into 
-		 * 5 bits for Red, 6 bits for Green and 5 bits for Blue
-		 * Why 6 bits for Green? Human biology, that's why.
-		 * The least significant _byte_ is first and the most 
-		 * significant byte is second. Byte order is always the same.
-		 * 0x25E2 is actually the colour E225 which is orange.
-		 * Red - 1110 0; Green - 010 001; Blue - 0 0101)
-		 */
-		memset(fbp + 2*i, colour, 2);
-	}
-}
-
 int find_freq_recur(double freq, int i, int len) {
 	while (1) {
 		if (FREQS[i] <= freq) {
@@ -136,14 +119,19 @@ int bitblit_colour(char* filename, char* fbp, int x, int y, short colour) {
 	int i, j, w, h, vw;
 	unsigned char buf[3], px[2];
 
+	if (!fbp)
+		return -3;
+
 	fd = fopen(filename, "rb");
 	if (fd == NULL)
 		return -1;
+
 	fread(buf, 1, 3, fd);
 	if (buf[0] != 'P' || buf[1] != '6') {
 		fclose(fd);
 		return -2;
 	}
+
 	fread(buf, 1, 3, fd);
 	w = 0;
 	for (i = 0; i < 3; i++) {
@@ -205,6 +193,25 @@ int bitblit_colour(char* filename, char* fbp, int x, int y, short colour) {
 
 	fclose(fd);
 	return 0;
+}
+
+void colour_screen(char* fbp, short colour) {
+	int i;
+
+	if (!fbp)
+		return;
+	for (i = 0; i < SCREENSIZE/2; i++) {
+		/*
+		 * So, we have 16-bits per pixel. It is split up into
+		 * 5 bits for Red, 6 bits for Green and 5 bits for Blue
+		 * Why 6 bits for Green? Human biology, that's why.
+		 * The least significant _byte_ is first and the most
+		 * significant byte is second. Byte order is always the same.
+		 * 0x25E2 is actually the colour E225 which is orange.
+		 * Red - 1110 0; Green - 010 001; Blue - 0 0101)
+		 */
+		memset(fbp + 2*i, colour, 2);
+	}
 }
 
 int bitblit(char* filename, char* fbp, int x, int y) {
@@ -334,11 +341,11 @@ char *init_display(int *fbfd) {
 	}
 
 	memset(fbp, 0x00, SCREENSIZE);
-	colour_screen(fbp, ORANGE);
 	return fbp;
 }
 
 void cleanup_display(char* fbp, int *fbfd) {
-	munmap(fbp, SCREENSIZE);
+	if (fbp)
+		munmap(fbp, SCREENSIZE);
 	close(*fbfd);
 }
