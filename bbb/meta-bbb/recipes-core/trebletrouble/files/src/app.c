@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
 	}
 
 	get_lcd_input(&fd.ts, &sb);
+
        	cleanup_display(fbp, &fd.fb);
 	metronome(100);
 	return 0; 
