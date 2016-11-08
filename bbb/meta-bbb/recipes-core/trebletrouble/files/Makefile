@@ -1,10 +1,10 @@
-CFLAGS="-Wall"
+CFLAGS=-Wall
 
 bin/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 bin/trebletrouble: src/app.c bin/display.o
-	$(CC) $(CFLAGS) $< bin/display.o -o $@
+	$(CC) $(CFLAGS) $^ -o $@
 
 trebletrouble:	bin/trebletrouble
 
