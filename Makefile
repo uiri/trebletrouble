@@ -1,3 +1,4 @@
+
 CFLAGS="-Wall"
 
 LIBS=-lc -lasound -lm

@@ -34,12 +34,8 @@ int main(int argc, char** argv) {
 	sleep(10);
 
 	cleanup_display(fbp, &fbfd);
-<<<<<<< HEAD
-	metronome();
-	return 0; 
 
-=======
-  */
+*/
 	// Added tone.c which will generate a wav file with 44.1 Khz sampling rate and a 880 Hz tone.
 	temp = tone();
 

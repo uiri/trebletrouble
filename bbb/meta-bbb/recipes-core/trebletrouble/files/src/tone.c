@@ -15,7 +15,6 @@
  */
 
 
-
 // ------------------------------------------------------ [ Section: Endians ]
 int isBigEndian() {
   int test = 1;
@@ -241,11 +240,15 @@ int tone(void){
   float frameData[1];
   for(i = 0; i<nSamples; i++){
     frameData[0] = cos(freq*(float)i*3.14159/sampleRate);
-    waveAddSample(&mySound, frameData);
+    waveAddSample(&mySound,frameData);
   }
 
-  // Write it to a fiel and clear up when done
-  waveToFile( &mySound, "mono-32bit.wav");
+  // Write it to a file and clear up when done
+  //waveToFile( &mySound, "mono-32bit.wav");
+  
+  // play the wav sound
+  
+
   waveDestroy( &mySound );
 
   return 0;
