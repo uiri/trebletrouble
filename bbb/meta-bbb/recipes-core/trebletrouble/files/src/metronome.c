@@ -6,8 +6,8 @@
 #include <time.h>
 #include <alsa/asoundlib.h>
 #include <sys/time.h>
-#include "loadWave.h"
-
+//#include "loadWave.h"
+#include "simpleAlsa.h"
 struct timeval start, last;
  
 inline int64_t tv_to_u(struct timeval s)
@@ -39,8 +39,9 @@ void beat(int delay)
 {
 	struct timeval tv = start;
 	int dir = 0;
+	int tmp;
 	int64_t d = 0, corr = 0, slp, cur, next = tv_to_u(start) + delay;
-	int64_t draw_interval = 20000;
+	//int64_t draw_interval = 20000;
 	//printf("\033[H\033[J");
 	while (1) {
 		gettimeofday(&tv, 0);
@@ -48,13 +49,15 @@ void beat(int delay)
 		usleep(slp);
 		gettimeofday(&tv, 0);
  
-		//putchar(7); /* bell */
-		printf("Hello");
-		sound();
+		putchar(7); /* bell */
+		//printf("Hello");
+		//
+
+		//		tmp=sound();
 		
 		
 //system("play /home/vagrant/trebletrouble/package/src/metro_1.wav");
-		fflush(stdout);
+	        fflush(stdout);
  
 		//printf("\033[5;1Hdrift: %d compensate: %d (usec)   ",
 		//	(int)d, (int)corr);
@@ -65,13 +68,13 @@ void beat(int delay)
 		corr = (corr + d) / 2;
 		next += delay;
  
-		while (cur + d + draw_interval < next) {
-			usleep(draw_interval);
-			gettimeofday(&tv, 0);
-			cur = tv_to_u(tv);
+		//while (cur + d + draw_interval < next) {
+		//	usleep(draw_interval);
+		//	gettimeofday(&tv, 0);
+		//	cur = tv_to_u(tv);
 			//	draw(dir, delay, cur, next);
-			fflush(stdout);
-		}
+		//	fflush(stdout);
+		//}
 	}
 }
  
