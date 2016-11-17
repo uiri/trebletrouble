@@ -60,7 +60,6 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 
-
 	get_lcd_input(&fd.ts, &sb);
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);

@@ -2,6 +2,7 @@ CFLAGS=-Wall
 
 
 
+
 LIBS=-lc -lasound -lsndfile -lm
 
 bin/app: package/src/app.c bin/display.o bin/simpleAlsa.o bin/metronome.o bin/input.o bin/tone.o bin/libfft.o
