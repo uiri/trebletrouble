@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 */
 	// Added tone.c which will generate a wav file with 44.1 Khz sampling rate and a 880 Hz tone.
 	temp = tone();
-
+	
 	return temp;    
 
 }
