@@ -4,11 +4,13 @@
 #include "metronome.h"
 #include "tone.h"
 #include "audio_recorder.h"
+#include "tone.h"
 
 int main(int argc, char** argv) {
 
         char* fbp;
-  	int fbfd, err, temp;
+  	int fbfd, err;
+	Wave temp;
 /*
 	fbp = init_display(&fbfd);
 
@@ -39,6 +41,9 @@ int main(int argc, char** argv) {
 	// Added tone.c which will generate a wav file with 44.1 Khz sampling rate and a 880 Hz tone.
 	temp = tone();
 	
-	return temp;    
+	initfft(44100*5);
+	
+	fft(temp,0,0);
 
+	return temp;
 }

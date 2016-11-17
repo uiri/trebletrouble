@@ -221,7 +221,7 @@ void waveToFile( Wave* wave, const char* filename ) {
 }
 
 // -------------------------------------------------------------------- [ Section: Main ] 
-int tone(void){
+Wave tone(void){
   
   // Define some variables fro the sound
   float sampleRate = 44100.0; // hertz
@@ -246,11 +246,10 @@ int tone(void){
   // Write it to a file and clear up when done
   //waveToFile( &mySound, "mono-32bit.wav");
   
-  // play the wav sound
-  
+  // destroy the wave and return the sound  
 
   waveDestroy( &mySound );
 
-  return 0;
+  return mySound;
 
 }
