@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "metronome.h"
 #include "tone.h"
-#include "audio_recorder.h"
+#include "libfft.h"
 
 int main(int argc, char** argv) {
 
@@ -19,7 +19,6 @@ int main(int argc, char** argv) {
 		int fb, ts;
 	} fd;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
-	int expected[NUM_NOTES];
 	ScreenBounds sb;
 
 	fbp = init_display(&fd.fb);
@@ -29,6 +28,8 @@ int main(int argc, char** argv) {
 		printf("Error reading event input file\n");
 		return err;
 	}
+
+	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 
 	colour_screen(fbp, ORANGE);
 	err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
