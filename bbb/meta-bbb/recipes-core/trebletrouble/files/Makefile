@@ -3,7 +3,7 @@ CFLAGS=-Wall
 bin/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-bin/trebletrouble: src/app.c bin/display.o
+bin/trebletrouble: src/app.c bin/display.o bin/input.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 trebletrouble:	bin/trebletrouble
