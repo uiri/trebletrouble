@@ -1,6 +1,6 @@
 CFLAGS=-Wall
 
-bin/app: package/src/app.c bin/display.o
+bin/app: package/src/app.c bin/display.o bin/input.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 bin/%.o: package/src/%.c
