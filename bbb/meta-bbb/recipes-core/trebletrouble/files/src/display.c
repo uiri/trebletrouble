@@ -113,6 +113,8 @@ int bitblit(char* filename, char* fbp, int x, int y) {
 	} while (buf[0] != ' ' && (buf[0] < 9 || 13 < buf[0]));
 
 	vw = (x+w) > 800 ? x+w-799 : 0;
+
+	
 	for (i = 0; i < SCREENSIZE/2; i++) {
 		if ((i / DISP_WIDTH) < y)
 			continue;

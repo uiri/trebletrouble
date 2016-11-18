@@ -21,14 +21,16 @@ int main(int argc, char** argv) {
 	}
 
 	sleep(5);
-	display_frequency(440.0, fbp);
-	sleep(10);
-	display_frequency(855.304, fbp);
-	sleep(10);
-	display_frequency(4100.0, fbp);
-	sleep(10);
-	display_frequency(28.0, fbp);
-	sleep(10);
+	colour_screen(hbp, WHITE);
+	//sleep(5);
+	//display_frequency(440.0, fbp);
+	//sleep(10);
+	//display_frequency(855.304, fbp);
+	//sleep(10);
+	//display_frequency(4100.0, fbp);
+	//sleep(10);
+	//display_frequency(28.0, fbp);
+	//sleep(10);
 	cleanup_display(fbp, &fbfd);
 	return 0;
 }

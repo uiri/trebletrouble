@@ -29,4 +29,11 @@ install-sdcard:
 install-sdcard-boot:
 	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_boot.sh sdb
 
+bin/display_test: package/src/display_test.c bin/display.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+
+display_test: bin/display_test 
+
+
 all:	app image
