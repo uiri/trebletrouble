@@ -78,6 +78,4 @@ int main(int argc, char** argv) {
 	
 	tone();
 
-	return 0;
-
 }
