@@ -7,15 +7,18 @@
 
 int main(int argc, char** argv) {
 	char* fbp;
-	int fbfd, tsfd, err, i;
+	int err, i;
+	struct {
+		int fb, ts;
+	} fd;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES];
 	ScreenBounds sb;
 	ScreenInput si;
 
-	fbp = init_display(&fbfd);
+	fbp = init_display(&fd.fb);
 
-	err = init_touchscreen(&tsfd, &sb);
+	err = init_touchscreen(&fd.ts, &sb);
 	if (err) {
 		printf("Error reading event input file\n");
 		return err;
@@ -25,9 +28,9 @@ int main(int argc, char** argv) {
 	err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
 	if (err) {
 		if (err == -1) {
-			printf("File not found :(");
+			printf("File not found :(\n");
 		} else if (err == -2) {
-			printf("Not P6 file");
+			printf("Not P6 file\n");
 		}
 		return err;
 	}
@@ -58,7 +61,7 @@ int main(int argc, char** argv) {
 	}
 
 	while (1) {
-		si = get_lcd_input(&tsfd, &sb);
+		si = get_lcd_input(&fd.ts, &sb);
 		/* Need to figure out what to do with the input once we 
 		   have it */
 		/* if (si.y < 512) */
@@ -70,7 +73,7 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 
-	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
+	cleanup_display(fbp, &fd.fb);
 	return 0;
 }
