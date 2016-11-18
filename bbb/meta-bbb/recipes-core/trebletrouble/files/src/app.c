@@ -31,6 +31,8 @@ int main(int argc, char** argv) {
 
 	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 
+	/* Wave temp; */
+
 	colour_screen(fbp, ORANGE);
 	err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
 	if (err) {
@@ -75,5 +77,14 @@ int main(int argc, char** argv) {
 	cleanup_display(fbp, &fd.fb);
 	metronome();
 
-	return 0;
+	cleanup_display(fbp, &fbfd);
+	tone(); // temp contains a tone 880Hz and 44.1 khz
+	
+	/*
+	  INSERT CODE TO TAKE THE WAVE FILE AND OUTPUT A FREQUENCY
+	  initfft(44100*5);
+	  fft(temp,0,0);
+	 */
+
+
 }
