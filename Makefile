@@ -2,7 +2,7 @@ CFLAGS="-Wall"
 
 LIBS=-lc -lasound -lm
 
-bin/app: package/src/app.c bin/display.o bin/tone.o bin/libfft.o
+bin/app: package/src/app.c bin/display.o bin/tone.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 bin/%.o: package/src/%.c
