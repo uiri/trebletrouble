@@ -5,6 +5,8 @@
 #include "colours.h"
 #include "display.h"
 
+extern long SCREENSIZE;
+extern int DISP_WIDTH;
 
 void screen_capture(char* fbp, char* filename){
 
@@ -32,8 +34,9 @@ void screen_capture(char* fbp, char* filename){
 		fbp++;
 		px[1] = *fbp;
 		
-		if(px[0] || px[1])
-			printf("NonBlack pixel\n");
+		//check nonblack pixels because black pixels are scary
+		/*if(px[0] || px[1])
+			printf("NonBlack pixel\n");*/
 
 		buf[0] = (px[0] & 0xF8);
 		buf[1] = (((px[0] & 0x07)<<5)| ((px[1] & 0xE0)>>3));
@@ -51,25 +54,21 @@ void screen_capture(char* fbp, char* filename){
 
 int main(int argc, char** argv){
 
-	//Char for testing fbp
-	char* fbp = malloc(800*480*2);
-	//int err;
-	
-	//write timbits to screen
-	//err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
-	
+	//set screensize and display_width for testing
+	SCREENSIZE = 800*480*2;
+	DISP_WIDTH = 800;
 
+	//Char for testing fbp
+	char* fbp = malloc(SCREENSIZE);
+	int tims;
+	
 	//test colour screen
-	colour_screen(fbp, ORANGE);
-	//help with errors
-	/*if (err){
-		if (err == -1){
-			printf("Error: File not found\n");
-		} else if (err == -2){
-			printf("Error: Not P6 file???\n");
-		}	
-		return err;
-	}*/
+	colour_screen(fbp, ORANGE);	
+
+
+	//write timbits to screen
+	tims = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
+	
 	
 	//writes the thing to a pnm hopefully
 	screen_capture(fbp, "screenshot.pnm");

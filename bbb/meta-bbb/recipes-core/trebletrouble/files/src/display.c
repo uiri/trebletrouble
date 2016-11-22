@@ -8,6 +8,7 @@
 #include <sys/mman.h>
 
 #include "colours.h"
+#include "display.h"
 
 int DISP_WIDTH = 1;
 long SCREENSIZE;
