@@ -16,7 +16,8 @@ float autocorr(long size,short *data,float *result);
 #include "waveio.h"
 #define PI 3.14159268
 
-int main(int argc,char *argv[])
+// int main(int argc, char *argv[])
+int autocorrelation(int argc,char *argv[])
 {
     struct soundhdr hdr;
     float *data;
