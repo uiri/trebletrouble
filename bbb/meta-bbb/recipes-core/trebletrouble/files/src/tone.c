@@ -218,7 +218,7 @@ Wave tone(void){
   
   // destroy the wave and return the sound  
 
-  waveDestroy( &mySound );
+  //waveDestroy( &mySound );
 
   return mySound;
 

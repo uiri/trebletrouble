@@ -8,6 +8,7 @@
 #include "metronome.h"
 #include "tone.h"
 #include "libfft.h"
+#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 
@@ -74,8 +75,8 @@ int main(int argc, char** argv) {
 
        	cleanup_display(fbp, &fd.fb);
 	metronome(100);
-	return 0; 
-	
 	tone();
+	return 0; 
+
 
 }
