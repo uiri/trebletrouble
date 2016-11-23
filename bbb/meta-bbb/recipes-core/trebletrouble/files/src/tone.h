@@ -11,13 +11,14 @@ typedef struct WaveHeader {
   // Format Subchunk
   char subChunk1Id[4];
   int subChunk1Size;
+
   short int audioFormat;
   short int numChannels;
   int sampleRate;
   int byteRate;
   short int blockAlign;
   short int bitsPerSample;
-  // short int extraParamSize;
+  // short in extraParamSize;
 
   // Data subchunk
   char subChunk2Id[4];
