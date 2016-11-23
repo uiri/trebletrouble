@@ -9,6 +9,7 @@
 #include "metronome.h"
 #include "tone.h"
 #include "libfft.h"
+#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 
@@ -16,7 +17,7 @@ int main(int argc, char** argv) {
 	int fbfd, err, i;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
-	/* Wave temp; */
+	Wave wave;
 
 	fbp = init_display(&fbfd);
 	colour_screen(fbp, ORANGE);
@@ -47,7 +48,8 @@ int main(int argc, char** argv) {
 	}
 
 	cleanup_display(fbp, &fbfd);
-	tone(); // temp contains a tone 880Hz and 44.1 khz
+
+	wave = tone(); // temp contains a tone 880Hz and 44.1 khz
 	
 	/*
 	  INSERT CODE TO TAKE THE WAVE FILE AND OUTPUT A FREQUENCY
