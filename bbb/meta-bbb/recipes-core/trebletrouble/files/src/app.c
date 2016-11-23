@@ -4,13 +4,12 @@
 #include "metronome.h"
 #include "tone.h"
 #include "audio_recorder.h"
-#include "tone.h"
 
 int main(int argc, char** argv) {
 
-        char* fbp;
-  	int fbfd, err;
-	Wave temp;
+  //char* fbp;
+  //int fbfd, err;
+  Wave wave;
 /*
 	fbp = init_display(&fbfd);
 
@@ -38,7 +37,7 @@ int main(int argc, char** argv) {
 	cleanup_display(fbp, &fbfd);
 
 */
-	temp = tone(); // temp contains a tone 880Hz and 44.1 khz
+	wave = tone(); // temp contains a tone 880Hz and 44.1 khz
 	
 	/*
 	  INSERT CODE TO TAKE THE WAVE FILE AND OUTPUT A FREQUENCY
@@ -47,5 +46,5 @@ int main(int argc, char** argv) {
 	 */
 
 
-	return temp;
+	return 0;
 }
