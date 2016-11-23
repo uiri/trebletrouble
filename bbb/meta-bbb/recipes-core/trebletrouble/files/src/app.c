@@ -10,6 +10,7 @@
 #include "metronome.h"
 #include "tone.h"
 #include "libfft.h"
+#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 
@@ -32,6 +33,7 @@ int main(int argc, char** argv) {
 	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 
 	/* Wave temp; */
+	Wave wave;
 
 	colour_screen(fbp, ORANGE);
 	err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
@@ -77,8 +79,7 @@ int main(int argc, char** argv) {
 	cleanup_display(fbp, &fd.fb);
 	metronome();
 
-	cleanup_display(fbp, &fbfd);
-	tone(); // temp contains a tone 880Hz and 44.1 khz
+	wave = tone(); // temp contains a tone 880Hz and 44.1 khz
 	
 	/*
 	  INSERT CODE TO TAKE THE WAVE FILE AND OUTPUT A FREQUENCY
