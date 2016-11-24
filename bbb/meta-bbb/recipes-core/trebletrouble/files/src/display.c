@@ -56,6 +56,8 @@ int find_freq_recur(double freq, int i, int len) {
 	}
 }
 
+
+/* External API */
 int find_freq(double freq) {
 	if (freq <= FREQS[0])
 		return 0;
@@ -64,7 +66,6 @@ int find_freq(double freq) {
 	return find_freq_recur(freq, KEYS / 2, KEYS);
 }
 
-/* External API */
 
 int bitblit(char* filename, char* fbp, int x, int y) {
 	FILE* fd;

@@ -1,6 +1,7 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
+int find_freq(double freq);
 int bitblit(char* filename, char* fbp, int x, int y);
 
 void cleanup_display(char* fbp, int *fbfd);
