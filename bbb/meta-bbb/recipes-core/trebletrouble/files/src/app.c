@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,7 +13,6 @@
 #include "tone.h"
 #include "libfft.h"
 #include "audio_recorder.h"
-#include "libfft.h"
 
 int main(int argc, char** argv) {
 	char* fbp;
@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
 	int err, i;
 	float *wave, duration = 5.0;
 	float *imaginary_wave;
+	
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	ScreenBounds sb;
 
@@ -34,8 +35,8 @@ int main(int argc, char** argv) {
 	}
 
 	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
-
-	/* Wave temp; */
+	int freq;
+	float pitch;
 
 	colour_screen(fbp, ORANGE);
 	err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
@@ -88,6 +89,14 @@ int main(int argc, char** argv) {
 	fft(wave,imaginary_wave,0);
 	free(imaginary_wave);
 	free(wave);
-	return 0;
+	/*=======
+	freq = 880;
+	duration = 1.0;
+	pitch = get_pitch(freq,duration);
+
+>>>>>>> Pitch recognition finally works!!!!!!!!!!
+	*/return 0;
 
 }
+
+
