@@ -1,4 +1,4 @@
-CFLAGS=-Wall
+CFLAGS=-Wall -ansi -g
 
 LIBS=-lc -lasound -lm
 
