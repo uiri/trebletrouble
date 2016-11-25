@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,15 +12,15 @@
 #include "tone.h"
 #include "libfft.h"
 #include "audio_recorder.h"
-#include "libfft.h"
 
 int main(int argc, char** argv) {
 	char* fbp;
 	int fbfd, err, i;
-	float *wave, duration = 5.0;
-	float *imaginary_wave;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
+	int freq;
+	float pitch;
+	float duration;
 
 	fbp = init_display(&fbfd);
 	colour_screen(fbp, ORANGE);
@@ -51,12 +52,11 @@ int main(int argc, char** argv) {
 
 	cleanup_display(fbp, &fbfd);
 
-        wave = malloc(sizeof(float) * SAMPLE_RATE * duration);
-	imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
-	tone(wave, duration); /* wave contains an array of tone 880Hz and 44.1 khz */
-	initfft(15);
-	fft(wave,imaginary_wave,0);
-	free(imaginary_wave);
-	free(wave);
+	freq = 880;
+	duration = 1.0;
+	pitch = get_pitch(freq,duration);
+
 	return 0;
 }
+
+
