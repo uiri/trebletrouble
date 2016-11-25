@@ -1,6 +1,11 @@
+#ifndef TONE_H_
+#define TONE_H_
+
+#define SAMPLE_RATE 44100.0
+
 typedef struct WaveHeader{
 
-  // Riff Wave Header
+  /* Riff Wave Header */
   char chunkId[4];
   int chunkSize;
   char format[4];
@@ -10,9 +15,12 @@ typedef struct WaveHeader{
   int byteRate;
   short int blockAlign;
   short int bitsPerSample;
-  // short in extraParamSize;
+  /* short in extraParamSize; */
 
-  // Data subchunk
+  /* Data subchunk */
+  char subChunk1Id[4];
+  int subChunk1Size;
+
   char subChunk2Id[4];
   int subChunk2Size;
 
@@ -27,4 +35,6 @@ typedef struct Wave {
 
 } Wave;
 
-Wave tone(void);
+void tone(float* data, float duration);
+
+#endif

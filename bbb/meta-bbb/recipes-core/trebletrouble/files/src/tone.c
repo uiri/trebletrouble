@@ -2,6 +2,8 @@
 #include <malloc.h>
 #include <math.h>
 
+#include "tone.h"
+
 /*
  * The audio format will be PCM.
  *  
@@ -54,30 +56,6 @@ void toLittleEndian(const long long int size, void* value) {
 // ------------------------------------------------------ [ Section: Wave Header ] 
 
 
-typedef struct WaveHeader {
-  
-  // Riff Wave Header
-  char chunkId[4];
-  int chunkSize;
-  char format[4];
-
-  // Format Subchunk
-  char subChunk1Id[4];
-  int subChunk1Size;
-  short int audioFormat;
-  short int numChannels;
-  int sampleRate;
-  int byteRate;
-  short int blockAlign;
-  short int bitsPerSample;
-  // short int extraParamSize;
-
-  // Data subchunk
-  char subChunk2Id[4];
-  int subChunk2Size;
-
-} WaveHeader;
-
 WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, short int const bitsPerSample ) {
 
   WaveHeader myHeader;
@@ -117,17 +95,6 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
   return myHeader;
 
 }
-
-// ----------------------------------------------------- [ Section: Wave ] 
-typedef struct Wave {
-  WaveHeader header;
-  char* data;
-  long long int index;
-  long long int size;
-  long long int nSamples;
-  
-} Wave;
-
 
 Wave makeWave(int const sampleRate, short int const numChannels, short int const bitsPerSample) {
   Wave myWave;
@@ -221,25 +188,27 @@ void waveToFile( Wave* wave, const char* filename ) {
 }
 
 // -------------------------------------------------------------------- [ Section: Main ] 
-Wave tone(void){
-  
+//Wave tone(void){
+void tone(float* data, float duration){ 
   // Define some variables fro the sound
-  float sampleRate = 44100.0; // hertz
   float freq = 880.0;         // hertz
   //float duration = 0.3;       // seconds
-  float duration = 5.0; 
 
-  int nSamples = (int)(duration*sampleRate);
+  int nSamples = (int)(duration*SAMPLE_RATE);
 
   // Create a mono(1), 32-bit sound and set the duration
-  Wave mySound = makeWave((int)sampleRate,1,32);
+  Wave mySound = makeWave((int)SAMPLE_RATE,1,32);
   waveSetDuration(&mySound, duration);
-  
+
   // Add all of the data
   int i;
   float frameData[1];
+  for (i = 0; i < nSamples; i++) {
+    data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
+  }
+
   for(i = 0; i<nSamples; i++){
-    frameData[0] = cos(freq*(float)i*3.14159/sampleRate);
+    frameData[0] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
     waveAddSample(&mySound,frameData);
   }
 
@@ -250,6 +219,7 @@ Wave tone(void){
 
   //waveDestroy( &mySound );
 
-  return mySound;
+  //return mySound;
+  //return data;
 
 }
