@@ -36,6 +36,6 @@ typedef struct Wave {
 
 } Wave;
 
-void tone(float* data, float duration);
+float get_pitch(float freq, float duration);
 
 #endif

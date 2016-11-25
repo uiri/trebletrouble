@@ -3,7 +3,10 @@
 #include <malloc.h>
 #include <math.h>
 
+#include "libfft.h"
 #include "tone.h"
+
+#define FFT_SIZE 15
 
 /*
  * The audio format will be PCM.
@@ -60,6 +63,7 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
 
   WaveHeader myHeader;
 
+  /* RIFF WAVE HEADER */
   myHeader.chunkId[0] = 'R';
   myHeader.chunkId[1] = 'I';
   myHeader.chunkId[2] = 'F';
@@ -69,6 +73,7 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
   myHeader.format[2] = 'V';
   myHeader.format[3] = 'E';
 
+  /* Format subchunk */
   myHeader.subChunk1Id[0] = 'f';
   myHeader.subChunk1Id[1] = 'm';
   myHeader.subChunk1Id[2] = 't';
@@ -80,6 +85,7 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
   myHeader.byteRate = myHeader.sampleRate * myHeader.numChannels * myHeader.bitsPerSample / 8;
   myHeader.blockAlign = myHeader.numChannels * myHeader.bitsPerSample/8;
 
+  /* Data subchunk */
   myHeader.subChunk2Id[0] = 'd';
   myHeader.subChunk2Id[1] = 'a';
   myHeader.subChunk2Id[2] = 't';
@@ -184,9 +190,11 @@ void waveToFile( Wave* wave, const char* filename ) {
   toLittleEndian(sizeof(int), (void*)&(wave->header.subChunk2Size));
 }
 
+/* -------------------------------------------------------------------- [ Section: Main ]  */
 /* Wave tone(void){ */
-void tone(float* data, float duration){ 
-  float freq = 880.0;
+void tone(float freq, float* data, float duration){ 
+  /* Define some variables for the sound */
+  /*float duration = 0.3;*/       /* seconds */
 
   int nSamples = (int)(duration*SAMPLE_RATE);
 
@@ -199,10 +207,49 @@ void tone(float* data, float duration){
   float frameData[1];
   for (i = 0; i < nSamples; i++) {
     data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
+    /*frameData[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);*/
   }
 
   for(i = 0; i<nSamples; i++){
     frameData[0] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
     waveAddSample(&mySound,frameData);
   }
+
+  /* Write it to a file and clear up when done */
+  /* waveToFile( &mySound, "mono-32bit.wav"); */
+  
+  /* destroy the wave and return the sound   */
+
+  /* waveDestroy( &mySound ); */
+
+  /* return mySound; */
+  /* return data; */
+
+}
+
+float get_pitch(float freq, float duration)
+{
+  float *wave, *imaginary_wave, max, pitch;
+  int max_index, i;
+
+  wave = malloc(sizeof(float) * SAMPLE_RATE * duration);
+  imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
+  tone(freq, wave, duration); /* wave contains an array of tone Hz and sample rate 44.1 khz */
+  initfft(FFT_SIZE);
+  fft(wave,imaginary_wave,0);
+  max = 0;
+  for (i = 0; i < (SAMPLE_RATE / 2); i++) {
+    /* check if there's any imaginary values */
+    /* waveval = sqrt(imaginary_wave[i] * imaginary_wave[i] + wave[i] * wave[i]); */
+    if (wave[i] > max) {
+      max = wave[i];
+      max_index = i;
+    }
+    /* } */
+  }
+  pitch = ((float)max_index) * SAMPLE_RATE / (1 << (FFT_SIZE-1));
+  free(imaginary_wave);
+  free(wave);
+
+  return pitch;
 }
