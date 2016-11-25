@@ -10,8 +10,11 @@
 ** implied warranty.
 */
 
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <math.h>
+#include "libfft.h"
+#include "tone.h"
 
 #define MAXFFTSIZE 32768
 #define LOG2_MAXFFTSIZE 15
@@ -22,9 +25,7 @@ static int bitreverse[MAXFFTSIZE], bits;
 **
 ** b    power of two such that 2**nu = number of samples
 */
-void
-initfft( b )
-int b;
+int initfft( int b )
     {
     register int i, j, k;
 
@@ -33,7 +34,7 @@ int b;
 	{
 	fprintf(
 	    stderr, "%d is too many bits, max is %d\n", bits, LOG2_MAXFFTSIZE );
-	exit( 1 );
+	return -1;
 	}
 
     for ( i = ( 1 << bits ) - 1; i >= 0; --i )
@@ -47,6 +48,7 @@ int b;
 	    }
 	bitreverse[i] = k;
 	}
+    return 0;
     }
 
 /* fft - a fast Fourier transform routine
@@ -56,13 +58,12 @@ int b;
 ** inv  flag for inverse
 */
 
-void
-fft( xr, xi, inv )
-float xr[], xi[];
-int inv;
+/*void fft(Wave xr, Wave xi, int inv )*/
+void fft(float xr[], float xi[], int inv)
     {
     int n, n2, i, k, kn2, l, p;
-    float ang, s, c, tr, ti;
+    double ang;
+    float s, c, tr, ti;
     double ds, dc;
 
     n = 1 << bits;
@@ -79,11 +80,11 @@ int inv;
 #ifdef notdef
 		c = cos( ang );
 		s = sin( ang );
-#else notdef
+#else /* notdef */
 		sincos( ang, &ds, &dc );
 		s = ds;
 		c = dc;
-#endif notdef
+#endif /* notdef */
 		kn2 = k + n2;
 		if ( inv )
 		    s = -s;

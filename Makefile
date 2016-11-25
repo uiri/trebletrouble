@@ -1,8 +1,8 @@
-CFLAGS="-Wall"
+CFLAGS=-Wall -ansi -g
 
 LIBS=-lc -lasound -lm
 
-bin/app: package/src/app.c bin/display.o bin/tone.o
+bin/app: package/src/app.c bin/display.o bin/tone.o bin/libfft.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 bin/%.o: package/src/%.c

@@ -18,7 +18,7 @@
  */
 
 
-// ------------------------------------------------------ [ Section: Endians ]
+/* ------------------------------------------------------ [ Section: Endians ] */
 int isBigEndian() {
   int test = 1;
   char *p = (char*)&test;
@@ -54,13 +54,12 @@ void toLittleEndian(const long long int size, void* value) {
   }
 }
 
-// ------------------------------------------------------ [ Section: Wave Header ] 
+/* ------------------------------------------------------ [ Section: Wave Header ]  */
 
 WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, short int const bitsPerSample ) {
 
   WaveHeader myHeader;
 
-  // RIFF WAVE HEADER
   myHeader.chunkId[0] = 'R';
   myHeader.chunkId[1] = 'I';
   myHeader.chunkId[2] = 'F';
@@ -70,19 +69,17 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
   myHeader.format[2] = 'V';
   myHeader.format[3] = 'E';
 
-  // Format subchunk
   myHeader.subChunk1Id[0] = 'f';
   myHeader.subChunk1Id[1] = 'm';
   myHeader.subChunk1Id[2] = 't';
   myHeader.subChunk1Id[3] = ' ';
-  myHeader.audioFormat = 1; // For PCM
-  myHeader.numChannels = numChannels; // 1 for MONO, 2 for stereo
-  myHeader.sampleRate = sampleRate; // ie 44100 hertz, cd quality audio
+  myHeader.audioFormat = 1; /* For PCM */
+  myHeader.numChannels = numChannels; /* 1 for MONO, 2 for stereo */
+  myHeader.sampleRate = sampleRate; /* ie 44100 hertz, cd quality audio */
   myHeader.bitsPerSample = bitsPerSample; 
   myHeader.byteRate = myHeader.sampleRate * myHeader.numChannels * myHeader.bitsPerSample / 8;
   myHeader.blockAlign = myHeader.numChannels * myHeader.bitsPerSample/8;
 
-  // Data subchunk
   myHeader.subChunk2Id[0] = 'd';
   myHeader.subChunk2Id[1] = 'a';
   myHeader.subChunk2Id[2] = 't';
@@ -95,9 +92,6 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
   return myHeader;
 
 }
-
-// ----------------------------------------------------- [ Section: Wave ] 
-
 
 Wave makeWave(int const sampleRate, short int const numChannels, short int const bitsPerSample) {
   Wave myWave;
@@ -160,7 +154,7 @@ void waveAddSample( Wave* wave, const float* samples ) {
 
 void waveToFile( Wave* wave, const char* filename ) {
 
-  // First make sure all numbers are little endian
+  /* First make sure all numbers are little endian */
   toLittleEndian(sizeof(int), (void*)&(wave->header.chunkSize));
   toLittleEndian(sizeof(int), (void*)&(wave->header.subChunk1Size));
   toLittleEndian(sizeof(short int), (void*)&(wave->header.audioFormat));
@@ -171,14 +165,14 @@ void waveToFile( Wave* wave, const char* filename ) {
   toLittleEndian(sizeof(short int), (void*)&(wave->header.bitsPerSample));
   toLittleEndian(sizeof(int), (void*)&(wave->header.subChunk2Size));
 
-  // Open the file, write header, write data
+  /* Open the file, write header, write data */
   FILE *file;
   file = fopen(filename, "wb");
   fwrite( &(wave->header), sizeof(WaveHeader), 1, file);
   fwrite( (void*)(wave->data), sizeof(char), wave->size, file);
   fclose( file);
   
-  // Convert back to the system endian-ness
+  /* Convert back to the system endian-ness */
   toLittleEndian(sizeof(int), (void*)&(wave->header.chunkSize));
   toLittleEndian(sizeof(int), (void*)&(wave->header.subChunk1Size));
   toLittleEndian(sizeof(short int), (void*)&(wave->header.audioFormat));
@@ -190,36 +184,25 @@ void waveToFile( Wave* wave, const char* filename ) {
   toLittleEndian(sizeof(int), (void*)&(wave->header.subChunk2Size));
 }
 
-// -------------------------------------------------------------------- [ Section: Main ] 
-Wave tone(void){
-  
-  // Define some variables fro the sound
-  float sampleRate = 44100.0; // hertz
-  float freq = 880.0;         // hertz
-  //float duration = 0.3;       // seconds
-  float duration = 5.0; 
+/* Wave tone(void){ */
+void tone(float* data, float duration){ 
+  float freq = 880.0;
 
-  int nSamples = (int)(duration*sampleRate);
+  int nSamples = (int)(duration*SAMPLE_RATE);
 
-  // Create a mono(1), 32-bit sound and set the duration
-  Wave mySound = makeWave((int)sampleRate,1,32);
+  /* Create a mono(1), 32-bit sound and set the duration */
+  Wave mySound = makeWave((int)SAMPLE_RATE,1,32);
   waveSetDuration(&mySound, duration);
-  
-  // Add all of the data
+
+  /* Add all of the data */
   int i;
   float frameData[1];
-  for(i = 0; i<nSamples; i++){
-    frameData[0] = cos(freq*(float)i*3.14159/sampleRate);
-    waveAddSample(&mySound,frameData);
+  for (i = 0; i < nSamples; i++) {
+    data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
   }
 
-  // Write it to a file and clear up when done
-  //waveToFile( &mySound, "mono-32bit.wav");
-  
-  // destroy the wave and return the sound  
-
-  //waveDestroy( &mySound );
-
-  return mySound;
-
+  for(i = 0; i<nSamples; i++){
+    frameData[0] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
+    waveAddSample(&mySound,frameData);
+  }
 }
