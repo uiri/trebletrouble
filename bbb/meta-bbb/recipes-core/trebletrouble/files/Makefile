@@ -7,7 +7,7 @@ bin/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 bin/trebletrouble: src/app.c bin/display.o bin/loadWave.o bin/metronome.o
-	$(CC) $(CFLAGS) $< bin/display.o bin/loadWave.o bin/metronome.o -o $@ $(LIBS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 trebletrouble:	bin/trebletrouble
 

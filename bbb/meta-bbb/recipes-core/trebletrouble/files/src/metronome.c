@@ -6,16 +6,16 @@
 #include <time.h>
 #include <alsa/asoundlib.h>
 #include <sys/time.h>
-//#include "loadWave.h"
-#include "simpleAlsa.h"
+#include "loadWave.h"
+//#include "simpleAlsa.h"
 struct timeval start, last;
  
-inline int64_t tv_to_u(struct timeval s)
+int64_t tv_to_u(struct timeval s)
 {
 	return s.tv_sec * 1000000 + s.tv_usec;
 }
  
-inline struct timeval u_to_tv(int64_t x)
+struct timeval u_to_tv(int64_t x)
 {
 	struct timeval s;
 	s.tv_sec = x / 1000000;
@@ -37,10 +37,14 @@ void draw(int dir, int64_t period, int64_t cur, int64_t next)
  
 void beat(int delay)
 {
-	struct timeval tv = start;
-	int dir = 0;
+	struct timeval tv;
+	int dir;
 	int tmp;
-	int64_t d = 0, corr = 0, slp, cur, next = tv_to_u(start) + delay;
+	int64_t d, corr, slp, cur, next;
+	tv = start;
+	d = corr = 0;
+	dir = 0;
+	next = tv_to_u(start) + delay;
 	//int64_t draw_interval = 20000;
 	//printf("\033[H\033[J");
 	while (1) {
@@ -49,15 +53,15 @@ void beat(int delay)
 		usleep(slp);
 		gettimeofday(&tv, 0);
  
-		putchar(7); /* bell */
+		//putchar(7); /* bell */
 		//printf("Hello");
 		//
 
-		//		tmp=sound();
+		tmp=sound();
 		
 		
-//system("play /home/vagrant/trebletrouble/package/src/metro_1.wav");
-	        fflush(stdout);
+		//system("play /home/vagrant/trebletrouble/package/src/metro_1.wav");
+		fflush(stdout);
  
 		//printf("\033[5;1Hdrift: %d compensate: %d (usec)   ",
 		//	(int)d, (int)corr);
@@ -72,10 +76,12 @@ void beat(int delay)
 		//	usleep(draw_interval);
 		//	gettimeofday(&tv, 0);
 		//	cur = tv_to_u(tv);
-			//	draw(dir, delay, cur, next);
+		//	draw(dir, delay, cur, next);
 		//	fflush(stdout);
 		//}
+		//		return 0;
 	}
+	
 }
  
 int metronome(void)
@@ -84,7 +90,7 @@ int metronome(void)
 	printf("Is the main even printing?");
  
 	//	if (c < 2 || (bpm = atoi(v[1])) <= 0) 
-bpm = 100;
+	bpm = 100;
 	if (bpm > 600) {
 		fprintf(stderr, "frequency %d too high\n", bpm);
 		exit(1);
