@@ -207,23 +207,7 @@ void tone(float freq, float* data, float duration){
   float frameData[1];
   for (i = 0; i < nSamples; i++) {
     data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
-    /*frameData[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);*/
   }
-
-  for(i = 0; i<nSamples; i++){
-    frameData[0] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
-    waveAddSample(&mySound,frameData);
-  }
-
-  /* Write it to a file and clear up when done */
-  /* waveToFile( &mySound, "mono-32bit.wav"); */
-  
-  /* destroy the wave and return the sound   */
-
-  /* waveDestroy( &mySound ); */
-
-  /* return mySound; */
-  /* return data; */
 
 }
 

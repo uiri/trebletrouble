@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include "display.h"
 #include "metronome.h"
 #include "tone.h"
@@ -9,8 +10,8 @@
 
 int main(int argc, char** argv) {
 
-  /* char* fbp; */
-  /* int fbfd, err; */
+  char* fbp; 
+  int fbfd, err;
   int freq;
   float pitch;
   float duration;
