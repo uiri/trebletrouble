@@ -81,9 +81,6 @@ int main(int argc, char** argv) {
 
        	cleanup_display(fbp, &fd.fb);
 	metronome(100);
-	/*tone();
-	return 0; 
-	*/
 	/*cleanup_display(fbp, &fbfd);*/
 	while(1); /* fuck it */
 	cleanup_display(fbp, &fd.fb);
@@ -95,6 +92,7 @@ int main(int argc, char** argv) {
 	fft(wave,imaginary_wave,0);
 	free(imaginary_wave);
 	free(wave);
+
 	return 0;
 
 }
