@@ -66,6 +66,18 @@ int find_freq(double freq) {
 	return find_freq_recur(freq, KEYS / 2, KEYS);
 }
 
+int find_ind(char note, int oct){
+	int ind, v;
+	
+	ind = (oct*12);
+
+	v = ((note - 'C'+7)%7)*2;
+
+	if (v > 4)
+		v--;
+
+	return ind+v-9;
+}
 
 int bitblit(char* filename, char* fbp, int x, int y) {
 	FILE* fd;
