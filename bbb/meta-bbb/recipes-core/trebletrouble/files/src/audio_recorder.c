@@ -12,7 +12,6 @@ const uint16_t bit_depth;
 const uint16_t channels;
 const int fd;
 
-
 WaveHeader *genericWAVHeader(uint32_t sample_rate, uint16_t bit_depth, uint16_t channels) {
   WaveHeader *hdr;
   hdr = malloc(sizeof(*hdr));
@@ -55,7 +54,6 @@ int writeWAVHeader(int fd, WaveHeader *hdr) {
   write(fd, &data_size, 4);
 
   return 0;
-
 }
 
 int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
@@ -91,7 +89,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   err = snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
   if (err) {
     fprintf(stderr, "Error setting interleaved mode: %s\n", snd_strerror(err));
-    snd_pcm_close(handle);
+    snd_pcm_close(handle  );
     return err;
   }
 

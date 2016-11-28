@@ -89,13 +89,8 @@ int main(int argc, char** argv) {
 	fft(wave,imaginary_wave,0);
 	free(imaginary_wave);
 	free(wave);
-	/*=======
-	freq = 880;
-	duration = 1.0;
-	pitch = get_pitch(freq,duration);
-
->>>>>>> Pitch recognition finally works!!!!!!!!!!
-	*/return 0;
+       
+	return 0;
 
 }
 

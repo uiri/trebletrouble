@@ -27,7 +27,7 @@ static int bitreverse[MAXFFTSIZE], bits;
 */
 int initfft( int b )
     {
-    register int i, j, k;
+    int i, j, k;
 
     bits = b;
     if ( bits > LOG2_MAXFFTSIZE )
@@ -115,7 +115,7 @@ void fft(float xr[], float xi[], int inv)
     /* Finally, multiply each value by 1/n, if this is the forward transform. */
     if ( ! inv )
 	{
-	register float f;
+	float f;
 
 	f = 1.0 / n;
 	for( i = 0; i < n ; ++i )
