@@ -75,6 +75,31 @@
 	backlight_pin: backlight_pin {
 		pinctrl-single,pins = < 0x48 (PIN_OUTPUT_PULLUP | MUX_MODE7) >; /* P9.14, gpio1[18] */
 	};
+
+	mcasp0_pins: mcasp0_pins {
+		     pinctrl-single,pins = <
+					0x1ac 0x30
+					0x19c 0x02
+					0x194 0x10
+					0x190 0x00
+					0x1a8 0x1f
+			>;
+	};
+};
+
+&mcasp0 {
+	pinctrl-names = "default";
+	pintctrl-0 = <&mcasp0_pins>;
+	status = "okay";
+	op-mode = <0>; /*MCASP_IIS_MODE */
+	tdm-slots = <2>;
+	serial-dir = </*0: INACTIVE,1: TX,2: RX */
+			0 0 1 0
+		>;
+	tx-num-evt = <1>;
+	rx-num-evt = <1>;
+
+
 };
 
 &lcdc {
@@ -130,6 +155,38 @@
 		gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>; /* P9.14 */
 		default-on;
 	};
+
+	clk_mcasp0_fixed: clk_mcasp0_fixed {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <24576000>;
+	};
+
+	clk_mcasp0: clk_mcasp0 {
+		#clock-cells = <0>;
+		compatible = "gpio-clock";
+		clocks= <&clk_mcasp0_fixed>;
+		enable-gpios = <&gpio1 27 0>;/* BeagleBone Black Clk enable on GPIO1_27 */
+	};
+
+	hdmi_audio: hdmi_audio@0 {
+		compatible = "linux,hdmi-audio";
+		status="okay";
+	};
+
+	sound {
+		compatible = "ti,am3xx-beaglebone-black";
+		ti,model = "TI BeagleBone Black";
+		ti,audio-codec =<&hdmi_audio>;
+		ti,mcasp-controller =<&mcasp0>;
+		ti,audio-routing =
+				 "HDMI Out",	"TX";
+		clocks = <&clk_mcasp0>;
+		clock-names = "ti,codec-clock";
+
+
+	};
+
 };
 
 &tscadc {

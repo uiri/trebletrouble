@@ -8,6 +8,17 @@ SRC_URI = "file://LICENSE \
 	   file://src/* \
 	   file://share/* \
 	  "
+ALSA_TOOLS = " \ 
+    alsa-plugins \
+    alsa-state \
+    alsa-lib \ 
+    alsa-lib-native \ 
+    alsa-tools \ 
+    alsa-utils \ 
+ " 
+
+
+DEPENDS = "${ALSA_TOOLS}"
 
 PR = "0"
 S = "${WORKDIR}"
