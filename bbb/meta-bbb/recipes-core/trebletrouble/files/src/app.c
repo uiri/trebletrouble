@@ -24,11 +24,12 @@ int main(int argc, char** argv) {
 	colour_screen(fbp, WHITE);
 
 	/*draw staff on screen*/
-	draw_staff(fbp);	
-	
+	draw_staff(fbp);
+
 	/*variables for reading song*/
 	FILE *song = fopen(SONG, "rb");
-	load_song(song, fbp);	
+	load_song(song, fbp);
+	fclose(song);
 	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
 	return 0;

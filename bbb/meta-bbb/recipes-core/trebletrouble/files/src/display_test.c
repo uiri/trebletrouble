@@ -65,8 +65,9 @@ int main(int argc, char** argv){
 	
 	/*variables for reading song*/
 	FILE *song = fopen(SONG, "rb");
-	load_song(song, fbp);	
-	
+	load_song(song, fbp);
+	fclose(song);
+
 	/*writes the thing to a pnm hopefully --update: it does*/
 	screen_capture(fbp, "screenshot.pnm");
 	

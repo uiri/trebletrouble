@@ -56,14 +56,14 @@ int find_freq_recur(double freq, int i, int len) {
 	}
 }
 
-void draw_note(unsigned char *buf, int xnote, char* fbp){
-	int ynote;
+int get_xnote(int i) {
+	/* First note is at 145,
+	   each subsequent note is 34 px further */
+	return 145 + i*34;
+}
 
-	/* the y position for each note - why all the specific numbers? because music 
-	is magic but also math.*/
-	ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
-
-	bitblit(NOTE_PIC, fbp, xnote, ynote-15);	
+void draw_note(int i, int ynote, char* fbp, short colour) {
+	bitblit_colour(NOTE_PIC, fbp, get_xnote(i), ynote-15, colour);
 }
 
 /* External API */
@@ -77,7 +77,7 @@ int find_freq(double freq) {
 
 int find_ind(char note, int oct){
 	int ind, v;
-	
+
 	ind = (oct*12);
 
 	v = ((note - 'C'+7)%7)*2;
@@ -173,7 +173,7 @@ void draw_staff(char* fbp){
 	int i;
 	int x = 0;
 	int y = 90;
-	/* m is the space between the lines */ 
+	/* m is the space between the lines */
 	int m = 30;
 	int start =0;
 	int end = 800;
@@ -184,21 +184,18 @@ void draw_staff(char* fbp){
 
 	/* draw the lines of the staff */
 	for(i=0; i < 5; i++, y+=m)
-		bitblit ("/srv/trebletrouble/line.pnm", fbp, x, y);
-
+		bitblit("/srv/trebletrouble/line.pnm", fbp, x, y);
 }
 
 void load_song(FILE *song, char *fbp){
 	/*TODO: return expected notes*/
 	unsigned char buf[2];
-	int xnote = 145; /*x start*/
-			
-	while (fread(buf, 1, 2, song) ==2){
-		draw_note(buf, xnote, fbp);
-		xnote = xnote+34;
-	}
+	int i, ynote;
 
-	fclose(song);
+	for (i = 0; i < 15 && fread(buf, 1, 2, song) == 2; i++) {
+		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
+		draw_note(i, ynote, fbp, BLACK);
+	}
 }
 
 char *init_display(int *fbfd) {
