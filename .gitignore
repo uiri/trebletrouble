@@ -3,3 +3,5 @@ bbb/meta-bbb/recipes-core/trebletrouble/files/bin/*
 bin/
 screenshot.pnm
 screenshot.png
+pseudo_1.7.5.bb
+poky-krogoth/meta/recipes-devtools/pseudo/files/pseudo-glibc-rtld-next-workaround.patch
