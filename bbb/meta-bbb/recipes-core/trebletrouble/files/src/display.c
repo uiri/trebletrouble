@@ -160,15 +160,6 @@ int bitblit(char* filename, char* fbp, int x, int y) {
 	return 0;
 }
 
-void display_frequency(double frequency, char* fbp) {
-	int ind;
-	/* binary search for the index */
-	ind = find_freq(frequency);
-
-	colour_screen(fbp, ORANGE);
-	bitblit(NOTE[ind % 12], fbp, 60, 300);
-	bitblit(OCTAVE[(ind+10) / 12], fbp, 270, 300);
-}
 
 void draw_staff(char* fbp){
 	/* place staff (five lines) on screen */

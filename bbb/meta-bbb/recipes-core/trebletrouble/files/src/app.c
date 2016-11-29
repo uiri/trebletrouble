@@ -30,5 +30,6 @@ int main(int argc, char** argv) {
 	FILE *song = fopen(SONG, "rb");
 	load_song(song, fbp);	
 	cleanup_display(fbp, &fbfd);
+	while(1); /* fuck it */
 	return 0;
 }
