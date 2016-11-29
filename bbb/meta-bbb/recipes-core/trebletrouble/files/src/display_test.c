@@ -14,7 +14,7 @@ int O[9] = {0,1,2,3,4,5,6,7,8};
 
 char *NOTE_PIC = "/srv/trebletrouble/note.pnm";
 char *L_PIC = "/srv/trebletrouble/note_l.pnm";
-char *SONG = "/srv/trebletrouble/twinkle_v1"; 
+char *SONG = "/srv/trebletrouble/testnotes"; 
 
 void screen_capture(char* fbp, char* filename){
 
@@ -57,22 +57,6 @@ void screen_capture(char* fbp, char* filename){
 	fclose(file);
 }
 
-void display_note_test(double freq){
-	int ind;
-	char *note;
-	int oct;
-
-	ind = find_freq(freq);
-
-	note = N[ind % 12];
-	oct = O[(ind+10) /12];
-
-	//print out data for testing
-	printf("freq: %f, ind: %d, note: %s, octave:%d\n", freq, ind, note, oct);
-	
-	//bitblit(NOTE_PIC)
-
-}
 
 void draw_note(unsigned char *buf, int xnote, char* fbp){
 	int ynote;
@@ -83,6 +67,8 @@ void draw_note(unsigned char *buf, int xnote, char* fbp){
 
 	bitblit(NOTE_PIC, fbp, xnote, ynote-15);	
 }
+
+
 
 int main(int argc, char** argv){
 
@@ -108,10 +94,12 @@ int main(int argc, char** argv){
 	int start =0;
 	int end = 800;
 	int xstart = 145;
-	int xnote = xstart;
+	
+	//variables for reading song
 	FILE *song = fopen(SONG, "rb");
 	unsigned char buf[2];
-
+	int xnote = xstart;
+	
 	//draw clef and end lines
 	bitblit("/srv/trebletrouble/clef.pnm", fbp, start, y-35);	
 	bitblit("/srv/trebletrouble/end.pnm", fbp, end-15, y);	
@@ -123,20 +111,15 @@ int main(int argc, char** argv){
 		y = y+m;
 	}
 	
-	//draw the notes
-	while (fread(buf, 1, 2, song) == 2){
 		
+	//for testing: place notes on the board from a song
+	while (fread(buf, 1, 2, song) ==2){
 		draw_note(buf, xnote, fbp);
 		xnote = xnote+m+4;
-		printf("it works?\n");
-
+		printf("drawing stuff on screen from song");
 	}
-	fclose(song);
 
-	//place note on the board	
-	/*while (xnote=0;xnote<15 ;xnote++ ){
-		display_note_test(*notes*, xnote);	
-	}*/
+	fclose(song);
 
 	//writes the thing to a pnm hopefully
 	screen_capture(fbp, "screenshot.pnm");
