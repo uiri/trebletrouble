@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 	int fbfd, err;
 
 	fbp = init_display(&fbfd);
-
+	colour_screen(fbp, ORANGE);
 	err = bitblit("/srv/trebletrouble/timbit.pnm", fbp, 400, 240);
 
 	if (err) {
@@ -19,18 +19,15 @@ int main(int argc, char** argv) {
 		}
 		return err;
 	}
-
 	sleep(5);
-	colour_screen(hbp, WHITE);
-	//sleep(5);
-	//display_frequency(440.0, fbp);
-	//sleep(10);
-	//display_frequency(855.304, fbp);
-	//sleep(10);
-	//display_frequency(4100.0, fbp);
-	//sleep(10);
-	//display_frequency(28.0, fbp);
-	//sleep(10);
+	colour_screen(fbp, WHITE);
+
+	/*draw staff on screen*/
+	draw_staff(fbp);	
+	
+	/*variables for reading song*/
+	FILE *song = fopen(SONG, "rb");
+	load_song(song, fbp);	
 	cleanup_display(fbp, &fbfd);
 	return 0;
 }

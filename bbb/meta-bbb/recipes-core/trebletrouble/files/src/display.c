@@ -56,6 +56,15 @@ int find_freq_recur(double freq, int i, int len) {
 	}
 }
 
+void draw_note(unsigned char *buf, int xnote, char* fbp){
+	int ynote;
+
+	/* the y position for each note - why all the specific numbers? because music 
+	is magic but also math.*/
+	ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
+
+	bitblit(NOTE_PIC, fbp, xnote, ynote-15);	
+}
 
 /* External API */
 int find_freq(double freq) {
@@ -128,7 +137,6 @@ int bitblit(char* filename, char* fbp, int x, int y) {
 
 	vw = (x+w) > 800 ? x+w-799 : 0;
 
-	
 	for (i = 0; i < SCREENSIZE/2; i++) {
 		if ((i / DISP_WIDTH) < y)
 			continue;
@@ -160,6 +168,39 @@ void display_frequency(double frequency, char* fbp) {
 	colour_screen(fbp, ORANGE);
 	bitblit(NOTE[ind % 12], fbp, 60, 300);
 	bitblit(OCTAVE[(ind+10) / 12], fbp, 270, 300);
+}
+
+void draw_staff(char* fbp){
+	/* place staff (five lines) on screen */
+	int i;
+	int x = 0;  
+	int y = 90;
+	/* m is the space between the lines */ 
+	int m = 30;
+	int start =0;
+	int end = 800;
+	/* draw clef and end lines */
+	bitblit("/srv/trebletrouble/clef.pnm", fbp, start, y-35);	
+	bitblit("/srv/trebletrouble/end.pnm", fbp, end-15, y);	
+	bitblit("/srv/trebletrouble/end.pnm", fbp, end-5, y);	
+
+	/* draw the lines of the staff */
+	for(i=0; i < 5; i++, y+=m)
+		bitblit ("/srv/trebletrouble/line.pnm", fbp, x, y);
+
+}
+
+void load_song(FILE *song, char *fbp){
+	/*TODO: return expected file?*/
+	unsigned char buf[2];
+	int xnote = 145; /*x start*/
+			
+	while (fread(buf, 1, 2, song) ==2){
+		draw_note(buf, xnote, fbp);
+		xnote = xnote+34;
+	}
+
+	fclose(song);
 }
 
 char *init_display(int *fbfd) {

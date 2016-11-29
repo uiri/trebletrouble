@@ -32,8 +32,6 @@ install-sdcard-boot:
 bin/display_test: package/src/display_test.c bin/display.o
 	$(CC) $(CFLAGS) $^ -o $@
 
-
 display_test: bin/display_test 
-
 
 all:	app image
