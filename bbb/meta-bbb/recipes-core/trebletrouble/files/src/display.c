@@ -173,16 +173,16 @@ void display_frequency(double frequency, char* fbp) {
 void draw_staff(char* fbp){
 	/* place staff (five lines) on screen */
 	int i;
-	int x = 0;  
+	int x = 0;
 	int y = 90;
 	/* m is the space between the lines */ 
 	int m = 30;
 	int start =0;
 	int end = 800;
 	/* draw clef and end lines */
-	bitblit("/srv/trebletrouble/clef.pnm", fbp, start, y-35);	
-	bitblit("/srv/trebletrouble/end.pnm", fbp, end-15, y);	
-	bitblit("/srv/trebletrouble/end.pnm", fbp, end-5, y);	
+	bitblit("/srv/trebletrouble/clef.pnm", fbp, start, y-35);
+	bitblit("/srv/trebletrouble/end.pnm", fbp, end-15, y);
+	bitblit("/srv/trebletrouble/end.pnm", fbp, end-5, y);
 
 	/* draw the lines of the staff */
 	for(i=0; i < 5; i++, y+=m)
@@ -191,7 +191,7 @@ void draw_staff(char* fbp){
 }
 
 void load_song(FILE *song, char *fbp){
-	/*TODO: return expected file?*/
+	/*TODO: return expected notes*/
 	unsigned char buf[2];
 	int xnote = 145; /*x start*/
 			
