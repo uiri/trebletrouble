@@ -9,6 +9,7 @@ int find_freq(double freq);
 int find_ind(char note, int oct);
 
 int bitblit(char* filename, char* fbp, int x, int y);
+int bitblit_colour(char* filename, char* fbp, int x, int y, short colour);
 void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);

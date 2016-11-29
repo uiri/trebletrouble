@@ -88,7 +88,7 @@ int find_ind(char note, int oct){
 	return ind+v-9;
 }
 
-int bitblit(char* filename, char* fbp, int x, int y) {
+int bitblit_colour(char* filename, char* fbp, int x, int y, short colour) {
 	FILE* fd;
 	int i, j, w, h, vw;
 	unsigned char buf[3], px[2];
@@ -151,6 +151,10 @@ int bitblit(char* filename, char* fbp, int x, int y) {
 		}
 		if (buf[0] == 0xFF && buf[1] == 0xFF && buf[2] == 0xFF)
 			continue;
+		if (buf[0] == 0x00 && buf[1] == 0x00 && buf[2] == 0x00) {
+			memset(fbp + 2*i, colour, 2);
+			continue;
+		}
 		px[0] = (buf[0] & 0xF8) | ((buf[1] & 0xE0) >> 5);
 		px[1] = ((buf[1] & 0x1C) << 3) | ((buf[2] & 0xF8) >> 3);
 		memset(fbp + 2*i, *(short*)px, 2);
@@ -160,6 +164,9 @@ int bitblit(char* filename, char* fbp, int x, int y) {
 	return 0;
 }
 
+int bitblit(char* filename, char* fbp, int x, int y) {
+	return bitblit_colour(filename, fbp, x, y, BLACK);
+}
 
 void draw_staff(char* fbp){
 	/* place staff (five lines) on screen */
