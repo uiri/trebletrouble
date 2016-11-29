@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 #include "display.h"
+#include "colours.h"
 
 int main(int argc, char** argv) {
 	char* fbp;
