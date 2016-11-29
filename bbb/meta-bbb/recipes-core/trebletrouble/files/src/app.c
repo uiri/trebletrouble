@@ -4,9 +4,13 @@
 #include "display.h"
 #include "colours.h"
 
+#define NUM_NOTES 16
+
 int main(int argc, char** argv) {
 	char* fbp;
-	int fbfd, err;
+	int fbfd, err, i;
+	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
+	int expected[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 
 	fbp = init_display(&fbfd);
 	colour_screen(fbp, ORANGE);
@@ -20,7 +24,7 @@ int main(int argc, char** argv) {
 		}
 		return err;
 	}
-	sleep(5);
+	sleep(2);
 	colour_screen(fbp, WHITE);
 
 	/*draw staff on screen*/
@@ -30,6 +34,11 @@ int main(int argc, char** argv) {
 	FILE *song = fopen(SONG, "rb");
 	load_song(song, fbp);
 	fclose(song);
+	sleep(2);
+	for (i = 0; i < NUM_NOTES; i++) {
+		compare_notes(expected[i], actual[i], i, fbp);
+		sleep(1);
+	}
 	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
 	return 0;

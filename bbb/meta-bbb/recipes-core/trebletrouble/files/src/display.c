@@ -187,6 +187,24 @@ void draw_staff(char* fbp){
 		bitblit("/srv/trebletrouble/line.pnm", fbp, x, y);
 }
 
+void compare_notes(int expected, int actual, int i, char* fbp) {
+	int ynote, j;
+
+	/* Does this work? idklol */
+	actual += 9;
+	j = actual%12;
+	if (j > 4)
+		j++;
+	j /= 2;
+	ynote = 240 - (15*j + 105*(actual/12 - 4));
+	actual -= 9;
+
+	if (actual == expected)
+		draw_note(i, ynote, fbp, GREEN);
+	else
+		draw_note(i, ynote, fbp, RED);
+}
+
 void load_song(FILE *song, char *fbp){
 	/*TODO: return expected notes*/
 	unsigned char buf[2];

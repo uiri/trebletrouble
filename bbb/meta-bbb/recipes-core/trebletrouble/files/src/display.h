@@ -13,6 +13,7 @@ int bitblit_colour(char* filename, char* fbp, int x, int y, short colour);
 void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);
+void compare_notes(int expected, int actual, int i, char* fbp);
 void load_song(FILE *file, char *fbp);
 
 char *init_display(int *fbfd);
