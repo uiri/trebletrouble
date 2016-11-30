@@ -25,6 +25,7 @@ void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);
 void compare_notes(int expected, int actual, int i, char* fbp);
+void clear_notes(int i, int expected[NUM_NOTES], char* fbp);
 void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]);
 
 char *init_display(int *fbfd);

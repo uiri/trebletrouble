@@ -33,10 +33,20 @@ int main(int argc, char** argv) {
 	load_song(song, fbp, expected);
 	fclose(song);
 	sleep(2);
+
+	/* This run has a mistake */
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], actual[i], i, fbp);
 		sleep(1);
 	}
+	/* Reset notes to black */
+	clear_notes(8, expected, fbp);
+	/* This run is perfect ;) */
+	for (i = 0; i < NUM_NOTES; i++) {
+		compare_notes(expected[i], expected[i], i, fbp);
+		sleep(1);
+	}
+
 	cleanup_display(fbp, &fbfd);
 	while(1); /* fuck it */
 	return 0;

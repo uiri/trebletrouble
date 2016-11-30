@@ -230,8 +230,8 @@ void draw_staff(char* fbp){
 		bitblit("/srv/trebletrouble/line.pnm", fbp, x, y);
 }
 
-void compare_notes(int expected, int actual, int i, char* fbp) {
-	int ynote, j;
+int get_ynote(int i) {
+	int j;
 
 	/* How does this work?
 	 * A0 is at index 0, so the value of actual will be 0 in that case.
@@ -264,18 +264,22 @@ void compare_notes(int expected, int actual, int i, char* fbp) {
 	 * B3 will be mapped to 6 and 3 -> 6*15 = 90, 105*(3-4) = -105
 	 * 90-105 = -15 - exactly where we want to place B3 relative to C4
 	 */
-	actual += 9;
-	j = actual%12;
+	i += 9;
+	j = i%12;
 	if (j > 4)
 		j++;
 	j /= 2;
-	ynote = 240 - (15*j + 105*(actual/12 - 4));
-	actual -= 9;
+	return (240 - (15*j + 105*(i/12 - 4)));
+}
 
-	if (actual == expected)
-		draw_note(i, ynote, fbp, GREEN, 1);
-	else
-		draw_note(i, ynote, fbp, RED, 1);
+void compare_notes(int expected, int actual, int i, char* fbp) {
+	short colour = actual == expected ? GREEN : RED;
+	draw_note(i, get_ynote(actual), fbp, colour, 1);
+}
+
+void clear_notes(int i, int expected[NUM_NOTES], char* fbp) {
+	for (; i < NUM_NOTES; i++)
+		draw_note(i, get_ynote(expected[i]), fbp, BLACK, 1);
 }
 
 void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
@@ -288,7 +292,7 @@ void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 	draw_bar(fbp);
 
 	for (i = 0; i < NUM_NOTES && fread(buf, 1, 2, song) == 2; i++) {
-		expected[i] = find_ind(buf[0], buf[1] - '4');
+		expected[i] = find_ind(buf[0], buf[1] - '0');
 		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
 		draw_note(i, ynote, fbp, BLACK, 1);
 	}
