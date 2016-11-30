@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
 		}
 		return err;
 	}
+
 	get_lcd_input(&fd.ts, &sb);
 	colour_screen(fbp, WHITE);
 
