@@ -190,7 +190,37 @@ void draw_staff(char* fbp){
 void compare_notes(int expected, int actual, int i, char* fbp) {
 	int ynote, j;
 
-	/* Does this work? idklol */
+	/* How does this work?
+	 * A0 is at index 0, so the value of actual will be 0 in that case.
+	 * We want to re-index it so that C0 is 0 which means adding 9 for the
+	 * calculations hence the subtraction after we have the value for ynote.
+	 * Modulo 12 accounts for where the index is within the octave. Now we
+	 * need to map these to letter notes:
+	 *	0, 1  -> C ( 0 )
+	 *	2, 3  -> D ( 1 )
+	 *	4     -> E ( 2 )
+	 *	5, 6  -> F ( 3 )
+	 *	7, 8  -> G ( 4 )
+	 *	9, 10 -> A ( 5 )
+	 *	11    -> B ( 6 )
+	 * If we divide by 2, the odd numbers will go have their result rounded
+	 * down. This is good for 1 and 3 but for values over 5, we want them
+	 * rounded up. This is easily accomplished by incrementing those values
+	 * by 1 before performing the division.
+	 *
+	 * The spacing between successive notes is 15 so we multiple our j value
+	 * by 15.
+	 *
+	 * The spacing between successive octaves is 7 notes - 15 * 7 = 105
+	 * We have set C4 to 240. C is mapped to 0 so no need to account for any
+	 * adjustment there. But, the octave number will be 4, so we need to
+	 * subtract 4 before multiplying by 105. Octaves which are lower will
+	 * have a negative portion here and octaves which are higher will have a
+	 * positive portion.
+	 *
+	 * B3 will be mapped to 6 and 3 -> 6*15 = 90, 105*(3-4) = -105
+	 * 90-105 = -15 - exactly where we want to place B3 relative to C4
+	 */
 	actual += 9;
 	j = actual%12;
 	if (j > 4)
