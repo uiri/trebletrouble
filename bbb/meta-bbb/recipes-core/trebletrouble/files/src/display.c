@@ -21,6 +21,8 @@ char *NOTE[12] = {"/srv/trebletrouble/A.pnm", "/srv/trebletrouble/As.pnm", "/srv
 
 char *OCTAVE[9] = {"/srv/trebletrouble/0.pnm", "/srv/trebletrouble/1.pnm", "/srv/trebletrouble/2.pnm", "/srv/trebletrouble/3.pnm", "/srv/trebletrouble/4.pnm", "/srv/trebletrouble/5.pnm", "/srv/trebletrouble/6.pnm", "/srv/trebletrouble/7.pnm", "/srv/trebletrouble/8.pnm"};
 
+char *TIME_STAMP[8] = {"","/srv/trebletrouble/2_ts.pnm","/srv/trebletrouble/3_ts.pnm","/srv/trebletrouble/4_ts.pnm","/srv/trebletrouble/5_ts.pnm","","/srv/trebletrouble/7_ts.pnm","/srv/trebletrouble/8_ts.pnm"};
+
 /* Internal functions */
 
 void colour_screen(char* fbp, short colour) {
@@ -66,6 +68,13 @@ void draw_note(int i, int ynote, char* fbp, short colour) {
 	bitblit_colour(NOTE_PIC, fbp, get_xnote(i), ynote-15, colour);
 }
 
+
+void set_time_signature(int t1,int t2, char *fbp){
+	int x = 90;
+	int y = 90;
+	bitblit(TIME_STAMP[t1-1], fbp, x, y);
+	bitblit(TIME_STAMP[t2-1], fbp, x, y+60);
+}
 /* External API */
 int find_freq(double freq) {
 	if (freq <= FREQS[0])
@@ -237,7 +246,11 @@ void compare_notes(int expected, int actual, int i, char* fbp) {
 
 void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 	unsigned char buf[2];
+
 	int i, ynote;
+	
+	/* for now, assume song is is in time signature 4 4 - common time*/
+	set_time_signature(4,4, fbp);
 
 	for (i = 0; i < NUM_NOTES && fread(buf, 1, 2, song) == 2; i++) {
 		expected[i] = find_ind(buf[0], buf[1] - '4');
