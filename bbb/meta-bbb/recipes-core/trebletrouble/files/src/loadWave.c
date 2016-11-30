@@ -10,6 +10,7 @@
 // Run it from a terminal, specifying the name of a WAVE file to play:
 // ./alsawave MyWaveFile.wav
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
