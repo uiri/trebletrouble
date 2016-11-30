@@ -235,12 +235,12 @@ void compare_notes(int expected, int actual, int i, char* fbp) {
 		draw_note(i, ynote, fbp, RED);
 }
 
-void load_song(FILE *song, char *fbp){
-	/*TODO: return expected notes*/
+void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 	unsigned char buf[2];
 	int i, ynote;
 
-	for (i = 0; i < 15 && fread(buf, 1, 2, song) == 2; i++) {
+	for (i = 0; i < NUM_NOTES && fread(buf, 1, 2, song) == 2; i++) {
+		expected[i] = find_ind(buf[0], buf[1] - '4');
 		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
 		draw_note(i, ynote, fbp, BLACK);
 	}
