@@ -14,7 +14,6 @@ int main(int argc, char** argv) {
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES];
 	ScreenBounds sb;
-	ScreenInput si;
 
 	fbp = init_display(&fd.fb);
 
@@ -34,7 +33,7 @@ int main(int argc, char** argv) {
 		}
 		return err;
 	}
-	sleep(2);
+	get_lcd_input(&fd.ts, &sb);
 	colour_screen(fbp, WHITE);
 
 	/*draw staff on screen*/
@@ -44,7 +43,7 @@ int main(int argc, char** argv) {
 	FILE *song = fopen(SONG, "rb");
 	load_song(song, fbp, expected);
 	fclose(song);
-	sleep(2);
+	get_lcd_input(&fd.ts, &sb);
 
 	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
@@ -52,27 +51,17 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 
+	get_lcd_input(&fd.ts, &sb);
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
+	get_lcd_input(&fd.ts, &sb);
 	/* This run is perfect ;) */
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], expected[i], i, fbp);
 		sleep(1);
 	}
 
-	while (1) {
-		si = get_lcd_input(&fd.ts, &sb);
-		/* Need to figure out what to do with the input once we 
-		   have it */
-		/* if (si.y < 512) */
-		/* 	colour_screen(fbp, RED); */
-		/* else if (si.y < 3930) */
-		/* 	colour_screen(fbp, GREEN); */
-		/* else */
-		/* 	colour_screen(fbp, ORANGE); */
-		sleep(1);
-	}
-
+	get_lcd_input(&fd.ts, &sb);
 	while(1); /* fuck it */
 	cleanup_display(fbp, &fd.fb);
 	return 0;
