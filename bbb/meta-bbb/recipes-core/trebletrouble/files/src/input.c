@@ -53,7 +53,7 @@ ScreenInput get_lcd_input(int *fd, ScreenBounds *sb) {
 			break;
 		case 1:
 			if (ev[i].value)
-				st.y = ev[i].value * 480 / TS_YMAX;
+				st.y = ev[i].value * 480 / TS_MAX;
 			break;
 		case 24:
 			if (ev[i].value)
@@ -69,8 +69,7 @@ ScreenInput get_lcd_input(int *fd, ScreenBounds *sb) {
 
 int init_touchscreen(int *fd, ScreenBounds *sb) {
 	unsigned long bit[EV_MAX][KEY_MAX / (8 * sizeof(unsigned long))];
-	int ev_abs[EV_ABS_SIZE] = {0};
-	int i, j, k;
+	int i;
 
 	if ((*fd = open("/dev/input/touchscreen0", O_RDONLY)) < 0) {
 		return -1;

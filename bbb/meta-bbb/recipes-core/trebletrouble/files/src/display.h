@@ -1,6 +1,9 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
+#include <stdio.h>
+
+#define NOTE_PIC "/srv/trebletrouble/note.pnm"
 #define L_PIC "/srv/trebletrouble/note_l.pnm"
 #define SONG "/srv/trebletrouble/testnotes" 
 #define NUM_NOTES 16
