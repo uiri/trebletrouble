@@ -61,19 +61,42 @@ int find_freq_recur(double freq, int i, int len) {
 int get_xnote(int i) {
 	/* First note is at 145,
 	   each subsequent note is 34 px further */
-	return 145 + i*34;
+	return XSTART + i*XS;
 }
 
-void draw_note(int i, int ynote, char* fbp, short colour) {
-	bitblit_colour(NOTE_PIC, fbp, get_xnote(i), ynote-15, colour);
+void draw_note(int i, int ynote, char* fbp, short colour, int time) {
+	/*if ynote on treble clef is above B - flip the stem*/
+	/*150 = 90+30+30*/
+	if(ynote < 150){
+		if (time == 1)
+			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote-15, colour);
+		else 
+			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
+	}else{
+		if (time == 1)
+			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-105, colour);
+		else 
+			bitblit_colour(W_N, fbp, get_xnote(i), ynote-105, colour);
+
+	}
 }
 
 
 void set_time_signature(int t1,int t2, char *fbp){
-	int x = 90;
+	int x = XSTART-30;
 	int y = 90;
 	bitblit(TIME_STAMP[t1-1], fbp, x, y);
 	bitblit(TIME_STAMP[t2-1], fbp, x, y+60);
+}
+
+void draw_bar(char *fbp){
+	/*hard coding bar spaces for now
+	with xstart being defined in display.h, and there's 4 notes per bar
+	each bar will be 160 apart*/
+	int y = 90;
+	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4)-5, y);
+	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*2)-5, y);
+	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*3)-5, y);
 }
 /* External API */
 int find_freq(double freq) {
@@ -188,12 +211,15 @@ void draw_staff(char* fbp){
 	int end = 800;
 	/* draw clef and end lines */
 	bitblit("/srv/trebletrouble/clef.pnm", fbp, start, y-35);
-	bitblit("/srv/trebletrouble/end.pnm", fbp, end-15, y);
-	bitblit("/srv/trebletrouble/end.pnm", fbp, end-5, y);
+	bitblit("/srv/trebletrouble/bar.pnm", fbp, end-16, y);
+	bitblit("/srv/trebletrouble/end.pnm", fbp, end-7, y);
 
 	/* draw the lines of the staff */
 	for(i=0; i < 5; i++, y+=m)
 		bitblit("/srv/trebletrouble/line.pnm", fbp, x, y);
+
+	/*draw bars on staff*/
+	draw_bar(fbp);
 }
 
 void compare_notes(int expected, int actual, int i, char* fbp) {
@@ -239,9 +265,9 @@ void compare_notes(int expected, int actual, int i, char* fbp) {
 	actual -= 9;
 
 	if (actual == expected)
-		draw_note(i, ynote, fbp, GREEN);
+		draw_note(i, ynote, fbp, GREEN, 1);
 	else
-		draw_note(i, ynote, fbp, RED);
+		draw_note(i, ynote, fbp, RED, 1);
 }
 
 void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
@@ -255,7 +281,7 @@ void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 	for (i = 0; i < NUM_NOTES && fread(buf, 1, 2, song) == 2; i++) {
 		expected[i] = find_ind(buf[0], buf[1] - '4');
 		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
-		draw_note(i, ynote, fbp, BLACK);
+		draw_note(i, ynote, fbp, BLACK, 1);
 	}
 }
 
