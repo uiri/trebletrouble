@@ -59,7 +59,7 @@ void toLittleEndian(const long long int size, void* value) {
 
 /* ------------------------------------------------------ [ Section: Wave Header ]  */
 
-WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, short int const bitsPerSample ) {
+WaveHeader makeWaveHeader(const int sampleRate, const short numChannels, const short bitsPerSample ) {
 
   WaveHeader myHeader;
 
@@ -99,7 +99,7 @@ WaveHeader makeWaveHeader(int const sampleRate, short int const numChannels, sho
 
 }
 
-Wave makeWave(int const sampleRate, short int const numChannels, short int const bitsPerSample) {
+Wave makeWave(const int sampleRate, const short numChannels, const short bitsPerSample) {
   Wave myWave;
   myWave.header = makeWaveHeader(sampleRate, numChannels, bitsPerSample);
   return myWave;
@@ -121,34 +121,15 @@ void waveSetDuration(Wave* wave, const float seconds) {
 
 void waveAddSample( Wave* wave, const float* samples ) {
   int i;
-  short int sample8bit;
-  int sample16bit;
-  long int sample32bit;
+  
+  long int sampleNbit;
   char* sample;
-  if ( wave->header.bitsPerSample == 8) {
-    for(i = 0; i < wave->header.numChannels; i++) {
-      sample8bit = (short int)(127+127.0*samples[i]);
-      toLittleEndian(1, (void*) &sample8bit);
-      sample = (char*)&sample8bit;
-      (wave->data)[ wave->index ] = sample[0];
-      wave->index += 1;
-    }
-  }
-  if ( wave->header.bitsPerSample == 16) {
-    for(i = 0; i < wave->header.numChannels; i++) {
-      sample16bit = (int) (32767*samples[i]);
-      toLittleEndian(2, (void*) &sample16bit);
-      sample = (char*)&sample16bit;
-      wave->data[ wave->index + 0 ] = sample[0];
-      wave->data[ wave->index + 1 ] = sample[1];
-      wave->index += 2;
-    }
-  }
+
   if ( wave->header.bitsPerSample == 32) {
     for(i = 0; i < wave->header.numChannels; i++) {
-      sample32bit = ( long int) ((pow(2, 32-1)-1)*samples[i]);
-      toLittleEndian(4, (void*) &sample32bit);
-      sample = (char*)&sample32bit;
+      sampleNbit = ( long int) ((1<<(wave->header.bitsPerSample-1))*samples[i]);
+      toLittleEndian(4, (void*) &sampleNbit);
+      sample = (char*)&sampleNbit;
       wave->data[ wave->index + 0 ] = sample[0];
       wave->data[ wave->index + 1 ] = sample[1];
       wave->data[ wave->index + 2 ] = sample[2];
@@ -176,7 +157,7 @@ void waveToFile( Wave* wave, const char* filename ) {
   file = fopen(filename, "wb");
   fwrite( &(wave->header), sizeof(WaveHeader), 1, file);
   fwrite( (void*)(wave->data), sizeof(char), wave->size, file);
-  fclose( file);
+  fclose( file );
   
   /* Convert back to the system endian-ness */
   toLittleEndian(sizeof(int), (void*)&(wave->header.chunkSize));
@@ -204,7 +185,7 @@ void tone(float freq, float* data, float duration){
 
   /* Add all of the data */
   int i;
-  float frameData[1];
+
   for (i = 0; i < nSamples; i++) {
     data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
   }
@@ -216,11 +197,14 @@ float get_pitch(float freq, float duration)
   float *wave, *imaginary_wave, max, pitch;
   int max_index, i;
 
+  if (duration * SAMPLE_RATE < 1.0)
+    return NAN;
   wave = malloc(sizeof(float) * SAMPLE_RATE * duration);
   imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
   tone(freq, wave, duration); /* wave contains an array of tone Hz and sample rate 44.1 khz */
   initfft(FFT_SIZE);
   fft(wave,imaginary_wave,0);
+  free(imaginary_wave);
   max = 0;
   for (i = 0; i < (SAMPLE_RATE / 2); i++) {
     /* check if there's any imaginary values */
@@ -232,7 +216,6 @@ float get_pitch(float freq, float duration)
     /* } */
   }
   pitch = ((float)max_index) * SAMPLE_RATE / (1 << (FFT_SIZE-1));
-  free(imaginary_wave);
   free(wave);
 
   return pitch;
