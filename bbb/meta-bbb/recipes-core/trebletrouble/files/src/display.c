@@ -65,6 +65,17 @@ int get_xnote(int i) {
 }
 
 void draw_note(int i, int ynote, char* fbp, short colour, int time) {
+	/* draw lines if notes are above/below staff*/
+	if(ynote < 61){
+		bitblit(L_PIC, fbp, get_xnote(i)-3, 45);
+	}
+	if(ynote < 31){
+		bitblit(L_PIC, fbp, get_xnote(i)-3, 15);
+	}
+	if(ynote > 239){
+		bitblit(L_PIC, fbp, get_xnote(i)-3, 225);
+	}
+
 	/*if ynote on treble clef is above B - flip the stem*/
 	/*150 = 90+30+30*/
 	if(ynote < 150){
