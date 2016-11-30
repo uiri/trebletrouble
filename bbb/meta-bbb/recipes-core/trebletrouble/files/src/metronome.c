@@ -6,9 +6,9 @@
 #include <time.h>
 #include <alsa/asoundlib.h>
 #include <sys/time.h>
-#include "loadWave.h"
-//#include "simpleAlsa.h"
-struct timeval start, last;
+#include "simpleAlsa.h"
+//#include "loadWave.h"
+struct timeval start,last;
  
 int64_t tv_to_u(struct timeval s)
 {
@@ -39,12 +39,12 @@ void beat(int delay)
 {
 	struct timeval tv;
 	int dir;
-	int tmp;
 	int64_t d, corr, slp, cur, next;
 	tv = start;
 	d = corr = 0;
 	dir = 0;
 	next = tv_to_u(start) + delay;
+	set_up();
 	//int64_t draw_interval = 20000;
 	//printf("\033[H\033[J");
 	while (1) {
@@ -57,7 +57,7 @@ void beat(int delay)
 		//printf("Hello");
 		//
 
-		tmp=sound();
+		sound();
 		
 		
 		//system("play /home/vagrant/trebletrouble/package/src/metro_1.wav");
@@ -81,13 +81,13 @@ void beat(int delay)
 		//}
 		//		return 0;
 	}
-	
+	closePCM();
 }
  
 int metronome(void)
 {
 	int bpm;
-	printf("Is the main even printing?");
+	//printf("Is the main even printing?");
  
 	//	if (c < 2 || (bpm = atoi(v[1])) <= 0) 
 	bpm = 100;

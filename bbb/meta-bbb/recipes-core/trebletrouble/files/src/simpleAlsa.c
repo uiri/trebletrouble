@@ -32,10 +32,25 @@ static double freq = 440;                               /* sinusoidal wave frequ
 static int verbose = 0;                                 /* verbose flag */
 static int resample = 1;                                /* enable alsa-lib resampling */
 static int period_event = 0;                            /* produce poll event after each period */
-static unsigned int rate = 44100;                       /* stream rate */
-static unsigned int channels = 1;                       /* count of channels */
+//static unsigned int rate = 44100;                       /* stream rate */
+//static unsigned int channels = 1;                       /* count of channels */
 static snd_pcm_format_t format = SND_PCM_FORMAT_S16;    /* sample format */
+int i;
 
+//WAV code
+static unsigned int pcm, tmp;
+static int rate, channels, seconds;
+static snd_pcm_t *pcm_handle;
+static snd_pcm_hw_params_t *params;
+static snd_pcm_uframes_t frames;
+static snd_async_handler_t *pcm_callback;
+static int dir , pcmrc;
+static char *infilename = "/srv/trebletrouble/metro_1.wav";
+static short* buf =NULL;
+static short readcount;
+static SF_INFO sfinfo;
+static SNDFILE *infile = NULL;
+	
 
 static void generate_sine(const snd_pcm_channel_area_t *areas, 
                           snd_pcm_uframes_t offset,
@@ -101,41 +116,19 @@ static void generate_sine(const snd_pcm_channel_area_t *areas,
         *_phase = phase;
 }
 
-
-int sound (void){
-
-  unsigned int pcm, tmp;
-	int rate, channels, seconds;
-	
-	snd_pcm_t *pcm_handle;
-	snd_pcm_hw_params_t *params;
-	snd_pcm_uframes_t frames;
-	snd_async_handler_t *pcm_callback;
-	int dir , pcmrc;
-	
-	char *infilename = "/srv/trebletrouble/metro_1.wav";
-	short* buf =NULL;
-	short readcount;
+int set_up(void){
 	
 	if ( access( infilename, F_OK) !=-1){
-	  printf("File exists");	
+		//  printf("File exists");	
 	}
 	else{
-	  printf("File doesn't exist");
+		//printf("File doesn't exist");
 	}
-	SF_INFO sfinfo;
-  	SNDFILE *infile = NULL;
-	
 	infile = sf_open(infilename, SFM_READ, &sfinfo);
-        fprintf(stderr,"Channels: %d\n", sfinfo.channels);
-        fprintf(stderr,"Sample rate: %d\n", sfinfo.samplerate);
-        fprintf(stderr,"Sections: %d\n", sfinfo.sections);
-	        fprintf(stderr,"Format: %d\n", sfinfo.format);
-
-		//	rate = 44100;
-		//channels = 1;
-		//seconds = 0.5;
-
+        //fprintf(stderr,"Channels: %d\n", sfinfo.channels);
+        //fprintf(stderr,"Sample rate: %d\n", sfinfo.samplerate);
+        //fprintf(stderr,"Sections: %d\n", sfinfo.sections);
+	//fprintf(stderr,"Format: %d\n", sfinfo.format);
 	/* Open the PCM device in playback mode */
 	if (pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
 					SND_PCM_STREAM_PLAYBACK, 0) < 0) 
@@ -163,35 +156,47 @@ int sound (void){
 		
 
 	/* Resume information */
-	printf("PCM name: '%s'\n", snd_pcm_name(pcm_handle));
-	printf("PCM state: %s\n", snd_pcm_state_name(snd_pcm_state(pcm_handle)));
+	//printf("PCM name: '%s'\n", snd_pcm_name(pcm_handle));
+	//printf("PCM state: %s\n", snd_pcm_state_name(snd_pcm_state(pcm_handle)));
 	snd_pcm_hw_params_get_channels(params, &tmp);
-	printf("channels: %i ", tmp);
-
+	//printf("channels: %i ", tmp);
 	if (tmp == 1)
 		printf("(mono)\n");
 	else if (tmp == 2)
 		printf("(stereo)\n");
-
 	snd_pcm_hw_params_get_rate(params, &tmp, 0);
-	printf("rate: %d bps\n", tmp);
-
+	//printf("rate: %d bps\n", tmp);
 	//printf("seconds: %d\n", seconds);	
+	/* Write parameters */
+	snd_pcm_hw_params(pcm_handle, params);
+	/* Allocate buffer to hold single period */
+	snd_pcm_hw_params_get_period_size(params, &frames, &dir);
+	//fprintf(stderr,"# frames in a period: %d\n", frames);
+	//fprintf(stderr,"Starting read/write loop\n");
+	buf = malloc(frames * sfinfo.channels * sizeof(short));
+	return 0;
 
-	 /* Write parameters */
-    snd_pcm_hw_params(pcm_handle, params);
+}
+int closePCM(void){
+    //Drain the buffer
+    snd_pcm_drain(pcm_handle);
+    //Close the device
+    snd_pcm_close(pcm_handle);
+    free(buf);
+    printf("I freed the buf and closed the device");
 
-    /* Allocate buffer to hold single period */
-    snd_pcm_hw_params_get_period_size(params, &frames, &dir);
-    fprintf(stderr,"# frames in a period: %d\n", frames);
+}
 
-    fprintf(stderr,"Starting read/write loop\n");
-    buf = malloc(frames * sfinfo.channels * sizeof(short));
+
+
+int sound (void){
+
+
     while ((readcount = sf_readf_short(infile, buf, frames))>0) {
 	    // printf("My readcount is:%d",readcount);
         pcmrc = snd_pcm_writei(pcm_handle, buf, frames);
         if (pcmrc == -EPIPE) {
-            fprintf(stderr, "Underrun!\n");
+		//    fprintf(stderr, "Underrun!\n");
             snd_pcm_prepare(pcm_handle);
 	    //frames = snd_pcm_writei(pcm.handle,buf, )
         }
@@ -199,18 +204,13 @@ int sound (void){
             fprintf(stderr, "Error writing to PCM device: %s\n", snd_strerror(pcmrc));
         }
         else if (pcmrc != readcount) {
-            fprintf(stderr,"PCM write differs from PCM read.\n");
+		//      fprintf(stderr,"PCM write differs from PCM read.\n");
         }
 
     }
-    fprintf(stderr,"End read/write loop\n");
-
-    //Drain the buffer
-    snd_pcm_drain(pcm_handle);
-    //Close the device
-    snd_pcm_close(pcm_handle);
-    free(buf);
-    printf("I freed the buf and closed the device");
+    //fprintf(stderr,"End read/write loop\n");
+    sf_seek(infile,0,SEEK_SET);
+    
     return 0;
 
 				
