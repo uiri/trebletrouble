@@ -35,6 +35,11 @@ install-sdcard-boot:
 bin/display_test: package/src/display_test.c bin/display.o
 	$(CC) $(CFLAGS) $^ -o $@
 
+bin/tone_test: package/src/tone_test.c bin/tone.o bin/libfft.o
+	$(CC) $(CFLAGS) $^ -o $@ -lm
+
 display_test: bin/display_test 
+
+tone_test: bin/tone_test
 
 all:	app image
