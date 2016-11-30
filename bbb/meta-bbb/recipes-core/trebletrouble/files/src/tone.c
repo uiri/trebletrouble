@@ -59,50 +59,44 @@ void toLittleEndian(const long long int size, void* value) {
 
 /* ------------------------------------------------------ [ Section: Wave Header ]  */
 
-WaveHeader makeWaveHeader(const int sampleRate, const short numChannels, const short bitsPerSample ) {
-
-  WaveHeader myHeader;
+void makeWaveHeader(WaveHeader* myHeader,const int sampleRate, const short numChannels, const short bitsPerSample ) {
 
   /* RIFF WAVE HEADER */
-  myHeader.chunkId[0] = 'R';
-  myHeader.chunkId[1] = 'I';
-  myHeader.chunkId[2] = 'F';
-  myHeader.chunkId[3] = 'F';
-  myHeader.format[0] = 'W';
-  myHeader.format[1] = 'A';
-  myHeader.format[2] = 'V';
-  myHeader.format[3] = 'E';
+  myHeader->chunkId[0] = 'R';
+  myHeader->chunkId[1] = 'I';
+  myHeader->chunkId[2] = 'F';
+  myHeader->chunkId[3] = 'F';
+  myHeader->format[0] = 'W';
+  myHeader->format[1] = 'A';
+  myHeader->format[2] = 'V';
+  myHeader->format[3] = 'E';
 
   /* Format subchunk */
-  myHeader.subChunk1Id[0] = 'f';
-  myHeader.subChunk1Id[1] = 'm';
-  myHeader.subChunk1Id[2] = 't';
-  myHeader.subChunk1Id[3] = ' ';
-  myHeader.audioFormat = 1; /* For PCM */
-  myHeader.numChannels = numChannels; /* 1 for MONO, 2 for stereo */
-  myHeader.sampleRate = sampleRate; /* ie 44100 hertz, cd quality audio */
-  myHeader.bitsPerSample = bitsPerSample; 
-  myHeader.byteRate = myHeader.sampleRate * myHeader.numChannels * myHeader.bitsPerSample / 8;
-  myHeader.blockAlign = myHeader.numChannels * myHeader.bitsPerSample/8;
+  myHeader->subChunk1Id[0] = 'f';
+  myHeader->subChunk1Id[1] = 'm';
+  myHeader->subChunk1Id[2] = 't';
+  myHeader->subChunk1Id[3] = ' ';
+  myHeader->audioFormat = 1; /* For PCM */
+  myHeader->numChannels = numChannels; /* 1 for MONO, 2 for stereo */
+  myHeader->sampleRate = sampleRate; /* ie 44100 hertz, cd quality audio */
+  myHeader->bitsPerSample = bitsPerSample; 
+  myHeader->byteRate = myHeader->sampleRate * myHeader->numChannels * myHeader->bitsPerSample / 8;
+  myHeader->blockAlign = myHeader->numChannels * myHeader->bitsPerSample/8;
 
   /* Data subchunk */
-  myHeader.subChunk2Id[0] = 'd';
-  myHeader.subChunk2Id[1] = 'a';
-  myHeader.subChunk2Id[2] = 't';
-  myHeader.subChunk2Id[3] = 'a';
+  myHeader->subChunk2Id[0] = 'd';
+  myHeader->subChunk2Id[1] = 'a';
+  myHeader->subChunk2Id[2] = 't';
+  myHeader->subChunk2Id[3] = 'a';
 
-  myHeader.chunkSize = 4+8+16+8+0;
-  myHeader.subChunk1Size = 16;
-  myHeader.subChunk2Size = 0;
-
-  return myHeader;
+  myHeader->chunkSize = 4+8+16+8+0;
+  myHeader->subChunk1Size = 16;
+  myHeader->subChunk2Size = 0;
 
 }
 
-Wave makeWave(const int sampleRate, const short numChannels, const short bitsPerSample) {
-  Wave myWave;
-  myWave.header = makeWaveHeader(sampleRate, numChannels, bitsPerSample);
-  return myWave;
+void makeWave(Wave* myWave, const int sampleRate, const short numChannels, const short bitsPerSample) {
+  makeWaveHeader(&myWave->header, sampleRate, numChannels, bitsPerSample);
 }
 
 void waveDestroy( Wave* wave) {
@@ -178,9 +172,10 @@ void tone(float freq, float* data, float duration){
   /*float duration = 0.3;*/       /* seconds */
 
   int nSamples = (int)(duration*SAMPLE_RATE);
+  Wave mySound;
 
   /* Create a mono(1), 32-bit sound and set the duration */
-  Wave mySound = makeWave((int)SAMPLE_RATE,1,32);
+  makeWave(&mySound,(int)SAMPLE_RATE,1,32);
   waveSetDuration(&mySound, duration);
 
   /* Add all of the data */
