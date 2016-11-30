@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 		}
 		return err;
 	}
-	sleep(2);
+	get_lcd_input(&fd.ts, &sb);
 	colour_screen(fbp, WHITE);
 
 	/*draw staff on screen*/
@@ -45,25 +45,13 @@ int main(int argc, char** argv) {
 	FILE *song = fopen(SONG, "rb");
 	load_song(song, fbp);
 	fclose(song);
-	sleep(2);
+	get_lcd_input(&fd.ts, &sb);
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], actual[i], i, fbp);
 		sleep(1);
 	}
 
-	while (1) {
-		si = get_lcd_input(&fd.ts, &sb);
-		/* Need to figure out what to do with the input once we 
-		   have it */
-		/* if (si.y < 512) */
-		/* 	colour_screen(fbp, RED); */
-		/* else if (si.y < 3930) */
-		/* 	colour_screen(fbp, GREEN); */
-		/* else */
-		/* 	colour_screen(fbp, ORANGE); */
-		sleep(1);
-	}
-
+	get_lcd_input(&fd.ts, &sb);
 	while(1); /* fuck it */
 	cleanup_display(fbp, &fd.fb);
 	return 0;
