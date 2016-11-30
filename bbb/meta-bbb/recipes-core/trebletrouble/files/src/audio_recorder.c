@@ -4,14 +4,6 @@
 #include <unistd.h>
 #include "wav.h"
 
-const char *fileName = "";
-const uint32_t duration = 10;
-const WaveHeader hdr;
-const uint32_t sample_rate;
-const uint16_t bit_depth;
-const uint16_t channels;
-const int fd;
-
 WaveHeader *genericWAVHeader(uint32_t sample_rate, uint16_t bit_depth, uint16_t channels) {
   WaveHeader *hdr;
   hdr = malloc(sizeof(*hdr));
