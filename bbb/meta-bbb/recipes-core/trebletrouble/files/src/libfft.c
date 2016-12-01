@@ -58,7 +58,6 @@ int initfft( int b )
 ** inv  flag for inverse
 */
 
-/*void fft(Wave xr, Wave xi, int inv )*/
 void fft(float xr[], float xi[], int inv)
     {
     int n, n2, i, k, kn2, l, p;
