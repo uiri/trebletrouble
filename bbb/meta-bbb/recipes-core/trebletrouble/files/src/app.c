@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 	fclose(song);
 	sleep(2);
 
-	/* This run has a mistake */
+	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], actual[i], i, fbp);
 		sleep(1);
