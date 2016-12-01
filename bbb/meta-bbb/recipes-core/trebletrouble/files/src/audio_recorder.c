@@ -82,7 +82,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   err = snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
   if (err) {
     fprintf(stderr, "Error setting interleaved mode: %s\n", snd_strerror(err));
-    goto END;
+    goto END_PCM;
   }
 
   /* Signed 16-bit litte-endian format */
@@ -94,14 +94,14 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 
   if (err) {
     fprintf(stderr, "Error setting format: %s\n", snd_strerror(err)); 
-    goto END;
+    goto END_PCM;
   }
 
   /* Two channels (stereo) */
   err = snd_pcm_hw_params_set_channels(handle, params, hdr -> number_of_channels);
   if (err) {
     fprintf(stderr, "Error setting channels: %s\n", snd_strerror(err));
-    goto END;
+    goto END_PCM;
   }
 
   /* 44100 bits/second sampling rate (CD quality) */
@@ -109,7 +109,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   err = snd_pcm_hw_params_set_rate_near(handle, params, &sampleRate, &dir);
   if (err) {
     fprintf(stderr, "Error setting sampling rate (%d): %s\n", sampleRate, snd_strerror(err));
-    goto END;
+    goto END_PCM;
   }
   hdr -> sample_rate = SAMPLE_RATE;
 
@@ -117,34 +117,35 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   err = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
   if (err) {
     fprintf(stderr, "Error setting period size: %s\n", snd_strerror(err));
-    goto END;
+    goto END_PCM;
   }
 
   /* Write the parameters to the driver */
   err = snd_pcm_hw_params(handle, params);
   if (err < 0) {
     fprintf(stderr, "Unable to set HW parameters: %s\n", snd_strerror(err));
-    goto END;
+    goto END_PCM;
   }
 
   /* Use a buffer large enough to hold one period */
   err = snd_pcm_hw_params_get_period_size(params, &frames, &dir);
   if (err){
     fprintf(stderr, "Error retrieving period size: %s\n", snd_strerror(err));
-    goto END;
+    goto END_PCM;
   }
 
   size = frames * hdr-> bits_per_sample / 8 * hdr -> number_of_channels; // 2 bytes/sample, 2 channels
   buffer = (char *) malloc(size);
   if (!buffer) {
     fprintf(stdout, "Buffer error.\n");
-    return -1;
+    err = -1;
+    goto END_PCM;
   }
 
   err = snd_pcm_hw_params_get_period_time(params, &sampleRate, &dir);
   if (err) {
     fprintf(stderr, "Error retrieving period time: %s\n", snd_strerror(err));
-    goto END;
+    goto END_BUF;
   }
 
   uint32_t pcm_data_size = hdr-> sample_rate* hdr-> bytes_per_frame * (duration/1000);
@@ -154,7 +155,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   err = writeWAVHeader(filedesc, hdr);
   if (err) {
     fprintf(stderr, "Error writing .wav header.");
-    goto END;
+    goto END_FILE;
   }
 
   int totalFrames = 0;
@@ -184,10 +185,16 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   return 0;
 
   /* clean up */
-END:
+ END_FILE:
   close(filedesc);
-  snd_pcm_drain(handle);
-  snd_pcm_close(handle);
+ END_BUF:
   free(buffer);
+ END_PCM:
+  snd_pcm_close(handle);
+ END:
   return err;
+}
+
+void audio_recorder() {
+
 }
