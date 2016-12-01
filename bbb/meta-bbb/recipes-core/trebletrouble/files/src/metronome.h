@@ -1,1 +1,1 @@
-int metronome(void);
+void metronome(int bpm);

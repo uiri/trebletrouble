@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
 
 	/*variables for reading song*/
 	FILE *song = fopen(SONG, "rb");
+
 	load_song(song, fbp, expected);
 	fclose(song);
 	get_lcd_input(&fd.ts, &sb);
@@ -66,8 +67,8 @@ int main(int argc, char** argv) {
 	}
 
 	get_lcd_input(&fd.ts, &sb);
-	while(1); /* fuck it */
-	cleanup_display(fbp, &fd.fb);
-	metronome();
+       	cleanup_display(fbp, &fd.fb);
+	metronome(100);
 	return 0; 
+	
 }

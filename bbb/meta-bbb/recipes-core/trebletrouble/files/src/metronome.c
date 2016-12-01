@@ -7,7 +7,6 @@
 #include <alsa/asoundlib.h>
 #include <sys/time.h>
 #include "simpleAlsa.h"
-//#include "loadWave.h"
 struct timeval start,last;
  
 int64_t tv_to_u(struct timeval s)
@@ -15,28 +14,11 @@ int64_t tv_to_u(struct timeval s)
 	return s.tv_sec * 1000000 + s.tv_usec;
 }
  
-struct timeval u_to_tv(int64_t x)
-{
-	struct timeval s;
-	s.tv_sec = x / 1000000;
-	s.tv_usec = x % 1000000;
-	return s;
-}
- 
-void draw(int dir, int64_t period, int64_t cur, int64_t next)
-{
-	int len = 40 * (next - cur) / period;
-	int s, i;
- 
-	if (len > 20) len = 40 - len;
-	s = 20 + (dir ? len : -len);
- 
-	printf("\033[H");
-	for (i = 0; i <= 40; i++) putchar(i == 20 ? '|': i == s ? '#' : '-');
-}
- 
 void beat(int delay)
 {
+	snd_pcm_t *pcm_handle;
+	char *infilename = "/srv/trebletrouble/metro_1.wav" ;
+	short *buf = NULL ;
 	struct timeval tv;
 	int dir;
 	int64_t d, corr, slp, cur, next;
@@ -44,61 +26,31 @@ void beat(int delay)
 	d = corr = 0;
 	dir = 0;
 	next = tv_to_u(start) + delay;
-	set_up();
-	//int64_t draw_interval = 20000;
-	//printf("\033[H\033[J");
+	pcm_handle=init_pcm(infilename,&buf);
 	while (1) {
 		gettimeofday(&tv, 0);
 		slp = next - tv_to_u(tv) - corr;
 		usleep(slp);
 		gettimeofday(&tv, 0);
- 
-		//putchar(7); /* bell */
-		//printf("Hello");
-		//
-
-		sound();
-		
-		
-		//system("play /home/vagrant/trebletrouble/package/src/metro_1.wav");
+ 		sound(pcm_handle,buf);
 		fflush(stdout);
- 
-		//printf("\033[5;1Hdrift: %d compensate: %d (usec)   ",
-		//	(int)d, (int)corr);
-		dir = !dir;
- 
-		cur = tv_to_u(tv);
+ 		dir = !dir;
+ 		cur = tv_to_u(tv);
 		d = cur - next;
 		corr = (corr + d) / 2;
 		next += delay;
- 
-		//while (cur + d + draw_interval < next) {
-		//	usleep(draw_interval);
-		//	gettimeofday(&tv, 0);
-		//	cur = tv_to_u(tv);
-		//	draw(dir, delay, cur, next);
-		//	fflush(stdout);
-		//}
-		//		return 0;
-	}
-	closePCM();
+ 	}
+	cleanup_pcm(&pcm_handle,&buf);
 }
  
-int metronome(void)
+void metronome(int bpm)
 {
-	int bpm;
-	//printf("Is the main even printing?");
- 
-	//	if (c < 2 || (bpm = atoi(v[1])) <= 0) 
-	bpm = 100;
 	if (bpm > 600) {
 		fprintf(stderr, "frequency %d too high\n", bpm);
 		exit(1);
 	}
- 
 	gettimeofday(&start, 0);
 	last = start;
 	beat(60 * 1000000 / bpm);
- 
-	return 0;
+
 }
