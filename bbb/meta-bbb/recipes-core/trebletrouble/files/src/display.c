@@ -277,9 +277,15 @@ void compare_notes(int expected, int actual, int i, char* fbp) {
 	draw_note(i, get_ynote(actual), fbp, colour, 1);
 }
 
-void clear_notes(int i, int expected[NUM_NOTES], char* fbp) {
-	for (; i < NUM_NOTES; i++)
+void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fbp) {
+	int actual_ynote;
+	for (; i < NUM_NOTES; i++) {
+		actual_ynote = get_ynote(actual[i]);
+		draw_note(i, actual_ynote, fbp, WHITE, 1);
+		if (!(actual_ynote%30))
+			bitblit(L_PIC, fbp, get_xnote(i)-3, get_ynote(actual[i])-14);
 		draw_note(i, get_ynote(expected[i]), fbp, BLACK, 1);
+	}
 }
 
 void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {

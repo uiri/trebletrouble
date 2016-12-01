@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 	/* Reset notes to black */
-	clear_notes(8, expected, fbp);
+	clear_notes(0, expected, actual, fbp);
 	/* This run is perfect ;) */
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], expected[i], i, fbp);
