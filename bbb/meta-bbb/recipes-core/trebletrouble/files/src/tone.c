@@ -95,7 +95,7 @@ void makeWaveHeader(WaveHeader* myHeader,const int sampleRate, const short numCh
 
 }
 
-void makeWave(Wave* myWave, const int sampleRate, const short numChannels, const short bitsPerSample) {
+void initWave(Wave* myWave, const int sampleRate, const short numChannels, const short bitsPerSample) {
   makeWaveHeader(&myWave->header, sampleRate, numChannels, bitsPerSample);
 }
 
@@ -175,7 +175,7 @@ void tone(float freq, float* data, float duration){
   Wave mySound;
 
   /* Create a mono(1), 32-bit sound and set the duration */
-  makeWave(&mySound,(int)SAMPLE_RATE,1,32);
+  initWave(&mySound,(int)SAMPLE_RATE,1,32);
   waveSetDuration(&mySound, duration);
 
   /* Add all of the data */

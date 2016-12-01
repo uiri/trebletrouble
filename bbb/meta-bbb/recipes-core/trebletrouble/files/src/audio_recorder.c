@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "wav.h"
+#include "tone.h"
 
-WaveHeader *genericWAVHeader(uint32_t sample_rate, uint16_t bit_depth, uint16_t channels) {
+WaveHeader *genericWAVHeader(uint16_t bit_depth, uint16_t channels) {
   WaveHeader *hdr;
   hdr = malloc(sizeof(*hdr));
   if (!hdr) {
@@ -16,8 +17,8 @@ WaveHeader *genericWAVHeader(uint32_t sample_rate, uint16_t bit_depth, uint16_t 
   memcpy(&hdr->format_marker, "fmt ", 4);
   hdr -> data_header_length = 16;
   hdr -> format_type = 1;
-  hdr -> sample_rate = sample_rate;
-  hdr -> bytes_per_second = sample_rate * channels * bit_depth / 8;
+  hdr -> sample_rate = SAMPLE_RATE;
+  hdr -> bytes_per_second = SAMPLE_RATE * channels * bit_depth / 8;
   hdr -> bytes_per_frame = channels * bit_depth/8;
   hdr -> bits_per_sample = bit_depth;
 
@@ -29,17 +30,17 @@ int writeWAVHeader(int fd, WaveHeader *hdr) {
     return -1;
   }
 
-  write(fd, &hdr->RIFF_marker, 4);
-  write(fd, &hdr->file_size, 4);
-  write(fd, &hdr->filetype_header, 4);
-  write(fd, &hdr->format_marker, 4);
-  write(fd, &hdr->data_header_length, 4);
-  write(fd, &hdr->format_type, 2);
-  write(fd, &hdr->number_of_channels, 2);
-  write(fd, &hdr->sample_rate, 4);
-  write(fd, &hdr->bytes_per_second, 4);
-  write(fd, &hdr->bytes_per_frame, 2);
-  write(fd, &hdr->bits_per_sample, 2);
+  write(fd, &hdr, 32);
+  /* write(fd, &hdr->file_size, 4); */
+  /* write(fd, &hdr->filetype_header, 4); */
+  /* write(fd, &hdr->format_marker, 4); */
+  /* write(fd, &hdr->data_header_length, 4); */
+  /* write(fd, &hdr->format_type, 2); */
+  /* write(fd, &hdr->number_of_channels, 2); */
+  /* write(fd, &hdr->sample_rate, 4); */
+  /* write(fd, &hdr->bytes_per_second, 4); */
+  /* write(fd, &hdr->bytes_per_frame, 2); */
+  /* write(fd, &hdr->bits_per_sample, 2); */
   write(fd, "data", 4);
 
   uint32_t data_size = hdr -> file_size - 36;
@@ -57,7 +58,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   unsigned int sampleRate = hdr->sample_rate;
   int dir;
   snd_pcm_uframes_t frames = 32;
-  const char *device = "plughw:1,0"; // USB microphone
+  OAconst char *device = "plughw:1,0"; // USB microphone
   // const char *device = "default"; // Integrated system microphone
   char *buffer;
   int filedesc;
@@ -115,7 +116,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
     snd_pcm_close(handle);
     return err;
   }
-  hdr -> sample_rate = sampleRate;
+  hdr -> SAMPLE_RATE= sampleRate;
 
   /* Set period size */
   err = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
@@ -157,7 +158,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
     return err;
   }
 
-  uint32_t pcm_data_size = hdr-> sample_rate * hdr-> bytes_per_frame * (duration/1000);
+  uint32_t pcm_data_size = hdr-> sample_rate* hdr-> bytes_per_frame * (duration/1000);
   hdr -> file_size = pcm_data_size + 36;
 
   filedesc = open(fileName, O_WRONLY | O_CREAT, 0644);
@@ -172,7 +173,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 
   int totalFrames = 0;
 
-  int i = ((duration * 1000) / (hdr->sample_rate / frames));
+  int i = ((duration * 1000) / (hdr->sample_rate/ frames));
   for(i; i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
     totalFrames += err;
@@ -198,5 +199,9 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   snd_pcm_close(handle);
   free(buffer);
   return 0;
+}
+
+void audio_recorder(void) {
+  
 }
 

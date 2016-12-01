@@ -1,1 +1,1 @@
-int audio_recorder(void);
+void audio_recorder(void);
