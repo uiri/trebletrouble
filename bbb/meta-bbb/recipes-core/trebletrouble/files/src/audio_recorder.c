@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "wav.h"
+#include "audio_recorder.h"
 #include "tone.h"
 
 WaveHeader *genericWAVHeader(uint16_t bit_depth, uint16_t channels) {
@@ -200,8 +200,3 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   free(buffer);
   return 0;
 }
-
-void audio_recorder(void) {
-  
-}
-
