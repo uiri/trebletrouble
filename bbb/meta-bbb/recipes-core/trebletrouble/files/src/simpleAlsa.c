@@ -26,7 +26,8 @@
 #include <sndfile.h>
 #include <math.h>
 
-#define PCM_DEVICE "plughw:0,0"
+
+#define PCM_DEVICE "default"
 static snd_pcm_format_t format = SND_PCM_FORMAT_S16;    /* sample format */
 //WAV code
 static snd_pcm_uframes_t frames;
@@ -118,26 +119,26 @@ snd_pcm_t * init_pcm(char *infilename,short **buf){
 	}
 	infile = sf_open(infilename, SFM_READ, &sfinfo);
         /* Open the PCM device in playback mode */
-	if (pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
-					SND_PCM_STREAM_PLAYBACK, 0) < 0) 
+	if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
+				SND_PCM_STREAM_PLAYBACK, 0)) < 0) 
 	  	printf("ERROR: Can't open \"%s\" PCM device. %s\n",
 					PCM_DEVICE, snd_strerror(pcm));
        	/* Allocate parameters object and fill it with default values*/
 	snd_pcm_hw_params_alloca(&params);
 	snd_pcm_hw_params_any(pcm_handle, params);
 	/* Set parameters */
-	if (pcm = snd_pcm_hw_params_set_access(pcm_handle, params,
-					SND_PCM_ACCESS_RW_INTERLEAVED) < 0) 
+	if ((pcm = snd_pcm_hw_params_set_access(pcm_handle, params,
+						SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) 
 		printf("ERROR: Can't set noninterleaved mode. %s\n", snd_strerror(pcm));
 	//set formatting 
-	if (pcm = snd_pcm_hw_params_set_format(pcm_handle, params,
-						SND_PCM_FORMAT_S16_LE) < 0) 
+	if ((pcm = snd_pcm_hw_params_set_format(pcm_handle, params,
+					       SND_PCM_FORMAT_S16_LE)) < 0) 
 		printf("ERROR: Can't set format. %s\n", snd_strerror(pcm));
 	//Setting channels
-	if (pcm = snd_pcm_hw_params_set_channels(pcm_handle, params,1) < 0) 
+	if ((pcm = snd_pcm_hw_params_set_channels(pcm_handle, params,1)) < 0) 
 		printf("ERROR: Can't set channels number. %s\n", snd_strerror(pcm));
 	//Set sample rate
-	if (pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, &sfinfo.samplerate, 0) < 0) 
+	if ((pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, &sfinfo.samplerate, 0)) < 0) 
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
 	
 		
