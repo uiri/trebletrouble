@@ -30,7 +30,7 @@ int main(void)
 	freqList[6]  = 330;
 	freqList[7]  = 391;
 	freqList[8]  = 261;
-	freqList[9]  = 293;
+ 	freqList[9]  = 293;
 	freqList[10] = 330;
 
 	durationList[0]  = 1.0;  /* E  */
