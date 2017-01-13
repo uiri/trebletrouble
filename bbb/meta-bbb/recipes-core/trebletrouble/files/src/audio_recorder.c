@@ -25,12 +25,12 @@ WaveHeader *genericWAVHeader(uint16_t bit_depth, uint16_t channels) {
   return hdr;
 }
 
-int writeWAVHeader(int fd, WaveHeader *hdr) {
+int writeWAVHeader(FILE* file, WaveHeader *hdr) {
   if (!hdr) {
     return -1;
   }
 
-  write(fd, &hdr, 32);
+  fwrite(&hdr, sizeof(WaveHeader), 1, file);
   /* write(fd, &hdr->file_size, 4); */
   /* write(fd, &hdr->filetype_header, 4); */
   /* write(fd, &hdr->format_marker, 4); */
@@ -41,10 +41,10 @@ int writeWAVHeader(int fd, WaveHeader *hdr) {
   /* write(fd, &hdr->bytes_per_second, 4); */
   /* write(fd, &hdr->bytes_per_frame, 2); */
   /* write(fd, &hdr->bits_per_sample, 2); */
-  write(fd, "data", 4);
+  fwrite("data", 1, 4, file);
 
   uint32_t data_size = hdr -> file_size - 36;
-  write(fd, &data_size, 4);
+  fwrite(&hdr, &data_size, 4, file);
 
   return 0;
 }
@@ -58,7 +58,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   unsigned int sampleRate = hdr->sample_rate;
   int dir;
   snd_pcm_uframes_t frames = 32;
-  OAconst char *device = "plughw:1,0"; // USB microphone
+  const char *device = "plughw:1,0"; // USB microphone
   // const char *device = "default"; // Integrated system microphone
   char *buffer;
   int filedesc;
