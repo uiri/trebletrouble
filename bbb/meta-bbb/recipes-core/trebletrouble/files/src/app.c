@@ -10,16 +10,14 @@ int main(int argc, char** argv) {
 
 	char* fbp;
 	int err, i;
-	struct {
-		int fb, ts;
-	} fd;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES];
-	ScreenBounds sb;
+	int fbfd;
+	ScreenInput si;
 
-	fbp = init_display(&fd.fb);
+	fbp = init_display(&fbfd);
 
-	err = init_touchscreen(&fd.ts, &sb);
+	err = init_touchscreen(&si.fd);
 	if (err) {
 		printf("Error reading event input file\n");
 		return err;
@@ -37,7 +35,7 @@ int main(int argc, char** argv) {
 	}
 
 
-	get_lcd_input(&fd.ts, &sb);
+	get_lcd_input(&si);
 	colour_screen(fbp, WHITE);
 
 	/*draw staff on screen*/
@@ -48,7 +46,7 @@ int main(int argc, char** argv) {
 
 	load_song(song, fbp, expected);
 	fclose(song);
-	get_lcd_input(&fd.ts, &sb);
+	get_lcd_input(&si);
 
 	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
@@ -56,19 +54,18 @@ int main(int argc, char** argv) {
 		sleep(1);
 	}
 
-	get_lcd_input(&fd.ts, &sb);
+	get_lcd_input(&si);
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
-	get_lcd_input(&fd.ts, &sb);
+	get_lcd_input(&si);
 	/* This run is perfect ;) */
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], expected[i], i, fbp);
 		sleep(1);
 	}
 
-	get_lcd_input(&fd.ts, &sb);
-       	cleanup_display(fbp, &fd.fb);
+	get_lcd_input(&si);
+	cleanup_display(fbp, &fbfd);
 	metronome(100);
-	return 0; 
-	
+	return 0;
 }
