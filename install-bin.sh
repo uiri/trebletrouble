@@ -5,7 +5,7 @@ if [ ! -d /media/card ]; then
 	exit 1
 fi
 
-DEV=/dev/sdb2
+DEV=/dev/sdc2
 
 if [ -b $DEV ]; then
 	sudo mount $DEV /media/card

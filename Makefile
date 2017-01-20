@@ -1,4 +1,5 @@
 CFLAGS=-Wall
+SD=sdc
 
 LIBS=-lc -lasound -lsndfile -lm
 
@@ -23,13 +24,13 @@ install-bin:
 	./install-bin.sh
 
 sudo-format-sdcard:
-	sudo ./bbb/meta-bbb/scripts/mk2parts.sh sdb
+	sudo ./bbb/meta-bbb/scripts/mk2parts.sh $(SD)
 
 install-sdcard:
-	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_rootfs.sh sdb trebletrouble
+	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_rootfs.sh $(SD) trebletrouble
 
 install-sdcard-boot:
-	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_boot.sh sdb
+	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_boot.sh $(SD)
 
 bin/display_test: package/src/display_test.c bin/display.o
 	$(CC) $(CFLAGS) $^ -o $@
