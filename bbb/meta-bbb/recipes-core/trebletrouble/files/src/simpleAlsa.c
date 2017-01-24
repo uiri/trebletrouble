@@ -28,81 +28,10 @@
 
 
 #define PCM_DEVICE "default"
-static snd_pcm_format_t format = SND_PCM_FORMAT_S16;    /* sample format */
 //WAV code
 static snd_pcm_uframes_t frames;
-static snd_async_handler_t *pcm_callback;
 static SNDFILE *infile = NULL;	
 
-static void generate_sine(const snd_pcm_channel_area_t *areas, 
-                          snd_pcm_uframes_t offset,
-                          int count, double *_phase)
-{
-	int rate, channels, seconds;
-	double freq = 440;                               /* sinusoidal wave frequency in Hz */
-	int verbose = 0;                                 /* verbose flag */
-	int resample = 1;                                /* enable alsa-lib resampling */
-        int period_event = 0;                            /* produce poll event after each period */
-
-       static double max_phase = 2. * M_PI;
-        double phase = *_phase;
-        double step = max_phase*freq/(double)rate;
-        unsigned char *samples[channels];
-        int steps[channels];
-        unsigned int chn;
-        int format_bits = snd_pcm_format_width(format);
-        unsigned int maxval = (1 << (format_bits - 1)) - 1;
-        int bps = format_bits / 8;  /* bytes per sample */
-        int phys_bps = snd_pcm_format_physical_width(format) / 8;
-        int big_endian = snd_pcm_format_big_endian(format) == 1;
-        int to_unsigned = snd_pcm_format_unsigned(format) == 1;
-        int is_float = (format == SND_PCM_FORMAT_FLOAT_LE ||
-                        format == SND_PCM_FORMAT_FLOAT_BE);
-        /* verify and prepare the contents of areas */
-        for (chn = 0; chn < channels; chn++) {
-                if ((areas[chn].first % 8) != 0) {
-                        printf("areas[%i].first == %i, aborting...\n", chn, areas[chn].first);
-                        exit(EXIT_FAILURE);
-                }
-                samples[chn] = /*(signed short *)*/(((unsigned char *)areas[chn].addr) + (areas[chn].first / 8));
-                if ((areas[chn].step % 16) != 0) {
-                        printf("areas[%i].step == %i, aborting...\n", chn, areas[chn].step);
-                        exit(EXIT_FAILURE);
-                }
-                steps[chn] = areas[chn].step / 8;
-                samples[chn] += offset * steps[chn];
-        }
-        /* fill the channel areas */
-        while (count-- > 0) {
-                union {
-                        float f;
-                        int i;
-                } fval;
-                int res, i;
-                if (is_float) {
-                        fval.f = sin(phase);
-                        res = fval.i;
-                } else
-                        res = sin(phase) * maxval;
-                if (to_unsigned)
-                        res ^= 1U << (format_bits - 1);
-                for (chn = 0; chn < channels; chn++) {
-                        /* Generate data in native endian format */
-                        if (big_endian) {
-                                for (i = 0; i < bps; i++)
-                                        *(samples[chn] + phys_bps - 1 - i) = (res >> i * 8) & 0xff;
-                        } else {
-                                for (i = 0; i < bps; i++)
-                                        *(samples[chn] + i) = (res >>  i * 8) & 0xff;
-                        }
-                        samples[chn] += steps[chn];
-                }
-                phase += step;
-                if (phase >= max_phase)
-                        phase -= max_phase;
-        }
-        *_phase = phase;
-}
 
 snd_pcm_t * init_pcm(char *infilename,short **buf){
         
@@ -111,6 +40,7 @@ snd_pcm_t * init_pcm(char *infilename,short **buf){
 	snd_pcm_t *pcm_handle;
 	int dir;
 	unsigned int tmp,pcm;
+	dir = 0;
 	if ( access( infilename, F_OK) ==-1){
 		printf("File doesn't exists");	
 	}
@@ -138,7 +68,7 @@ snd_pcm_t * init_pcm(char *infilename,short **buf){
 	if ((pcm = snd_pcm_hw_params_set_channels(pcm_handle, params,1)) < 0) 
 		printf("ERROR: Can't set channels number. %s\n", snd_strerror(pcm));
 	//Set sample rate
-	if ((pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, &sfinfo.samplerate, 0)) < 0) 
+	if ((pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, (unsigned int*)&sfinfo.samplerate, &dir)) < 0) 
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
 	
 		
