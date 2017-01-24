@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <math.h>
+#include <string.h>
 
 #include "libfft.h"
 #include "tone.h"
@@ -59,17 +60,17 @@ void toLittleEndian(const long long int size, void* value) {
 
 /* ------------------------------------------------------ [ Section: Wave Header ]  */
 
-void makeWaveHeader(WaveHeader* myHeader,const int sampleRate, const short numChannels, const short bitsPerSample ) {
+void makeWaveHeader(WaveHeader* myHeader, const int sampleRate, const short numChannels, const short bitsPerSample ) {
 
   /* RIFF WAVE HEADER */
   myHeader->chunkId[0] = 'R';
   myHeader->chunkId[1] = 'I';
   myHeader->chunkId[2] = 'F';
   myHeader->chunkId[3] = 'F';
-  myHeader->format[0] = 'W';
-  myHeader->format[1] = 'A';
-  myHeader->format[2] = 'V';
-  myHeader->format[3] = 'E';
+  myHeader->format[0]  = 'W';
+  myHeader->format[1]  = 'A';
+  myHeader->format[2]  = 'V';
+  myHeader->format[3]  = 'E';
 
   /* Format subchunk */
   myHeader->subChunk1Id[0] = 'f';
@@ -95,12 +96,13 @@ void makeWaveHeader(WaveHeader* myHeader,const int sampleRate, const short numCh
 
 }
 
-void initWave(Wave* myWave, const int sampleRate, const short numChannels, const short bitsPerSample) {
+void makeWave(Wave* myWave, const int sampleRate, const short numChannels, const short bitsPerSample) {
   makeWaveHeader(&myWave->header, sampleRate, numChannels, bitsPerSample);
 }
 
 void waveDestroy( Wave* wave) {
   free(wave-> data);
+  free(wave);
 }
 
 void waveSetDuration(Wave* wave, const float seconds) {
@@ -166,52 +168,59 @@ void waveToFile( Wave* wave, const char* filename ) {
 }
 
 /* -------------------------------------------------------------------- [ Section: Main ]  */
-/* Wave tone(void){ */
-void tone(float freq, float* data, float duration){ 
+void tone(Wave* wave, float freq) { 
+/*void tone(float freq, float* data, float duration) { */ 
   /* Define some variables for the sound */
-  /*float duration = 0.3;*/       /* seconds */
-
+  float *data, duration = 0.3;       /* seconds */
   int nSamples = (int)(duration*SAMPLE_RATE);
-  Wave mySound;
 
   /* Create a mono(1), 32-bit sound and set the duration */
-  initWave(&mySound,(int)SAMPLE_RATE,1,32);
-  waveSetDuration(&mySound, duration);
+  makeWave(wave, (int)SAMPLE_RATE, 1, 32);
+  waveSetDuration(wave, duration);
 
   /* Add all of the data */
   int i;
 
-  for (i = 0; i < nSamples; i++) {
+  data = (float*)wave->data;
+
+  for (i = 0; i < nSamples; i++) { 
     data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
   }
+  
+  
 
 }
 
-float get_pitch(float freq, float duration)
-{
-  float *wave, *imaginary_wave, max, pitch;
+float get_pitch(float freq, float duration) {
+  float *waveData, *imaginary_wave, max, pitch;
+  Wave *wave;
   int max_index, i;
 
   if (duration * SAMPLE_RATE < 1.0)
     return NAN;
-  wave = malloc(sizeof(float) * SAMPLE_RATE * duration);
+  wave = malloc(sizeof(Wave));
+  wave->data = malloc(SAMPLE_RATE * duration * sizeof(float));
   imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
-  tone(freq, wave, duration); /* wave contains an array of tone Hz and sample rate 44.1 khz */
+  /* tone(freq, wave, duration); */ /* wave contains an array of tone Hz and sample rate 44.1 khz */
+  tone(wave,freq);
+
+  memcpy(waveData, wave->data, SAMPLE_RATE * duration * sizeof(float));
+
   initfft(FFT_SIZE);
-  fft(wave,imaginary_wave,0);
+  fft(waveData,imaginary_wave,0);
   free(imaginary_wave);
   max = 0;
   for (i = 0; i < (SAMPLE_RATE / 2); i++) {
     /* check if there's any imaginary values */
     /* waveval = sqrt(imaginary_wave[i] * imaginary_wave[i] + wave[i] * wave[i]); */
-    if (wave[i] > max) {
-      max = wave[i];
+    if (((float*)wave->data)[i] > max) {
+      max = ((float*)wave->data)[i];
       max_index = i;
     }
     /* } */
   }
   pitch = ((float)max_index) * SAMPLE_RATE / (1 << (FFT_SIZE-1));
-  free(wave);
+  waveDestroy(wave);
 
   return pitch;
 }

@@ -3,7 +3,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "audio_recorder.h"
-#include "tone.h"
+
+#ifndef alloca
+#define alloca(x) __builtin_alloca(x)
+#endif
 
 WaveHeader *genericWAVHeader(uint16_t bit_depth, uint16_t channels) {
   WaveHeader *hdr;
@@ -11,17 +14,23 @@ WaveHeader *genericWAVHeader(uint16_t bit_depth, uint16_t channels) {
   if (!hdr) {
     return NULL;
   }
-  
-  memcpy(&hdr->RIFF_marker, "RIFF", 4); 
-  memcpy(&hdr->filetype_header, "WAVE", 4);
-  memcpy(&hdr->format_marker, "fmt ", 4);
-  hdr -> data_header_length = 16;
-  hdr -> format_type = 1;
-  hdr -> sample_rate = SAMPLE_RATE;
-  hdr -> bytes_per_second = SAMPLE_RATE * channels * bit_depth / 8;
-  hdr -> bytes_per_frame = channels * bit_depth/8;
-  hdr -> bits_per_sample = bit_depth;
 
+  memcpy(&hdr->chunkId, "WAVE", 4);
+  hdr -> chunkSize = 16;
+  memcpy(&hdr->format, "fmt ", 4);
+
+  hdr -> audioFormat = 1;
+  hdr -> numChannels = 1;
+  hdr -> sampleRate = SAMPLE_RATE;
+  hdr -> byteRate = SAMPLE_RATE * channels * bit_depth / 8;
+  hdr -> blockAlign = channels * bit_depth / 8;
+  hdr -> bitsPerSample = bit_depth;
+
+  memcpy(&hdr->subChunk1Id, "DATA", 4);
+  hdr -> subChunk1Size = 32;
+  memcpy(&hdr->subChunk2Id, "DATA", 4);
+  hdr -> subChunk2Size = 32;
+  
   return hdr;
 }
 
@@ -31,20 +40,10 @@ int writeWAVHeader(FILE* file, WaveHeader *hdr) {
   }
 
   fwrite(&hdr, sizeof(WaveHeader), 1, file);
-  /* write(fd, &hdr->file_size, 4); */
-  /* write(fd, &hdr->filetype_header, 4); */
-  /* write(fd, &hdr->format_marker, 4); */
-  /* write(fd, &hdr->data_header_length, 4); */
-  /* write(fd, &hdr->format_type, 2); */
-  /* write(fd, &hdr->number_of_channels, 2); */
-  /* write(fd, &hdr->sample_rate, 4); */
-  /* write(fd, &hdr->bytes_per_second, 4); */
-  /* write(fd, &hdr->bytes_per_frame, 2); */
-  /* write(fd, &hdr->bits_per_sample, 2); */
-  fwrite("data", 1, 4, file);
+  fwrite("data", 4, 1, file);
 
-  uint32_t data_size = hdr -> file_size - 36;
-  fwrite(&hdr, &data_size, 4, file);
+  size_t data_size = hdr -> chunkSize - 36;
+  fwrite(&hdr, data_size, 1, file);
 
   return 0;
 }
@@ -55,13 +54,12 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   int size;
   snd_pcm_t *handle;
   snd_pcm_hw_params_t *params;
-  unsigned int sampleRate = hdr->sample_rate;
+  unsigned int sampleRate = hdr->sampleRate;
   int dir;
   snd_pcm_uframes_t frames = 32;
-  const char *device = "plughw:1,0"; // USB microphone
-  // const char *device = "default"; // Integrated system microphone
+  const char *device = "default"; /* Integrated system microphone */
   char *buffer;
-  int filedesc;
+  FILE* filedesc;
   
   /* Open PCM device for recording (capture). */
   err = snd_pcm_open(&handle, device, SND_PCM_STREAM_CAPTURE, 0);
@@ -86,7 +84,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   }
 
   /* Signed 16-bit litte-endian format */
-  if (hdr-> bits_per_sample == 16) {
+  if (hdr-> bitsPerSample == 16) {
     err = snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16_LE);
   } else {
     err = snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_U8);
@@ -98,20 +96,20 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   }
 
   /* Two channels (stereo) */
-  err = snd_pcm_hw_params_set_channels(handle, params, hdr -> number_of_channels);
+  err = snd_pcm_hw_params_set_channels(handle, params, hdr -> numChannels);
   if (err) {
     fprintf(stderr, "Error setting channels: %s\n", snd_strerror(err));
     goto END_PCM;
   }
 
   /* 44100 bits/second sampling rate (CD quality) */
-  sampleRate = hdr->sample_rate;
+  sampleRate = hdr->sampleRate;
   err = snd_pcm_hw_params_set_rate_near(handle, params, &sampleRate, &dir);
   if (err) {
     fprintf(stderr, "Error setting sampling rate (%d): %s\n", sampleRate, snd_strerror(err));
     goto END_PCM;
   }
-  hdr -> sample_rate = SAMPLE_RATE;
+  hdr -> sampleRate = SAMPLE_RATE;
 
   /* Set period size */
   err = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
@@ -134,7 +132,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
     goto END_PCM;
   }
 
-  size = frames * hdr-> bits_per_sample / 8 * hdr -> number_of_channels; // 2 bytes/sample, 2 channels
+  size = frames * hdr-> bitsPerSample / 8 * hdr -> numChannels; /* 2 bytes/sample, 2 channels */
   buffer = (char *) malloc(size);
   if (!buffer) {
     fprintf(stdout, "Buffer error.\n");
@@ -148,10 +146,10 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
     goto END_BUF;
   }
 
-  uint32_t pcm_data_size = hdr-> sample_rate* hdr-> bytes_per_frame * (duration/1000);
-  hdr -> file_size = pcm_data_size + 36;
+  uint32_t pcm_data_size = hdr-> sampleRate* hdr-> blockAlign * (duration/1000);
+  hdr -> chunkSize = pcm_data_size + 36;
 
-  filedesc = open(fileName, O_WRONLY | O_CREAT, 0644);
+  filedesc = fopen(fileName, "w");
   err = writeWAVHeader(filedesc, hdr);
   if (err) {
     fprintf(stderr, "Error writing .wav header.");
@@ -160,8 +158,8 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 
   int totalFrames = 0;
 
-  int i = ((duration * 1000) / (hdr->sample_rate/ frames));
-  for(i; i > 0; i--) {
+  int i = ((duration * 1000) / (hdr->sampleRate/ frames));
+  for(; i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
     totalFrames += err;
     if (err == -EPIPE) {
@@ -170,15 +168,15 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
     if (err < 0) {
       snd_pcm_recover(handle, err, 0);
     }
-    // Still an error, need to exit.
+    /* Still an error, need to exit. */
     if (err < 0) {
       fprintf(stderr, "Error occurred while recording: %s\n", snd_strerror(err));
       goto END;
     }
-    write(filedesc, buffer, size);
-  } // end for loop
+    fwrite(buffer, size, 1, filedesc);
+  } /* end for loop */
 
-  close(filedesc);
+  fclose(filedesc);
   snd_pcm_drain(handle);
   snd_pcm_close(handle);
   free(buffer);
@@ -186,7 +184,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 
   /* clean up */
  END_FILE:
-  close(filedesc);
+  fclose(filedesc);
  END_BUF:
   free(buffer);
  END_PCM:
@@ -196,5 +194,8 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 }
 
 void audio_recorder() {
+  WaveHeader *hdr;
+  hdr = genericWAVHeader(16, 1);
 
+  free(hdr);
 }
