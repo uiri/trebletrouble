@@ -7,7 +7,7 @@ bin/app: package/src/app.c bin/display.o bin/simpleAlsa.o bin/metronome.o bin/in
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 bin/%.o: package/src/%.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) $(LIBS) -c $(CFLAGS) $< -o $@
 
 app:	bin/app
 
