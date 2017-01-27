@@ -1,0 +1,43 @@
+TRGT = arm-poky-linux-gnueabi-
+CC = $(TRGT)gcc
+CPPC = $(TRGT)g++
+
+LD = $(TRGT)gcc
+CP = $(TRGT)objcopy
+AS = $(TRGT)gcc -x assembler-with-cpp
+AR = $(TRGT)ar
+OD = $(TRGT)objdump
+SZ = $(TRGT)size
+HEX = $(CP) -0 ihex
+BIN = $(CP) -0 binary
+
+#General Settings
+	OPT_OS 			=linux
+	OPT_LINK_OPTIMIZE 	=yes
+	OPT_CPU			=
+
+#uGFX settings
+	GFXLIB			= ../resources/ugfx
+	GFXBOARD 		= Linux-Framebuffer-Touch
+	GFXDEMO			= modules/gdisp/basics
+
+#Linux settings
+	ARCH = 
+	SRCFLAGS = -ggdb -o0
+	CFLAGS =
+	CXXFLAGS =
+	ASFLAGS =
+	LDFLAGS = 
+
+	SRC = 
+	OBJS =
+	DEFS = 
+	LIBS = 
+	INCPATH = 
+	LIBPATH = 
+
+include $(GFXLIB)/tools/gmake_scripts/library_ugfx.mk
+include $(GFXLIB)/tools/gmake_scripts/os_$(OPT_OS).mk
+include $(GFXLIB)/tools/gmake_scripts/compiler_gcc.mk
+include $(GFXLIB)/demos/$(GFXDEMO)/demo.mk
+
