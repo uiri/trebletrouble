@@ -1,5 +1,5 @@
 CFLAGS=-Wall
-SD=sdc
+SD=sdb
 
 LIBS=-lc -lasound -lsndfile -lm
 
