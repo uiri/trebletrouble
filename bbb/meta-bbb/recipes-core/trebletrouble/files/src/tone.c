@@ -97,7 +97,7 @@ void makeWaveHeader(WaveHeader* myHeader, const int sampleRate, const short numC
 }
 
 void makeWave(Wave* myWave, const int sampleRate, const short numChannels, const short bitsPerSample) {
-  makeWaveHeader(&myWave->header, sampleRate, numChannels, bitsPerSample);
+  makeWaveHeader(&(myWave->header), sampleRate, numChannels, bitsPerSample);
 }
 
 void waveDestroy( Wave* wave) {
@@ -115,11 +115,15 @@ void waveSetDuration(Wave* wave, const float seconds) {
   wave->header.subChunk2Size = totalBytes;
 }
 
-void waveAddSample( Wave* wave, const float* samples ) {
+void waveAddSample( Wave* wave, const float* samples, int channel ) {
   int i;
   
   long int sampleNbit;
   char* sample;
+
+  if (channel != wave-> header.numChannels) {
+    return;
+  }
 
   if ( wave->header.bitsPerSample == 32) {
     for(i = 0; i < wave->header.numChannels; i++) {
@@ -187,8 +191,6 @@ void tone(Wave* wave, float freq) {
     data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
   }
   
-  
-
 }
 
 float get_pitch(float freq, float duration) {
@@ -199,6 +201,7 @@ float get_pitch(float freq, float duration) {
   if (duration * SAMPLE_RATE < 1.0)
     return NAN;
   wave = malloc(sizeof(Wave));
+  waveData = malloc(sizeof(float));
   wave->data = malloc(SAMPLE_RATE * duration * sizeof(float));
   imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
   /* tone(freq, wave, duration); */ /* wave contains an array of tone Hz and sample rate 44.1 khz */
@@ -221,6 +224,7 @@ float get_pitch(float freq, float duration) {
   }
   pitch = ((float)max_index) * SAMPLE_RATE / (1 << (FFT_SIZE-1));
   waveDestroy(wave);
+  free(waveData);
 
   return pitch;
 }

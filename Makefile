@@ -1,7 +1,7 @@
-CFLAGS=-Wall -ansi -g
-SD=sdb
+CFLAGS=-Wall -ansi -std=gnu90 -g
 
 LIBS=-lc -lasound -lsndfile -lm
+SD=sdb
 
 bin/app: package/src/app.c bin/display.o bin/simpleAlsa.o bin/metronome.o bin/input.o bin/menu.o bin/tone.o bin/libfft.o bin/audio_recorder.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
