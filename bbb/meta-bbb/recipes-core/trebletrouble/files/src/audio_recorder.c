@@ -4,13 +4,14 @@
 #include <unistd.h>
 #include "audio_recorder.h"
 
+/* added to fix implicit delcaration warnings for alloca in target files */
 #ifndef alloca
 #define alloca(x) __builtin_alloca(x)
 #endif
 
-void *genericWAVHeader(WaveHeader *hdr, uint16_t bit_depth, uint16_t channels) {
+void genericWAVHeader(WaveHeader *hdr, uint16_t bit_depth, uint16_t channels) {
   if (!hdr) {
-    return NULL;
+    return;
   }
 
   memcpy(&hdr->chunkId, "WAVE", 4);
@@ -28,8 +29,7 @@ void *genericWAVHeader(WaveHeader *hdr, uint16_t bit_depth, uint16_t channels) {
   hdr -> subChunk1Size = 32;
   memcpy(&hdr->subChunk2Id, "DATA", 4);
   hdr -> subChunk2Size = 32;
-  
-  return hdr;
+
 }
 
 int writeWAVHeader(FILE* file, WaveHeader *hdr) {
@@ -192,9 +192,38 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 }
 
 void audio_recorder() {
+  int err;
   WaveHeader *hdr;
-  genericWAVHeader(&hdr, 16, 1);
+  FILE *ifp, *ofp;
+  char outputFileName[] = "out.list";
+  uint32_t duration = 10;
+  
   hdr = malloc(sizeof(*hdr));
 
+  /* OPEN FILE */
+  ifp = fopen("in.list", "w");
+  
+  if (ifp == NULL) {
+    fprintf(stderr, "Cannot open input file in.list.\n");
+    exit(1);
+  }
+
+  ofp = fopen(outputFileName, "w");
+
+  if (ofp == NULL) {
+    fprintf(stderr, "Cannot open output file %s.\n", outputFileName);
+    exit(1);
+  }
+
+  /* WRITE DATA TO FILE */
+  genericWAVHeader(hdr, 16, 1);
+  err = recordWAV(outputFileName, hdr, duration);
+  if (err) {
+    printf("Error in audio recording.");
+  }
+
+  /* CLOSE FILE */
+  /* This is done at the end of recordWAV() */
+  
   free(hdr);
 }

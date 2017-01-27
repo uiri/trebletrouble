@@ -2,6 +2,7 @@
 #include "display.h"
 #include "input.h"
 #include "menu.h"
+#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 	char* fbp;
@@ -30,6 +31,9 @@ int main(int argc, char** argv) {
 
 	get_lcd_input(&si);
 	cleanup_display(fbp, &fbfd);
+
+	audio_recorder();
+
 	return 0;
 }
 
