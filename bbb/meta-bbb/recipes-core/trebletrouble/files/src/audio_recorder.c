@@ -8,9 +8,7 @@
 #define alloca(x) __builtin_alloca(x)
 #endif
 
-WaveHeader *genericWAVHeader(uint16_t bit_depth, uint16_t channels) {
-  WaveHeader *hdr;
-  hdr = malloc(sizeof(*hdr));
+void *genericWAVHeader(WaveHeader *hdr, uint16_t bit_depth, uint16_t channels) {
   if (!hdr) {
     return NULL;
   }
@@ -195,7 +193,8 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
 
 void audio_recorder() {
   WaveHeader *hdr;
-  hdr = genericWAVHeader(16, 1);
+  genericWAVHeader(&hdr, 16, 1);
+  hdr = malloc(sizeof(*hdr));
 
   free(hdr);
 }
