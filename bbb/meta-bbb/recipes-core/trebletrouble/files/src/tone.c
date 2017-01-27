@@ -60,7 +60,7 @@ void toLittleEndian(const long long int size, void* value) {
 
 /* ------------------------------------------------------ [ Section: Wave Header ]  */
 
-void makeWaveHeader(WaveHeader* myHeader, const int sampleRate, const short numChannels, const short bitsPerSample ) {
+void makeWaveHeader(WaveHeader* myHeader, const int sampleRate, const short numChannels, const short bitsPerSample) {
 
   /* RIFF WAVE HEADER */
   myHeader->chunkId[0] = 'R';
