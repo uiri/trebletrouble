@@ -36,6 +36,9 @@ typedef struct Wave {
 
 } Wave;
 
-float get_pitch(float freq, float duration);
+/*float get_pitch(float freq, float duration);*/
+float get_pitch(Wave* wave);
+void waveAddSample(Wave* wave, const float* samples, int channel);
+void tone(Wave* wave, int duration);
 
 #endif

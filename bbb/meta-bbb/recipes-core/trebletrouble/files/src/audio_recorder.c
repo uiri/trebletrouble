@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "audio_recorder.h"
+#include "tone.h"
 
 /* added to fix implicit delcaration warnings for alloca in target files */
 #ifndef alloca
@@ -46,7 +47,7 @@ int writeWAVHeader(FILE* file, WaveHeader *hdr) {
   return 0;
 }
 
-int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
+int recordWAV(Wave* wave, WaveHeader *hdr, uint32_t duration)
 {
   int err;
   int size;
@@ -56,8 +57,8 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   int dir;
   snd_pcm_uframes_t frames = 32;
   const char *device = "default"; /* Integrated system microphone */
-  char *buffer;
-  FILE* filedesc;
+  float *buffer;
+  int channel = 1;
   
   /* Open PCM device for recording (capture). */
   err = snd_pcm_open(&handle, device, SND_PCM_STREAM_CAPTURE, 0);
@@ -131,7 +132,7 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   }
 
   size = frames * hdr-> bitsPerSample / 8 * hdr -> numChannels; /* 2 bytes/sample, 2 channels */
-  buffer = (char *) malloc(size);
+  buffer = (float *) malloc(size);
   if (!buffer) {
     fprintf(stdout, "Buffer error.\n");
     err = -1;
@@ -147,15 +148,8 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   uint32_t pcm_data_size = hdr-> sampleRate* hdr-> blockAlign * (duration/1000);
   hdr -> chunkSize = pcm_data_size + 36;
 
-  filedesc = fopen(fileName, "w");
-  err = writeWAVHeader(filedesc, hdr);
-  if (err) {
-    fprintf(stderr, "Error writing .wav header.");
-    goto END_FILE;
-  }
-
   int totalFrames = 0;
-
+  int j;
   int i = ((duration * 1000) / (hdr->sampleRate/ frames));
   for(; i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
@@ -171,18 +165,21 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
       fprintf(stderr, "Error occurred while recording: %s\n", snd_strerror(err));
       goto END;
     }
-    fwrite(buffer, size, 1, filedesc);
+    /* So the buffer size is 128 Bytes. This places 4 bytes of the buffer  */
+    for (j = 0; j < size/sizeof(float); i++) {
+      waveAddSample(wave,buffer,channel);
+    }
+    /* This should be appending data from the buffer into wave->data */
+    /* fwrite(buffer, size, 1, filedesc); */
+    
   } /* end for loop */
 
-  fclose(filedesc);
   snd_pcm_drain(handle);
   snd_pcm_close(handle);
   free(buffer);
   return 0;
 
   /* clean up */
- END_FILE:
-  fclose(filedesc);
  END_BUF:
   free(buffer);
  END_PCM:
@@ -191,39 +188,17 @@ int recordWAV(const char *fileName, WaveHeader *hdr, uint32_t duration)
   return err;
 }
 
-void audio_recorder() {
+void audio_recorder(Wave* wave, WaveHeader* hdr, uint32_t duration) {
   int err;
-  WaveHeader *hdr;
-  FILE *ifp, *ofp;
-  char outputFileName[] = "out.list";
-  uint32_t duration = 10;
+  uint16_t bit_depth = 16;
+  uint16_t channels = 1;
   
-  hdr = malloc(sizeof(*hdr));
-
-  /* OPEN FILE */
-  ifp = fopen("in.list", "w");
-  
-  if (ifp == NULL) {
-    fprintf(stderr, "Cannot open input file in.list.\n");
-    exit(1);
-  }
-
-  ofp = fopen(outputFileName, "w");
-
-  if (ofp == NULL) {
-    fprintf(stderr, "Cannot open output file %s.\n", outputFileName);
-    exit(1);
-  }
-
-  /* WRITE DATA TO FILE */
-  genericWAVHeader(hdr, 16, 1);
-  err = recordWAV(outputFileName, hdr, duration);
+  /* WRITE DATA TO WAVE */  
+  tone(wave, duration); /* Creates space for wave and sets the duration */
+  genericWAVHeader(hdr, bit_depth, channels);
+  err = recordWAV(wave, hdr, duration);
   if (err) {
     printf("Error in audio recording.");
   }
 
-  /* CLOSE FILE */
-  /* This is done at the end of recordWAV() */
-  
-  free(hdr);
 }

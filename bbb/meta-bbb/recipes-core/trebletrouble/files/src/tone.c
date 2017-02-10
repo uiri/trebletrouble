@@ -117,8 +117,7 @@ void waveSetDuration(Wave* wave, const float seconds) {
 
 void waveAddSample( Wave* wave, const float* samples, int channel ) {
   int i;
-  
-  long int sampleNbit;
+  long int sample32bit;
   char* sample;
 
   if (channel != wave-> header.numChannels) {
@@ -127,9 +126,9 @@ void waveAddSample( Wave* wave, const float* samples, int channel ) {
 
   if ( wave->header.bitsPerSample == 32) {
     for(i = 0; i < wave->header.numChannels; i++) {
-      sampleNbit = ( long int) ((1<<(wave->header.bitsPerSample-1))*samples[i]);
-      toLittleEndian(4, (void*) &sampleNbit);
-      sample = (char*)&sampleNbit;
+      sample32bit = ( long int) ((1<<(wave->header.bitsPerSample-1))*samples[i]);
+      toLittleEndian(4, (void*) &sample32bit);
+      sample = (char*)&sample32bit;
       wave->data[ wave->index + 0 ] = sample[0];
       wave->data[ wave->index + 1 ] = sample[1];
       wave->data[ wave->index + 2 ] = sample[2];
@@ -172,30 +171,34 @@ void waveToFile( Wave* wave, const char* filename ) {
 }
 
 /* -------------------------------------------------------------------- [ Section: Main ]  */
-void tone(Wave* wave, float freq) { 
+void tone(Wave* wave, int duration/*, float freq*/) { 
 /*void tone(float freq, float* data, float duration) { */ 
   /* Define some variables for the sound */
-  float *data, duration = 0.3;       /* seconds */
-  int nSamples = (int)(duration*SAMPLE_RATE);
+  /*float *data;*/
+  /*int nSamples = (int)(duration*SAMPLE_RATE);*/
+  int bitsPerSample = 32;
+  int numChannels = 1;
+
 
   /* Create a mono(1), 32-bit sound and set the duration */
-  makeWave(wave, (int)SAMPLE_RATE, 1, 32);
+  makeWave(wave, (int)SAMPLE_RATE, numChannels, bitsPerSample);
   waveSetDuration(wave, duration);
 
   /* Add all of the data */
-  int i;
-
+  /*int i;
   data = (float*)wave->data;
-
+  
   for (i = 0; i < nSamples; i++) { 
     data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
-  }
+    waveAddSample(&wave, data);
+  }*/
   
 }
 
-float get_pitch(float freq, float duration) {
+/*float get_pitch(float freq, float duration) { */
+float get_pitch(Wave* wave) {
   float *waveData, *imaginary_wave, max, pitch;
-  Wave *wave;
+  float duration = 10; 
   int max_index, i;
 
   if (duration * SAMPLE_RATE < 1.0)
@@ -205,7 +208,7 @@ float get_pitch(float freq, float duration) {
   wave->data = malloc(SAMPLE_RATE * duration * sizeof(float));
   imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
   /* tone(freq, wave, duration); */ /* wave contains an array of tone Hz and sample rate 44.1 khz */
-  tone(wave,freq);
+  /*tone(wave,freq);*/ /* commented out to use real data instead */
 
   memcpy(waveData, wave->data, SAMPLE_RATE * duration * sizeof(float));
 
