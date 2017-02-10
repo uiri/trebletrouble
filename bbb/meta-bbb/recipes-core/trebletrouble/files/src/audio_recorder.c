@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+
 #include "audio_recorder.h"
 #include "tone.h"
 
@@ -47,7 +48,7 @@ int writeWAVHeader(FILE* file, WaveHeader *hdr) {
   return 0;
 }
 
-int recordWAV(Wave* wave, WaveHeader *hdr, uint32_t duration)
+int recordWAV(Wave* wave, WaveHeader* hdr, uint32_t duration)
 {
   int err;
   int size;
@@ -131,7 +132,7 @@ int recordWAV(Wave* wave, WaveHeader *hdr, uint32_t duration)
     goto END_PCM;
   }
 
-  size = frames * hdr-> bitsPerSample / 8 * hdr -> numChannels; /* 2 bytes/sample, 2 channels */
+  size = frames * hdr-> bitsPerSample / 8 * hdr -> numChannels; /* 4 bytes/sample, 1 channels */
   buffer = (float *) malloc(size);
   if (!buffer) {
     fprintf(stdout, "Buffer error.\n");
@@ -165,12 +166,11 @@ int recordWAV(Wave* wave, WaveHeader *hdr, uint32_t duration)
       fprintf(stderr, "Error occurred while recording: %s\n", snd_strerror(err));
       goto END;
     }
-    /* So the buffer size is 128 Bytes. This places 4 bytes of the buffer  */
-    for (j = 0; j < size/sizeof(float); i++) {
+    /* So the buffer size is 128 Bytes. This places 4 bytes from the buffer into wave->data four times. */
+    for (j = 0; j < size/sizeof(float); j++) {
       waveAddSample(wave,buffer,channel);
     }
     /* This should be appending data from the buffer into wave->data */
-    /* fwrite(buffer, size, 1, filedesc); */
     
   } /* end for loop */
 
@@ -188,15 +188,11 @@ int recordWAV(Wave* wave, WaveHeader *hdr, uint32_t duration)
   return err;
 }
 
-void audio_recorder(Wave* wave, WaveHeader* hdr, uint32_t duration) {
+void audio_recorder(Wave* wave, uint32_t duration) {
   int err;
-  uint16_t bit_depth = 16;
-  uint16_t channels = 1;
-  
   /* WRITE DATA TO WAVE */  
   tone(wave, duration); /* Creates space for wave and sets the duration */
-  genericWAVHeader(hdr, bit_depth, channels);
-  err = recordWAV(wave, hdr, duration);
+  err = recordWAV(wave, &(wave->header), duration);
   if (err) {
     printf("Error in audio recording.");
   }

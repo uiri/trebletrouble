@@ -1,4 +1,4 @@
-CFLAGS=-Wall -ansi -std=gnu90 -g
+CFLAGS=-Wall -std=gnu90 -g
 
 LIBS=-lc -lasound -lsndfile -lm
 SD=sdb

@@ -171,31 +171,16 @@ void waveToFile( Wave* wave, const char* filename ) {
 }
 
 /* -------------------------------------------------------------------- [ Section: Main ]  */
-void tone(Wave* wave, int duration/*, float freq*/) { 
-/*void tone(float freq, float* data, float duration) { */ 
+void tone(Wave* wave, int duration) { 
   /* Define some variables for the sound */
-  /*float *data;*/
-  /*int nSamples = (int)(duration*SAMPLE_RATE);*/
   int bitsPerSample = 32;
   int numChannels = 1;
 
-
   /* Create a mono(1), 32-bit sound and set the duration */
   makeWave(wave, (int)SAMPLE_RATE, numChannels, bitsPerSample);
-  waveSetDuration(wave, duration);
-
-  /* Add all of the data */
-  /*int i;
-  data = (float*)wave->data;
-  
-  for (i = 0; i < nSamples; i++) { 
-    data[i] = cos(freq*(float)i*3.14159/SAMPLE_RATE);
-    waveAddSample(&wave, data);
-  }*/
-  
+  waveSetDuration(wave, duration);  
 }
 
-/*float get_pitch(float freq, float duration) { */
 float get_pitch(Wave* wave) {
   float *waveData, *imaginary_wave, max, pitch;
   float duration = 10; 
@@ -203,12 +188,10 @@ float get_pitch(Wave* wave) {
 
   if (duration * SAMPLE_RATE < 1.0)
     return NAN;
-  wave = malloc(sizeof(Wave));
-  waveData = malloc(sizeof(float));
+  
+  waveData = malloc(SAMPLE_RATE * duration * sizeof(float));
   wave->data = malloc(SAMPLE_RATE * duration * sizeof(float));
   imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
-  /* tone(freq, wave, duration); */ /* wave contains an array of tone Hz and sample rate 44.1 khz */
-  /*tone(wave,freq);*/ /* commented out to use real data instead */
 
   memcpy(waveData, wave->data, SAMPLE_RATE * duration * sizeof(float));
 

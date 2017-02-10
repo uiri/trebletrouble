@@ -2,7 +2,6 @@
 #include "display.h"
 #include "input.h"
 #include "menu.h"
-#include "audio_recorder.h"
 
 int main(int argc, char** argv) {
 	char* fbp;
@@ -10,9 +9,6 @@ int main(int argc, char** argv) {
 	int fbfd;
 	ScreenInput si;
 	void (*menu_item)(char* fbp, ScreenInput* si);
-	WaveHeader *hdr;
-	Wave* wave;
-	int duration;
 
 	fbp = init_display(&fbfd);
 
@@ -34,15 +30,6 @@ int main(int argc, char** argv) {
 
 	get_lcd_input(&si);
 	cleanup_display(fbp, &fbfd);
-
-	/* Section: Audio Recording */
-	
-	duration = 10;
-        
-	hdr = malloc(sizeof(*hdr));
-	wave = malloc(SAMPLE_RATE * duration);
-	
-	audio_recorder(wave,hdr,duration); /* record for 10 seconds */
 
 	return 0;
 }
