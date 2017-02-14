@@ -3,7 +3,7 @@ HOMEPAGE = "http://uottawa.ca"
 
 IMAGE_LINGUAS = "en-us"
 
-require qt5-image.bb
+require console-image.bb
 
 ALSA_TOOLS = " \ 
     alsa-lib \ 
