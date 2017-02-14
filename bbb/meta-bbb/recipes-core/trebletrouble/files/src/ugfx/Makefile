@@ -3,8 +3,9 @@
 # /home/vagrant/trebletrouble/bbb/build/tmp/sysroot-destdir/x86_64-linux/gcc-cross-arm/5.3.0-r0/image/
 
 OPT_MAKE_LIB = yes
+HOME=/home/$(shell whoami)
 
-#TRGT = /home/vagrant/trebletrouble/bbb/build/tmp/sysroots/x86_64-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-
+#TRGT = $(HOME)/trebletrouble/bbb/build/tmp/sysroots/x86_64-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-
 TRGT = arm-poky-linux-gnueabi-
 XCC = $(TRGT)gcc
 CPPC = $(TRGT)g++
@@ -54,8 +55,8 @@ SRC      =
 OBJS     =
 DEFS     = 
 LIBS     = -lm
-INCPATH  = /home/vagrant/trebletrouble/bbb/build/tmp/sysroots/beaglebone/usr/include
-LIBPATH  = /home/vagrant/trebletrouble/bbb/build/tmp/sysroots/beaglebone/usr/include/glibc-locale-internal-cortexa8hf-neon-poky-linux-gnueabi/usr/lib
+INCPATH  = $(HOME)/trebletrouble/bbb/build/tmp/sysroots/beaglebone/usr/include
+LIBPATH  = $(HOME)/trebletrouble/bbb/build/tmp/sysroots/beaglebone/usr/include/glibc-locale-internal-cortexa8hf-neon-poky-linux-gnueabi/usr/lib
 
 ##############################################################################################
 # These should be at the end
