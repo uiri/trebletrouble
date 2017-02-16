@@ -1,24 +1,45 @@
 /*
- * Simple sound playback using ALSA API and libasound.
+ *  Copyright (C) 2016-2017  Daniel Rosales
+ *  Copyright (C) 2009 Alessandro Ghedini <alessandro@ghedini.me>
  *
- * Compile:
- * $ cc -o play sound_playback.c -lasound
- * 
- * Usage:
- * $ ./play <sample_rate> <channels> <seconds> < <file>
- * 
- * Examples:
- * $ ./play 44100 2 5 < /dev/urandom
- * $ ./play 22050 1 8 < /path/to/file.wav
+ *  This file is covered by the terms of BOTH licenses listed below.
  *
- * Copyright (C) 2009 Alessandro Ghedini <alessandro@ghedini.me>
- * --------------------------------------------------------------
- * "THE BEER-WARE LICENSE" (Revision 42):
- * Alessandro Ghedini wrote this file. As long as you retain this
- * notice you can do whatever you want with this stuff. If we
- * meet some day, and you think this stuff is worth it, you can
- * buy me a beer in return.
- * --------------------------------------------------------------
+ *  --------------------------------------------------------------
+ *  "THE BEER-WARE LICENSE" (Revision 42):
+ *  Daniel Rosales wrote this file.
+ *  Alessandro Ghedini wrote this file. As long as you retain this
+ *  notice you can do whatever you want with this stuff. If we
+ *  meet some day, and you think this stuff is worth it, you can
+ *  buy me a beer in return.
+ *  --------------------------------------------------------------
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  Additional permission under GNU GPL version 3 section 7
+ *
+ *  If you modify this Program, or any covered work, by linking or
+ *  combining it with the uGFX Library, containing parts covered by the
+ *  terms of the GFX License, Version 1.2, the licensors of this Program
+ *  grant you additional permission to convey the resulting work.
+ *  Corresponding Source for a non-source form of such a combination
+ *  shall include the source code for the parts of the uGFX Library used
+ *  as well as that of the covered work.
+ *
+ *
+ *
+ *
+ * 
  */
 
 #include <alsa/asoundlib.h>
