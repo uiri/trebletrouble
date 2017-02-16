@@ -62,6 +62,8 @@ LIBPATH  = $(HOME)/trebletrouble/bbb/build/tmp/sysroots/beaglebone/usr/include/g
 # These should be at the end
 #
 
+include $(GFXLIB)/gfx.mk
+include $(GFXLIB)/drivers/gdisp/framebuffer/driver.mk
 include $(GFXLIB)/tools/gmake_scripts/library_ugfx.mk
 include $(GFXLIB)/tools/gmake_scripts/os_$(OPT_OS).mk
 include $(GFXLIB)/tools/gmake_scripts/compiler_gcc.mk
