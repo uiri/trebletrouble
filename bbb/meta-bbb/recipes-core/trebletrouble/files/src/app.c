@@ -1,6 +1,5 @@
 /*
  *  Copyright (C) 2016-2017  William Pearson
- *  Copyright (C) 2016-2017  Emilie Cobbold
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,11 +35,7 @@
 #include "gui.h"
 
 int main(int argc, char** argv) {
-	/* char* fbp; */
-	/* int err; */
-	/* int fbfd; */
-	/* ScreenInput si; */
-	/* void (*menu_item)(char* fbp, ScreenInput* si); */
+	/* int sifd; */
 
 	gfxInit();
 
@@ -55,23 +50,12 @@ int main(int argc, char** argv) {
 	while (1)
 		guiEventLoop();
 
-	/* err = init_touchscreen(&si.fd); */
+	/* To be removed when the touchscreen is properly configured. */
+	/* err = init_touchscreen(&sifd); */
 	/* if (err) { */
 	/* 	printf("Error reading event input file\n"); */
 	/* 	return err; */
 	/* } */
 
-	/* colour_screen(fbp, ORANGE); */
-	/* get_lcd_input(&si); */
-
-	/* if (si.y > (TS_MAX_Y / 2)) { */
-	/* 	menu_item = metronome_menu; */
-	/* } else { */
-	/* 	menu_item = play_song_menu; */
-	/* } */
-	/* menu_item(fbp, &si); */
-
-	/* get_lcd_input(&si); */
-	/* cleanup_display(fbp, &fbfd); */
 	return 0;
 }
