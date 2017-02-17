@@ -27,20 +27,14 @@
  *
  */
 
-#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#include <stropts.h>
-#include <unistd.h>
-
-#include <linux/fb.h>
-#include <sys/mman.h>
 
 #include "colours.h"
 #include "display.h"
 
-int DISP_WIDTH = 1;
-long SCREENSIZE;
+extern int DISP_WIDTH;
+extern long SCREENSIZE;
 
 #define KEYS 88
 
@@ -338,43 +332,4 @@ void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
 		draw_note(i, ynote, fbp, BLACK, 1);
 	}
-}
-
-char *init_display(int *fbfd) {
-	struct fb_var_screeninfo vinfo;
-	struct fb_fix_screeninfo finfo;
-	char* fbp;
-
-	*fbfd = open("/dev/fb0", O_RDWR);
-	if (*fbfd == -1) {
-		printf("Error: cannot open framebuffer.\n");
-		return NULL;
-	}
-
-	if (ioctl(*fbfd, FBIOGET_VSCREENINFO, &vinfo)) {
-		printf("Error reading variable screen info\n");
-	}
-
-	if (ioctl(*fbfd, FBIOGET_FSCREENINFO, &finfo)) {
-		printf("Error reading fixed screen info\n");
-	}
-
-	DISP_WIDTH = vinfo.xres;
-	SCREENSIZE = finfo.smem_len;
-
-	fbp = (char*)mmap(0, SCREENSIZE, PROT_READ | PROT_WRITE, MAP_SHARED,
-			  *fbfd, 0);
-	if ((long)fbp == -1) {
-		printf("Mmap of screen failed.\n");
-		return NULL;
-	}
-
-	memset(fbp, 0x00, SCREENSIZE);
-	return fbp;
-}
-
-void cleanup_display(char* fbp, int *fbfd) {
-	if (fbp)
-		munmap(fbp, SCREENSIZE);
-	close(*fbfd);
 }

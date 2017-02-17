@@ -13,7 +13,7 @@ bin/%.o: src/%.c
 bin/trebletrouble: src/ugfx/.build/libugfx.a src/app.c bin/display.o bin/input.o bin/simpleAlsa.o bin/metronome.o bin/menu.o bin/gui.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDES)
 
-src/ugfx/.builld/libugfx.a:
+src/ugfx/.build/libugfx.a:
 	$(MAKE) -C src/ugfx
 
 trebletrouble:	bin/trebletrouble

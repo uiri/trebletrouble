@@ -1,6 +1,5 @@
 /*
- *  Copyright (C) 2016-2017  William Pearson
- *  Copyright (C) 2016-2017  Emilie Cobbold
+ *  Copyright (C) 2017  William Pearson
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,51 +26,57 @@
  *
  */
 
-/* #include "colours.h" */
-/* #include "display.h" */
-/* #include "input.h" */
-/* #include "menu.h" */
+/* This file implements the framebuffer driver for our board */
 
-#include "gfx.h"
-#include "gui.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <stropts.h>
+#include <unistd.h>
 
-int main(int argc, char** argv) {
-	/* char* fbp; */
-	/* int err; */
-	/* int fbfd; */
-	/* ScreenInput si; */
-	/* void (*menu_item)(char* fbp, ScreenInput* si); */
+#include <linux/fb.h>
+#include <sys/mman.h>
 
-	gfxInit();
+static int fbfd;
 
-	gdispSetBacklight(100);
-	gdispSetContrast(100);
+int DISP_WIDTH = 1;
+long SCREENSIZE;
 
-	geventListenerInit(&glistener);
-	gwinAttachListener(&glistener);
+char *init_display() {
+	struct fb_var_screeninfo vinfo;
+	struct fb_fix_screeninfo finfo;
+	char* fbp;
 
-	guiCreate();
+	fbfd = open("/dev/fb0", O_RDWR);
+	if (fbfd == -1) {
+		printf("Error: cannot open framebuffer.\n");
+		return NULL;
+	}
 
-	while (1)
-		guiEventLoop();
+	if (ioctl(fbfd, FBIOGET_VSCREENINFO, &vinfo)) {
+		printf("Error reading variable screen info\n");
+	}
 
-	/* err = init_touchscreen(&si.fd); */
-	/* if (err) { */
-	/* 	printf("Error reading event input file\n"); */
-	/* 	return err; */
-	/* } */
+	if (ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo)) {
+		printf("Error reading fixed screen info\n");
+	}
 
-	/* colour_screen(fbp, ORANGE); */
-	/* get_lcd_input(&si); */
+	DISP_WIDTH = vinfo.xres;
+	SCREENSIZE = finfo.smem_len;
 
-	/* if (si.y > (TS_MAX_Y / 2)) { */
-	/* 	menu_item = metronome_menu; */
-	/* } else { */
-	/* 	menu_item = play_song_menu; */
-	/* } */
-	/* menu_item(fbp, &si); */
+	fbp = (char*)mmap(0, SCREENSIZE, PROT_READ | PROT_WRITE, MAP_SHARED,
+			  fbfd, 0);
+	if ((long)fbp == -1) {
+		printf("Mmap of screen failed.\n");
+		return NULL;
+	}
 
-	/* get_lcd_input(&si); */
-	/* cleanup_display(fbp, &fbfd); */
-	return 0;
+	/* memset(fbp, 0x00, SCREENSIZE); */
+	return fbp;
+}
+
+void cleanup_display(char* fbp) {
+	if (fbp)
+		munmap(fbp, SCREENSIZE);
+	close(fbfd);
 }

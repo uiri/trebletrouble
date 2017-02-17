@@ -10,21 +10,21 @@
 	#define GDISP_LLD_PIXELFORMAT		GDISP_PIXELFORMAT_RGB565
 #endif
 
+char *init_display(void);
+void cleanup_display(char* fbp);
+
 // Uncomment this if your frame buffer device requires flushing
 //#define GDISP_HARDWARE_FLUSH		TRUE
 
 #ifdef GDISP_DRIVER_VMT
 
 	static void board_init(GDisplay *g, fbInfo *fbi) {
-		// TODO: Initialize your frame buffer device here
-
-		// TODO: Set the details of the frame buffer
 		g->g.Width = 800;
 		g->g.Height = 480;
 		g->g.Backlight = 100;
 		g->g.Contrast = 50;
 		fbi->linelen = g->g.Width * sizeof(LLDCOLOR_TYPE);				// bytes per row
-		fbi->pixels = 0;												// pointer to the memory frame buffer
+		fbi->pixels = init_display();
 	}
 
 	#if GDISP_HARDWARE_FLUSH
