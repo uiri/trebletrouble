@@ -52,7 +52,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 
 	load_song(song, fbp, expected);
 	fclose(song);
-	get_lcd_input(si);
+	/* get_lcd_input(si); */
 
 	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
@@ -60,10 +60,10 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 		sleep(1);
 	}
 
-	get_lcd_input(si);
+	/* get_lcd_input(si); */
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
-	get_lcd_input(si);
+	/* get_lcd_input(si); */
 	/* This run is perfect ;) */
 	for (i = 0; i < NUM_NOTES; i++) {
 		compare_notes(expected[i], expected[i], i, fbp);

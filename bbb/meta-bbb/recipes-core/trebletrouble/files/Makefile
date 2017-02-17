@@ -5,7 +5,7 @@ LIBS=-lc -lasound -lsndfile -lm -lpthread -Lsrc/ugfx/.build -lugfx
 INCLUDES=-Isrc/ugfx/resources/ugfx/
 
 bin/gui.o: src/gui.c
-	$(CC) -c $(CFLAGS) $< -o $@ $(INCLUDES) -Isrc/ugfx/resources/ugfx/src/
+	$(CC) -c $(CFLAGS) $< -o $@ $(INCLUDES)
 
 bin/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@

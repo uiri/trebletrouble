@@ -54,6 +54,7 @@
 #define GDISP_NEED_ARC TRUE
 #define GDISP_NEED_CONVEX_POLYGON FALSE
 #define GDISP_NEED_IMAGE FALSE
+#define GDISP_NEED_PIXMAP TRUE
 #define GDISP_NEED_PIXMAP_IMAGE TRUE
 #define GDISP_NEED_STARTUP_LOGO FALSE
 #define GDISP_NEED_CIRCLE TRUE
@@ -82,6 +83,7 @@
     #define GWIN_REDRAW_SINGLEOP TRUE
 
 #define GWIN_NEED_WIDGET TRUE
+    #define GWIN_NEED_LABEL TRUE
     #define GWIN_NEED_BUTTON TRUE
         #define GWIN_BUTTON_LAZY_RELEASE FALSE
     #define GWIN_FLAT_STYLING FALSE
@@ -90,7 +92,6 @@
     #define GWIN_NEED_CONTAINER TRUE
     #define GWIN_NEED_FRAME FALSE
     #define GWIN_NEED_TABSET FALSE
-
 
 /********************************************************/
 /* GTIMER stuff                                         */

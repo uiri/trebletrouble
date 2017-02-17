@@ -34,9 +34,14 @@
 
 #include "colors.h"
 #include "widgetstyles.h"
-#include "gui.h"
 
-#include "gwin/gwin_textedit.h"
+#include "gui.h"
+#include "menu.h"
+
+#include "src/gdisp/gdisp.h"
+#include "src/gdisp/gdisp_pixmap.h"
+
+#include "src/gwin/gwin_label.h"
 
 // GListeners
 GListener glistener;
@@ -47,7 +52,7 @@ GHandle ghContainer1;
 GHandle ghButton1_2;
 GHandle ghButton1_1;
 GHandle ghButton1;
-GHandle ghTextedit1;
+GHandle ghLabel1;
 
 // Fonts
 font_t dejavu_sans_16;
@@ -108,7 +113,8 @@ static void createPagePage0(void)
 	wi.g.width = 600;
 	wi.g.height = 75;
 	wi.g.parent = ghContainer1;
-	wi.text = "Compose Mode";
+	/* wi.text = "Compose Mode"; */
+	wi.text = "Metronome";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = 0;
@@ -127,20 +133,19 @@ static void createPagePage0(void)
 	wi.customStyle = 0;
 	ghButton1 = gwinButtonCreate(0, &wi);
 
-	// Create textedit widget: ghTextedit1
+	// Create label widget: ghLabel1
 	/* wi.g.show = TRUE; */
-	/* wi.g.x = 180; */
-	/* wi.g.y = 10; */
-	/* wi.g.width = 450; */
-	/* wi.g.height = 50; */
-	/* wi.g.parent = ghContainerPage0; */
-	/* wi.text = "Welcome to Treble Trouble "; */
-	/* wi.customDraw = gwinTexteditDefaultDraw; */
+	/* wi.g.x = 280; */
+	/* wi.g.y = 290; */
+	/* wi.g.width = 120; */
+	/* wi.g.height = 20; */
+	/* wi.g.parent = ghButton1_2; */
+	/* wi.text = "Settings"; */
+	/* wi.customDraw = gwinLabelDrawJustifiedLeft; */
 	/* wi.customParam = 0; */
 	/* wi.customStyle = 0; */
-	/* ghTextedit1 = gwinTexteditCreate(0, &wi, 0); */
-	/* gwinSetFont(ghTextedit1, dejavu_sans_32); */
-	/* gwinRedraw(ghTextedit1); */
+	/* ghLabel1 = gwinLabelCreate(0, &wi); */
+
 }
 
 void guiShowPage(unsigned pageIndex)
@@ -164,15 +169,15 @@ void guiCreate(void)
 	GWidgetInit wi;
 
 	// Prepare fonts
-	/* dejavu_sans_16 = gdispOpenFont("DejaVuSans16"); */
-	/* dejavu_sans_16_anti_aliased = gdispOpenFont("DejaVuSans16_aa"); */
-	/* dejavu_sans_32 = gdispOpenFont("DejaVuSans32"); */
+	dejavu_sans_16 = gdispOpenFont("DejaVuSans16");
+	dejavu_sans_16_anti_aliased = gdispOpenFont("DejaVuSans16_aa");
+	dejavu_sans_32 = gdispOpenFont("DejaVuSans32");
 
 	// Prepare images
 
 	// GWIN settings
 	gwinWidgetClearInit(&wi);
-	/* gwinSetDefaultFont(dejavu_sans_16); */
+	gwinSetDefaultFont(dejavu_sans_16);
 	gwinSetDefaultStyle(&white, FALSE);
 	gwinSetDefaultColor(black_studio);
 	gwinSetDefaultBgColor(magenta_studio);
@@ -192,7 +197,21 @@ void guiEventLoop(void)
 	while (1) {
 		// Get an event
 		pe = geventEventWait(&glistener, 0);
+		if (!pe)
+			continue;
+		printf("Valid PE\n");
 		switch (pe->type) {
+		case GEVENT_GWIN_BUTTON:
+			if (((GEventGWinButton*)pe)->gwin == ghButton1) {
+				printf("Button 1\n");
+				play_song_menu(gdispPixmapGetBits(gdispGetDisplay(0)), NULL);
+			} else if (((GEventGWinButton*)pe)->gwin == ghButton1_1) {
+				printf("Button 1 1\n");
+				metronome_menu(gdispPixmapGetBits(gdispGetDisplay(0)), NULL);
+			}
+			break;
+		default:
+			break;
 		}
 
 	}
