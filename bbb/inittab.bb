@@ -1,1 +1,1 @@
-/home/will/trebletrouble/poky-krogoth/meta/recipes-core/sysvinit/sysvinit-inittab_2.88dsf.bb
+../poky-krogoth/meta/recipes-core/sysvinit/sysvinit-inittab_2.88dsf.bb

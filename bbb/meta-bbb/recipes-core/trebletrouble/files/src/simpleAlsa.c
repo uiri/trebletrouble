@@ -49,10 +49,14 @@
 
 
 #define PCM_DEVICE "default"
-//WAV code
+/* WAV code */
 static snd_pcm_uframes_t frames;
 static SNDFILE *infile = NULL;	
 
+/* added to fix implicit declaration warnings for alloca in target files */
+#ifndef alloca
+#define alloca(x) __builtin_alloca(x)
+#endif
 
 snd_pcm_t * init_pcm(char *infilename,short **buf){
         
@@ -66,7 +70,7 @@ snd_pcm_t * init_pcm(char *infilename,short **buf){
 		printf("File doesn't exists");	
 	}
 	else{
-		//	printf("File does exist!");
+	  /*	printf("File does exist!"); */
 	}
 	infile = sf_open(infilename, SFM_READ, &sfinfo);
         /* Open the PCM device in playback mode */
@@ -81,14 +85,14 @@ snd_pcm_t * init_pcm(char *infilename,short **buf){
 	if ((pcm = snd_pcm_hw_params_set_access(pcm_handle, params,
 						SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) 
 		printf("ERROR: Can't set noninterleaved mode. %s\n", snd_strerror(pcm));
-	//set formatting 
+	/* Set formatting */
 	if ((pcm = snd_pcm_hw_params_set_format(pcm_handle, params,
 					       SND_PCM_FORMAT_S16_LE)) < 0) 
 		printf("ERROR: Can't set format. %s\n", snd_strerror(pcm));
-	//Setting channels
+	/* Setting channels */
 	if ((pcm = snd_pcm_hw_params_set_channels(pcm_handle, params,1)) < 0) 
 		printf("ERROR: Can't set channels number. %s\n", snd_strerror(pcm));
-	//Set sample rate
+	/* Set sample rate */
 	if ((pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, (unsigned int*)&sfinfo.samplerate, &dir)) < 0) 
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
 	
@@ -109,9 +113,9 @@ snd_pcm_t * init_pcm(char *infilename,short **buf){
 	return pcm_handle;
 }
 void cleanup_pcm(snd_pcm_t *pcm_handle,short *buf){
-    //Drain the buffer
+    /*Drain the buffer*/
     snd_pcm_drain(pcm_handle);
-    //Close the device
+    /*Close the device*/
     snd_pcm_close(pcm_handle);
     free(buf);
     
@@ -128,14 +132,14 @@ void sound (snd_pcm_t *pcm_handle,short *buf){
 	
         pcmrc = snd_pcm_writei(pcm_handle, buf, frames);
         if (pcmrc == -EPIPE) {
-		//    fprintf(stderr, "Underrun!\n");
+	  /*    fprintf(stderr, "Underrun!\n"); */
             snd_pcm_prepare(pcm_handle);
 	        }
         else if (pcmrc < 0) {
-		//            fprintf(stderr, "Error writing to PCM device: %s\n", snd_strerror(pcmrc));
+	  /*            fprintf(stderr, "Error writing to PCM device: %s\n", snd_strerror(pcmrc)); */
         }
         else if (pcmrc != readcount) {
-		//    fprintf(stderr,"PCM write differs from PCM read.\n");
+	  /*    fprintf(stderr,"PCM write differs from PCM read.\n"); */
         }
 
     }
