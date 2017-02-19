@@ -25,6 +25,7 @@ void cleanup_display(char* fbp);
 		g->g.Contrast = 50;
 		fbi->linelen = g->g.Width * sizeof(LLDCOLOR_TYPE);				// bytes per row
 		fbi->pixels = init_display();
+		g->board = fbi->pixels;
 	}
 
 	#if GDISP_HARDWARE_FLUSH

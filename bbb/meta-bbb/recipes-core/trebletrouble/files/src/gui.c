@@ -39,9 +39,12 @@
 #include "menu.h"
 
 #include "src/gdisp/gdisp.h"
+#include "src/gdisp/gdisp_driver.h"
 #include "src/gdisp/gdisp_pixmap.h"
 
 #include "src/gwin/gwin_label.h"
+
+extern GDisplay* GDISP;
 
 // GListeners
 GListener glistener;
@@ -193,27 +196,29 @@ void guiCreate(void)
 void guiEventLoop(void)
 {
 	GEvent* pe;
+	void (*menu_item)(char* fbp, ScreenInput *si);
+	char* fbp = GDISP->board;
 
 	while (1) {
 		// Get an event
 		pe = geventEventWait(&glistener, 0);
 		if (!pe)
 			continue;
-		printf("Valid PE\n");
 		switch (pe->type) {
 		case GEVENT_GWIN_BUTTON:
 			if (((GEventGWinButton*)pe)->gwin == ghButton1) {
-				printf("Button 1\n");
-				play_song_menu(gdispPixmapGetBits(gdispGetDisplay(0)), NULL);
+				menu_item = play_song_menu;
 			} else if (((GEventGWinButton*)pe)->gwin == ghButton1_1) {
-				printf("Button 1 1\n");
-				metronome_menu(gdispPixmapGetBits(gdispGetDisplay(0)), NULL);
+				menu_item = metronome_menu;
+			} else {
+				break;
 			}
+			gwinHide(ghContainerPage0);
+			menu_item(fbp, NULL);
+			gwinShow(ghContainerPage0);
 			break;
 		default:
 			break;
 		}
-
 	}
 }
-
