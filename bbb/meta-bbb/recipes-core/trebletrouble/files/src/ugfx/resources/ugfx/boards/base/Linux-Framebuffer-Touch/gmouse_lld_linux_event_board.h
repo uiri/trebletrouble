@@ -19,7 +19,7 @@
 #define GMOUSE_LINUX_EVENT_NUM_EVENT				64
 
 // The linux device input used for touchscreen
-#define GMOUSE_LINUX_EVENT_DEVICE					"/dev/input/event0"
+#define GMOUSE_LINUX_EVENT_DEVICE					"/dev/input/touchscreen0"
 
 // Set this to TRUE if you want self-calibration.
 //	NOTE:	This is not as accurate as real calibration.
