@@ -35,12 +35,15 @@
 #include "display.h"
 #include "input.h"
 #include "metronome.h"
+#include "audio_recorder.h"
 
 void play_song_menu(char* fbp, ScreenInput *si) {
 	FILE *song;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES];
 	int i;
+	Wave* wave;
+	uint32_t duration = 1; /* 1 sec*/
 
 	colour_screen(fbp, WHITE);
 
@@ -54,12 +57,15 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	fclose(song);
 	/* get_lcd_input(si); */
 
+	wave = malloc(sizeof(Wave));
 	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
-		compare_notes(expected[i], actual[i], i, fbp);
-		sleep(1);
+		/* Section: Audio Recording */
+	        audio_recorder(wave,duration);
+	        compare_notes(expected[i], get_pitch(wave,duration), i, fbp);
 	}
 
+	waveDestroy(wave);
 	/* get_lcd_input(si); */
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
