@@ -52,29 +52,34 @@ void toLittleEndian(const long long int size, void* value) {
   }
 }
 
-float get_pitch(Wave* wave, uint32_t duration) {
-  float *imaginary_wave, max, pitch;
+float get_pitch(Wave* wave) {
+  float *imaginary_wave, max, pitch, *waveData;
   int max_index, i;
 
-  if (duration * SAMPLE_RATE < 1.0)
-    return NAN;
+  imaginary_wave = calloc(wave->nSamples, sizeof(float));
+  waveData = calloc(wave->nSamples, sizeof(float));
 
-  imaginary_wave = calloc(SAMPLE_RATE * duration, sizeof(float));
+  for (i = 0; i < wave->nSamples; i++) {
+    waveData[i] = ((float)((int*)wave->data)[i]) / (1<<(wave->header.bitsPerSample-1));
+  }
 
   initfft(FFT_SIZE);
-  fft((float*)wave->data,imaginary_wave,0);
+  fft(waveData,imaginary_wave,0);
   free(imaginary_wave);
 
   max = 0;
   for (i = 0; i < (SAMPLE_RATE / 2); i++) {
     /* check if there's any imaginary values */
     /* waveval = sqrt(imaginary_wave[i] * imaginary_wave[i] + wave[i] * wave[i]); */
-    if (((float*)wave->data)[i] > max) {
-      max = ((float*)wave->data)[i];
+    if (waveData[i] > max) {
+      max = waveData[i];
+	  /* if (samples[i] > max) { */
+	  /* 	  max = samples[i]; */
       max_index = i;
     }
     /* } */
   }
+  free(waveData);
   pitch = ((float)max_index) * SAMPLE_RATE / (1 << (FFT_SIZE-1));
 
   return pitch;
@@ -126,27 +131,21 @@ Wave* makeWave(int duration) {
 	return wave;
 }
 
-void waveAddSample( Wave* wave, const float* samples, int channel ) {
-  int i;
-  long int sample32bit;
-  char* sample;
+void waveAddSample(Wave* wave, float sample) {
+	long long int sample32bit;
+	char *sample_bytes;
 
-  if (channel != wave-> header.numChannels) {
-    return;
-  }
+	if (wave->index >= wave->size)
+		return;
 
-  if ( wave->header.bitsPerSample == 32) {
-    for(i = 0; i < wave->header.numChannels; i++) {
-      sample32bit = ( long int) ((1<<(wave->header.bitsPerSample-1))*samples[i]);
-      toLittleEndian(4, (void*) &sample32bit);
-      sample = (char*)&sample32bit;
-      wave->data[ wave->index + 0 ] = sample[0];
-      wave->data[ wave->index + 1 ] = sample[1];
-      wave->data[ wave->index + 2 ] = sample[2];
-      wave->data[ wave->index + 3 ] = sample[3];
-      wave->index += 4;
-    }
-  }
+	sample32bit = (long long int) ((1<<(wave->header.bitsPerSample-1))*sample);
+	toLittleEndian(4, (void*) &sample32bit);
+	sample_bytes = (char*)&sample32bit;
+	wave->data[ wave->index + 0 ] = sample_bytes[0];
+	wave->data[ wave->index + 1 ] = sample_bytes[1];
+	wave->data[ wave->index + 2 ] = sample_bytes[2];
+	wave->data[ wave->index + 3 ] = sample_bytes[3];
+	wave->index += 4;
 }
 
 void waveDestroy( Wave* wave) {

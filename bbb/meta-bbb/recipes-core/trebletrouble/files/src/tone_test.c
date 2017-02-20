@@ -10,28 +10,26 @@
 int main(void)
 {
         
-	int freqList[NUM_FREQS];
-	int freq, i;
+	float freqList[NUM_FREQS];
+	float freq;
+	int i;
+	long long int j;
 	float durationList[NUM_FREQS];
 	float duration;
-        
-        /*freq = 880;
-        duration = 1.0;
-	pitch = get_pitch(freq,duration);
-	*/
+	Wave* wave;
   
 	/*JINGLE BELLS*/
-	freqList[0]  = 330;
-	freqList[1]  = 330;
-	freqList[2]  = 330;
-	freqList[3]  = 330;
-	freqList[4]  = 330;
-	freqList[5]  = 330;
-	freqList[6]  = 330;
-	freqList[7]  = 391;
-	freqList[8]  = 261;
- 	freqList[9]  = 293;
-	freqList[10] = 330;
+	freqList[0]  = 330.0;
+	freqList[1]  = 330.0;
+	freqList[2]  = 330.0;
+	freqList[3]  = 330.0;
+	freqList[4]  = 330.0;
+	freqList[5]  = 330.0;
+	freqList[6]  = 330.0;
+	freqList[7]  = 391.0;
+	freqList[8]  = 261.0;
+	freqList[9]  = 293.0;
+	freqList[10] = 330.0;
 
 	durationList[0]  = 1.0;  /* E  */
 	durationList[1]  = 1.0;  /* E  */
@@ -47,13 +45,18 @@ int main(void)
 	durationList[9]  = 1.0;  /* D  */
 	durationList[10] = 2.0;  /* E  */
 
-	/* generate wave data and fft*/ 
-	for (i = 0; i < numFrequencies; i++) {
+	for (i = 0; i < NUM_FREQS; i++) {
 	  freq = freqList[i];
 	  duration = durationList[i];
-	  pitch[i] = get_pitch(freq,duration);
-	  printf("%f\n",pitch[i]);
-	  sleep(duration);
+	  wave = makeWave(duration);
+
+	  for (j = 0; j < wave->nSamples; j++) {
+		  waveAddSample(wave, sin(freq * j * (duration * 3.14159 / wave->nSamples)));
+	  }
+
+	  printf("%f\n", get_pitch(wave));
+	  waveDestroy(wave);
 	}
+
 	return 0;
 }
