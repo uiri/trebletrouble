@@ -4,154 +4,137 @@ void makeBin() {
 	
 	int i;
 	int j;
-	note * start;
-	bar * bstart;
-	songFormatHeader sfh = {"twinkle twinkle little star",100,4,'C',"4/4"};
+	songFormatHeader sfh = {100,4,14,'C',51,"twinkle twinkle little star"};
 	//12 bars of twinkle twinkle 
 	
-	bar AllBars[4];
-	note AllNotes [14];
-	start = AllNotes;
+	bar allBars[4];
+	note allNotes [14];
+	
 	i=0;
 	j=0;
 	//Fist Bar
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =261.6; 
-        AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-        AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =261.6; 
+        allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+        allNotes[i].dotted = 0; 
 	i++;
         
-        AllNotes[i].quantumvalue = CROTCHET; 
-        AllNotes[i].frequency =261.6; 
-        AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-        AllNotes[i].dotted = 0; 
+        allNotes[i].quantumvalue = CROTCHET; 
+        allNotes[i].frequency =261.6; 
+        allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+        allNotes[i].dotted = 0; 
 	i++;
-        
-        	
-        AllNotes[i].quantumvalue = CROTCHET; 
-        AllNotes[i].frequency =415.3; 
-        AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+                	
+        allNotes[i].quantumvalue = CROTCHET; 
+        allNotes[i].frequency =392.0; 
+        allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
+	i++;
+                	
+        allNotes[i].quantumvalue = CROTCHET; 
+        allNotes[i].frequency =392.0; 
+        allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+        allNotes[i].dotted = 0; 
 	i++;
         	
-
-        	
-        AllNotes[i].quantumvalue = CROTCHET; 
-        AllNotes[i].frequency =415.3; 
-        AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-        AllNotes[i].dotted = 0; 
-	i++;
-        
-	
-	
 	//Second Bar
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =440.0; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =440.0; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
         
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =440.0; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =440.0; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
         
-	AllNotes[i].quantumvalue = MINIM; 
-	AllNotes[i].frequency =415.3; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = MINIM; 
+	allNotes[i].frequency =415.3; 
+	allNotes[i].duration = millisec(sfh.bpm,MINIM);
+	allNotes[i].dotted = 0; 
 	i++;
+	
 	//Third Bar
 
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =349.2; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =349.2; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
         
-       	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =349.2; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+       	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =349.2; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
         
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =329.63; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =329.63; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
 
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =329.63; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =329.63; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
 	
 	//Fourth Bar
 	
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =293.66; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =293.66; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
 		
-	AllNotes[i].quantumvalue = CROTCHET; 
-	AllNotes[i].frequency =293.66; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = CROTCHET; 
+	allNotes[i].frequency =293.66; 
+	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
+	allNotes[i].dotted = 0; 
 	i++;
 
-	AllNotes[i].quantumvalue = MINIM; 
-	AllNotes[i].frequency =261.6; 
-	AllNotes[i].duration = millisec(sfh.bpm,CROTCHET);
-	AllNotes[i].dotted = 0; 
+	allNotes[i].quantumvalue = MINIM; 
+	allNotes[i].frequency =261.6; 
+	allNotes[i].duration = millisec(sfh.bpm,MINIM);
+	allNotes[i].dotted = 0; 
 	i++;
 	
 	//Keep the starting point of each note stored in a bar	
 	
 	
 
-	AllBars[j]. NumNotes =4;
-	AllBars[j]. value = start;
-	start += AllBars[j].NumNotes;
+	allBars[j]. numNotes =4;
 	j++;
 	
 
-	AllBars[j]. NumNotes =3;
-	AllBars[j]. value = start;
-	start += AllBars[j].NumNotes;
+	allBars[j]. numNotes =3;
 	j++;
 
 
-	AllBars[j]. NumNotes =4;
-	AllBars[j]. value = start;
-	start += AllBars[j].NumNotes;
+	allBars[j]. numNotes =4;
 	j++;
 
 
-	AllBars[j]. NumNotes =4;
-	AllBars[j]. value = start;
-	start += AllBars[j].NumNotes;
-	j++;
+	allBars[j]. numNotes =3;
 	
-	song Twinkle = {&sfh,AllBars };
-
+	
 	/* Create the file */
-	FILE *fh = fopen ("Twinkle.bin", "wb+");
-	fwrite(&Twinkle,sizeof(song),1,fh);
+	FILE *fh = fopen (TWINKLE_FILENAME, "wb+");
 	fwrite(&sfh,sizeof(songFormatHeader),1,fh);
-	fwrite (AllBars, sizeof (bar), 4, fh);
-        fwrite(AllNotes,sizeof(note),14,fh);
-	
-	}
+	fwrite (allBars, sizeof (bar), 4, fh);
+        fwrite(allNotes,sizeof(note),14,fh);
+	fclose(fh);
+}
 
-int millisec(int bpm, double note) {
+int millisec(int bpm, float note) {
 	return (int)(
      60      /* seconds */
      * 1000  /* milliseconds per second */
      * note
-        / bpm
+     / (bpm *32)
 		     );  
 }    
 
