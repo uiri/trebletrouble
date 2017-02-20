@@ -34,9 +34,7 @@ S: Sixteenth */
 #define E_R "/srv/trebletrouble/eighth_r.pnm"
 #define S_R "/srv/trebletrouble/sixteenth_r.pnm"
 
-/*XSTART is the start of the notes on the xaxis on the staff
-XS is the x space between notes on the xaxis */
-#define XSTART 110
+/*XS is the x space between notes on the xaxis */
 #define XS 42
 
 /*Temp: key signatures*/

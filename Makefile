@@ -32,7 +32,7 @@ install-sdcard:
 install-sdcard-boot:
 	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_boot.sh $(SD)
 
-bin/display_test: package/src/display_test.c bin/display.o
+bin/display_test: package/src/display_test.c bin/display.o bin/gdisplay.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 bin/tone_test: package/src/tone_test.c bin/tone.o bin/libfft.o

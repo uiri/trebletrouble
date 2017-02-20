@@ -35,6 +35,8 @@
 
 extern int DISP_WIDTH;
 extern long SCREENSIZE;
+/*x_start for new song format*/
+static int x_start;
 
 #define KEYS 88
 
@@ -64,7 +66,7 @@ int find_freq_recur(double freq, int i, int len) {
 int get_xnote(int i) {
 	/* First note is at 145,
 	   each subsequent note is 34 px further */
-	return XSTART + i*XS;
+	return x_start + i*XS;
 }
 
 void draw_note(int i, int ynote, char* fbp, short colour, int time) {
@@ -97,15 +99,22 @@ void draw_note(int i, int ynote, char* fbp, short colour, int time) {
 	}*/
 }
 
-
 void set_time_signature(int t1,int t2, char *fbp){
-	int x = XSTART-30;
 	int y = 90;
-	bitblit(TIME_STAMP[t1], fbp, x, y);
-	bitblit(TIME_STAMP[t2], fbp, x, y+60);
+	bitblit(TIME_STAMP[t1], fbp, x_start, y);
+	bitblit(TIME_STAMP[t2], fbp, x_start, y+60);
+	x_start = x_start+20;
 }
 
-void draw_bar(char *fbp){
+void draw_bar(char *fbp, int numBars,int numPass){
+	int y = 90;
+	bitblit(BAR, fbp, x_start+(XS*4*pass)-5,y);
+	/*TODO: Delete when for loop has been written in load_notes*/
+	/*
+	for(;numBars>0;numBars--){
+		bitblit(BAR, fbp, x_start+(XS*4*pass)-5, y);
+		pass++;	
+	}*/
 	/* Fall code - to be deleted when new format is working
 	hard coded bar spaces for now
 	with xstart being defined in display.h, and there's 4 notes per bar
@@ -116,10 +125,61 @@ void draw_bar(char *fbp){
 	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*3)-5, y);*/
 }
 
-void draw_key(char *fbp, char key){
+int draw_key(char *fbp, char key){
+	/* p is x variable for the pitch signatures*/
+	int p = 64;
+	/* m is the x interval for each pitch */
+	int m = 15;
+	int y = 90;
 	/*Drawing key Signature*/
-			
-	
+	if (0x80 & key){
+		if (0x40 & key){
+			bitblit(SHARP, fbp, p, y-15);
+			p = p+m;
+		}if(0x20 & key){
+			bitblit(SHARP, fbp, p, y+30);
+			p = p+m;
+		}if(0x10 & key){
+			bitblit(SHARP, fbp, p, y-30);
+			p = p+m;
+		}if(0x08 & key){
+			bitblit(SHARP, fbp, p, y+15);
+			p = p+m;
+		}if(0x04 & key){
+			bitblit(SHARP, fbp, p, y+60);
+			p = p+m;
+		}if(0x02 & key){
+			bitblit(SHARP, fbp, p, y);
+			p = p+m;
+		}if(0x01 & key){
+			bitblit(SHARP, fbp, p, y+45);
+			p = p+m;
+		}
+	}else{
+		if (0x40 & key){
+			bitblit(FLAT, fbp, p, y+45);
+			p = p+m;
+		}if(0x20 & key){
+			bitblit(FLAT, fbp, p, y);
+			p = p+m;
+		}if(0x10 & key){
+			bitblit(FLAT, fbp, p, y+60);
+			p = p+m;
+		}if(0x08 & key){
+			bitblit(FLAT, fbp, p, y+15);
+			p = p+m;
+		}if(0x04 & key){
+			bitblit(FLAT, fbp, p, y+75);
+			p = p+m;
+		}if(0x02 & key){
+			bitblit(FLAT, fbp, p, y+30);
+			p = p+m;
+		}if(0x01 & key){
+			bitblit(FLAT, fbp, p, y+90);
+			p = p+m;
+		}
+	}
+	return p;
 }
 
 /* External API */
@@ -332,23 +392,23 @@ void load_song(char *fbp){
 	
 	/*name of the song*/
 	/*NumBar*/
-	int numBars = 4;
+	int numBars = 2;
 	/*Key*/
-	char key = C_MAJ;
+	char key = E_FLAT_MAJ;
 	/*Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1 
 	so for 4/4= 51
 	so for 3/4= 35*/
 	unsigned char timesignature = 51;
-
+	
+	/*Draw the key, return the current x value*/	
+	x_start = draw_key(fbp, key);
 
 	/*Take ints from char away*/
 	int ts1 = (timesignature/16)+1;
 	int ts2 = (timesignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
-	/*Draw the key*/
-	draw_key(fbp, key);
-	/*Drawing the bars*/
+
 }
 
 /*Old load song file - to be deleted when new one is working 
