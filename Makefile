@@ -37,4 +37,8 @@ bin/display_test: package/src/display_test.c bin/display.o
 
 display_test: bin/display_test 
 
+bin/format_test: package/src/fileFormat_test.c bin/fileFormat.o bin/fileRead.o
+	$(CC) $(CFLAGS) $^ -o $@
+fileFormat_test: bin/format_test
+
 all:	app image
