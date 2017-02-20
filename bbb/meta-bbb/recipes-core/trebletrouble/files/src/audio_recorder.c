@@ -21,11 +21,10 @@ int recordWAV(Wave* wave, uint32_t duration)
   WaveHeader* hdr;
   snd_pcm_uframes_t frames;
   const char *device; /* Integrated system microphone */
-  float *buffer;
+  char *buffer;
   
   hdr = &(wave->header);
-  sampleRate = hdr->sampleRate;
-  frames = 32;
+  frames = 1024;
   device = "default";
 
   /* Open PCM device for recording (capture). */
@@ -76,7 +75,6 @@ int recordWAV(Wave* wave, uint32_t duration)
     fprintf(stderr, "Error setting sampling rate (%d): %s\n", sampleRate, snd_strerror(err));
     goto END_PCM;
   }
-  hdr -> sampleRate = SAMPLE_RATE;
 
   /* Set period size */
   err = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
@@ -99,8 +97,8 @@ int recordWAV(Wave* wave, uint32_t duration)
     goto END_PCM;
   }
 
-  size = SAMPLE_RATE * duration * hdr -> numChannels;
-  buffer = (float *) malloc(size * sizeof(float));
+  size = frames * hdr -> numChannels * (hdr -> bitsPerSample / 8);
+  buffer = malloc(size);
   if (!buffer) {
     fprintf(stdout, "Buffer error.\n");
     err = -1;
@@ -113,15 +111,17 @@ int recordWAV(Wave* wave, uint32_t duration)
     goto END_BUF;
   }
 
-  uint32_t pcm_data_size = hdr-> sampleRate* hdr-> blockAlign * (duration/1000);
-  hdr -> chunkSize = pcm_data_size + 36;
-
   int totalFrames = 0;
-  int j;
   int i = ((duration * 1000) / (hdr->sampleRate/ frames));
   for(; i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
-    totalFrames += err;
+    if (err >= 0) {
+      totalFrames += err;
+      err *= hdr -> numChannels * (hdr -> bitsPerSample / 8);
+      memcpy(wave->data + wave->index, buffer, err);
+      wave->index += err;
+      continue;
+    }
     if (err == -EPIPE) {
       fprintf(stderr, "Overrun occurred: %d\n", err);
     }
@@ -133,11 +133,6 @@ int recordWAV(Wave* wave, uint32_t duration)
       fprintf(stderr, "Error occurred while recording: %s\n", snd_strerror(err));
       goto END;
     }
-    
-    for (j = 0; j < size; j++) {
-      waveAddSample(wave,buffer[j]);
-    }
-    
   } /* end for loop */
 
   snd_pcm_drain(handle);
