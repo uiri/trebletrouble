@@ -10,56 +10,24 @@
 #define alloca(x) __builtin_alloca(x)
 #endif
 
-void genericWAVHeader(WaveHeader *hdr, uint16_t bit_depth, uint16_t channels) {
-  if (!hdr) {
-    return;
-  }
-
-  memcpy(&hdr->chunkId, "WAVE", 4);
-  hdr -> chunkSize = 16;
-  memcpy(&hdr->format, "fmt ", 4);
-
-  hdr -> audioFormat = 1;
-  hdr -> numChannels = 1;
-  hdr -> sampleRate = SAMPLE_RATE;
-  hdr -> byteRate = SAMPLE_RATE * channels * bit_depth / 8;
-  hdr -> blockAlign = channels * bit_depth / 8;
-  hdr -> bitsPerSample = bit_depth;
-
-  memcpy(&hdr->subChunk1Id, "DATA", 4);
-  hdr -> subChunk1Size = 32;
-  memcpy(&hdr->subChunk2Id, "DATA", 4);
-  hdr -> subChunk2Size = 32;
-
-}
-
-int writeWAVHeader(FILE* file, WaveHeader *hdr) {
-  if (!hdr) {
-    return -1;
-  }
-
-  fwrite(&hdr, sizeof(WaveHeader), 1, file);
-  fwrite("data", 4, 1, file);
-
-  size_t data_size = hdr -> chunkSize - 36;
-  fwrite(&hdr, data_size, 1, file);
-
-  return 0;
-}
-
-int recordWAV(Wave* wave, WaveHeader* hdr, uint32_t duration)
+int recordWAV(Wave* wave, uint32_t duration)
 {
   int err;
   int size;
   snd_pcm_t *handle;
   snd_pcm_hw_params_t *params;
-  unsigned int sampleRate = hdr->sampleRate;
+  unsigned int sampleRate;
   int dir;
-  snd_pcm_uframes_t frames = 32;
-  const char *device = "default"; /* Integrated system microphone */
+  WaveHeader* hdr;
+  snd_pcm_uframes_t frames;
+  const char *device; /* Integrated system microphone */
   float *buffer;
-  int channel = 1;
   
+  hdr = &(wave->header);
+  sampleRate = hdr->sampleRate;
+  frames = 32;
+  device = "default";
+
   /* Open PCM device for recording (capture). */
   err = snd_pcm_open(&handle, device, SND_PCM_STREAM_CAPTURE, 0);
   if (err) {
@@ -167,9 +135,8 @@ int recordWAV(Wave* wave, WaveHeader* hdr, uint32_t duration)
     }
     
     for (j = 0; j < size; j++) {
-      waveAddSample(wave,buffer,channel);
+      waveAddSample(wave,buffer[j]);
     }
-    /* This should be appending data from the buffer into wave->data */
     
   } /* end for loop */
 
@@ -185,19 +152,4 @@ int recordWAV(Wave* wave, WaveHeader* hdr, uint32_t duration)
   snd_pcm_close(handle);
  END:
   return err;
-}
-
-void audio_recorder(Wave* wave, uint32_t duration) {
-  int err;
-  uint16_t bit_depth = 16;
-  uint16_t channels = 1;
-  
-  /* WRITE DATA TO WAVE */  
-  tone(wave, duration); /* Creates space for wave and sets the duration */
-  genericWAVHeader(&(wave->header), bit_depth, channels);
-  err = recordWAV(wave, &(wave->header), duration);
-  if (err) {
-    printf("Error in audio recording.");
-  }
-
 }
