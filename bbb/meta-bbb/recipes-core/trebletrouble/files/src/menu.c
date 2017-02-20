@@ -35,6 +35,7 @@
 #include "display.h"
 #include "input.h"
 #include "metronome.h"
+#include "simpleAlsa.h"
 #include "audio_recorder.h"
 
 void play_song_menu(char* fbp, ScreenInput *si) {
@@ -45,6 +46,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
+	snd_pcm_t *pcmh;
 
 	colour_screen(fbp, WHITE);
 
@@ -58,6 +60,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	fclose(song);
 	/* get_lcd_input(si); */
 
+	pcmh = init_pcm(SAMPLE_RATE);
 	/* Allocate data buffer for whole note ?? */
 	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
@@ -68,11 +71,13 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 			printf("Oh no! An error with the mic!\n");
 			continue;
 		}
+		play_wave(pcmh, wave);
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
 		compare_notes(expected[i], find_freq(pitch), i, fbp);
 		waveDestroy(wave);
 	}
+	cleanup_pcm(&pcmh);
 	/* get_lcd_input(si); */
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
