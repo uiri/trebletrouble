@@ -1,12 +1,14 @@
 /*
  *  Copyright (C) 2016-2017  Daniel Rosales
+ *  Copyright (C) 2017       William Pearson
+ *
  *  Copyright (C) 2009 Alessandro Ghedini <alessandro@ghedini.me>
  *
  *  This file is covered by the terms of BOTH licenses listed below.
  *
  *  --------------------------------------------------------------
  *  "THE BEER-WARE LICENSE" (Revision 42):
- *  Daniel Rosales wrote this file.
+ *  Daniel Rosales wrote this file. William Pearson wrote this file.
  *  Alessandro Ghedini wrote this file. As long as you retain this
  *  notice you can do whatever you want with this stuff. If we
  *  meet some day, and you think this stuff is worth it, you can
@@ -35,10 +37,6 @@
  *  Corresponding Source for a non-source form of such a combination
  *  shall include the source code for the parts of the uGFX Library used
  *  as well as that of the covered work.
- *
- *
- *
- *
  *
  */
 
@@ -111,7 +109,7 @@ snd_pcm_t * init_pcm(unsigned int samplerate)
 	return pcm_handle;
 }
 
-unsigned int init_sndfile(char *infilename, short **buf)
+unsigned int init_sndfile(char *infilename)
 {
 	SF_INFO sfinfo;
 	if ( access( infilename, F_OK) ==-1) {
@@ -120,38 +118,43 @@ unsigned int init_sndfile(char *infilename, short **buf)
 		/* printf("File does exist!"); */
 	}
 	infile = sf_open(infilename, SFM_READ, &sfinfo);
-
-	/* Allocate buffer to hold single period */
-	*buf = malloc(frames * sfinfo.channels * sizeof(short));
 	return sfinfo.samplerate;
 }
 
 
-void cleanup_pcm(snd_pcm_t *pcm_handle,short *buf)
+void cleanup_pcm(snd_pcm_t *pcm_handle)
 {
 	/*Drain the buffer*/
 	snd_pcm_drain(pcm_handle);
 	/*Close the device*/
 	snd_pcm_close(pcm_handle);
-	free(buf);
 }
 
-void sound (snd_pcm_t *pcm_handle,short *buf)
+void sound(snd_pcm_t *pcm_handle, void *buf, int readcount)
 {
 	int pcmrc;
+	pcmrc = snd_pcm_writei(pcm_handle, buf, frames);
+	if (pcmrc == -EPIPE) {
+		/* fprintf(stderr, "Underrun!\n"); */
+		snd_pcm_prepare(pcm_handle);
+	} else if (pcmrc < 0) {
+		/* fprintf(stderr, "Error writing to PCM device: %s\n",
+		   snd_strerror(pcmrc)); */
+	} else if (pcmrc != readcount) {
+		/* fprintf(stderr,"PCM write differs from PCM read.\n");
+		 */
+	}
+}
+
+void play_sndfile(snd_pcm_t *pcm_handle)
+{
 	short readcount;
+	short* buf;
+	/* Allocate 2 in case of stereo */
+	buf = malloc(frames * 2 * sizeof(short));
 	while ((readcount = sf_readf_short(infile, buf, frames))>0) {
-		pcmrc = snd_pcm_writei(pcm_handle, buf, frames);
-		if (pcmrc == -EPIPE) {
-			/* fprintf(stderr, "Underrun!\n"); */
-			snd_pcm_prepare(pcm_handle);
-		} else if (pcmrc < 0) {
-			/* fprintf(stderr, "Error writing to PCM device: %s\n",
-			   snd_strerror(pcmrc)); */
-		} else if (pcmrc != readcount) {
-			/* fprintf(stderr,"PCM write differs from PCM read.\n");
-			 */
-		}
+		sound(pcm_handle, buf, readcount);
 	}
 	sf_seek(infile,0,SEEK_SET);
+	free(buf);
 }

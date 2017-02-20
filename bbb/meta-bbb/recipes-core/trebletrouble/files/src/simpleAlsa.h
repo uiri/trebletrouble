@@ -1,4 +1,5 @@
-void cleanup_pcm(snd_pcm_t **pcm_handle,short **buf);
-unsigned int init_sndfile(char *infilename, short **buf);
+void cleanup_pcm(snd_pcm_t **pcm_handle);
+unsigned int init_sndfile(char *infilename);
 snd_pcm_t * init_pcm(unsigned int samplerate);
-void sound(snd_pcm_t *pcm_handle,short *buf);
+void play_sndfile(snd_pcm_t *pcm_handle);
+void sound(snd_pcm_t *pcm_handle, short *buf, int readcount);

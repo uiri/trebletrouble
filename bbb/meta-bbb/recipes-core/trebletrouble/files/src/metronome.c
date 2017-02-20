@@ -46,7 +46,6 @@ void beat(int delay)
 {
 	snd_pcm_t *pcm_handle;
 	char *infilename = "/srv/trebletrouble/metro_1.wav" ;
-	short *buf = NULL ;
 	struct timeval tv;
 	int dir;
 	int64_t d, corr, slp, cur, next;
@@ -55,14 +54,14 @@ void beat(int delay)
 	d = corr = 0;
 	dir = 0;
 	next = tv_to_u(start) + delay;
-	samplerate = init_sndfile(infilename,&buf);
+	samplerate = init_sndfile(infilename);
 	pcm_handle=init_pcm(samplerate);
 	while (1) {
 		gettimeofday(&tv, 0);
 		slp = next - tv_to_u(tv) - corr;
 		usleep(slp);
 		gettimeofday(&tv, 0);
- 		sound(pcm_handle,buf);
+		play_sndfile(pcm_handle);
 		fflush(stdout);
  		dir = !dir;
  		cur = tv_to_u(tv);
@@ -70,7 +69,7 @@ void beat(int delay)
 		corr = (corr + d) / 2;
 		next += delay;
  	}
-	cleanup_pcm(&pcm_handle,&buf);
+	cleanup_pcm(&pcm_handle);
 }
  
 void metronome(int bpm)
