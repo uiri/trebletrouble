@@ -52,4 +52,8 @@ tone_test: bin/tone_test
 
 record_test: bin/record_test
 
+screenshot.png: bin/display_test
+	./bin/display_test
+	pnmtopng screenshot.pnm > screenshot.png
+
 all:	app image
