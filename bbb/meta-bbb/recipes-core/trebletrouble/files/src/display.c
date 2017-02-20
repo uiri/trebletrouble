@@ -40,14 +40,11 @@ extern long SCREENSIZE;
 
 double FREQS[KEYS] = {27.5, 29.1352, 30.8677, 32.7032, 34.6478, 36.7081, 38.8909, 41.2034, 43.6535, 46.2493, 48.9994, 51.9131, 55.0, 58.2705, 61.7354, 65.4064, 69.2957, 73.4162, 77.7817, 82.4069, 87.3071, 92.4986, 97.9989, 103.826, 110.0, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563, 164.814, 174.614, 184.997, 195.998, 207.652, 220.0, 233.082, 246.942, 261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995, 415.305, 440.0, 466.164, 493.883, 523.251, 554.365, 587.330, 622.254, 659.255, 698.456, 739.989, 783.991, 830.609, 880.0, 932.328, 987.767, 1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760.0, 1864.66, 1975.53, 2093.0, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.0, 3729.31, 3951.07, 4186.01};
 
-char *NOTE[12] = {"/srv/trebletrouble/A.pnm", "/srv/trebletrouble/As.pnm", "/srv/trebletrouble/B.pnm", "/srv/trebletrouble/C.pnm", "/srv/trebletrouble/Cs.pnm", "/srv/trebletrouble/D.pnm", "/srv/trebletrouble/Ds.pnm", "/srv/trebletrouble/E.pnm", "/srv/trebletrouble/F.pnm", "/srv/trebletrouble/Fs.pnm", "/srv/trebletrouble/G.pnm", "/srv/trebletrouble/Gs.pnm"};
-
 char *OCTAVE[9] = {"/srv/trebletrouble/0.pnm", "/srv/trebletrouble/1.pnm", "/srv/trebletrouble/2.pnm", "/srv/trebletrouble/3.pnm", "/srv/trebletrouble/4.pnm", "/srv/trebletrouble/5.pnm", "/srv/trebletrouble/6.pnm", "/srv/trebletrouble/7.pnm", "/srv/trebletrouble/8.pnm"};
 
 char *TIME_STAMP[10] = {"","","/srv/trebletrouble/2_ts.pnm","/srv/trebletrouble/3_ts.pnm","/srv/trebletrouble/4_ts.pnm","/srv/trebletrouble/5_ts.pnm","","/srv/trebletrouble/7_ts.pnm","/srv/trebletrouble/8_ts.pnm", ""};
 
 /* Internal functions */
-
 int find_freq_recur(double freq, int i, int len) {
 	while (1) {
 		if (FREQS[i] <= freq) {
@@ -71,7 +68,9 @@ int get_xnote(int i) {
 }
 
 void draw_note(int i, int ynote, char* fbp, short colour, int time) {
-	/* draw lines if notes are above/below staff*/
+		
+	/* Fall code - to be deleted when new format is working
+	draw lines if notes are above/below staff
 	if(ynote < 61){
 		bitblit(L_PIC, fbp, get_xnote(i)-3, 45);
 	}
@@ -82,8 +81,8 @@ void draw_note(int i, int ynote, char* fbp, short colour, int time) {
 		bitblit(L_PIC, fbp, get_xnote(i)-3, 225);
 	}
 
-	/*if ynote on treble clef is above B - flip the stem*/
-	/*150 = 90+30+30*/
+	*if ynote on treble clef is above B - flip the stem
+	*150 = 90+30+30
 	if(ynote < 150){
 		if (time == 1)
 			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote-15, colour);
@@ -95,7 +94,7 @@ void draw_note(int i, int ynote, char* fbp, short colour, int time) {
 		else 
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-105, colour);
 
-	}
+	}*/
 }
 
 
@@ -107,14 +106,22 @@ void set_time_signature(int t1,int t2, char *fbp){
 }
 
 void draw_bar(char *fbp){
-	/*hard coding bar spaces for now
+	/* Fall code - to be deleted when new format is working
+	hard coded bar spaces for now
 	with xstart being defined in display.h, and there's 4 notes per bar
-	each bar will be 160 apart*/
+	each bar will be 160 apart
 	int y = 90;
 	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4)-5, y);
 	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*2)-5, y);
-	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*3)-5, y);
+	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*3)-5, y);*/
 }
+
+void draw_key(char *fbp, char key){
+	/*Drawing key Signature*/
+			
+	
+}
+
 /* External API */
 int find_freq(double freq) {
 	if (freq <= FREQS[0])
@@ -267,8 +274,6 @@ int get_ynote(int i) {
 	 * A0 is at index 0, so the value of actual will be 0 in that case.
 	 * We want to re-index it so that C0 is 0 which means adding 9 for the
 	 * calculations hence the subtraction after we have the value for ynote.
-	 * Modulo 12 accounts for where the index is within the octave. Now we
-	 * need to map these to letter notes:
 	 *	0, 1  -> C ( 0 )
 	 *	2, 3  -> D ( 1 )
 	 *	4     -> E ( 2 )
@@ -318,13 +323,43 @@ void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fb
 	}
 }
 
+void load_song(char *fbp){
+	unsigned char buf[2];
+	int i, ynote;
+
+	/*TESTING ONLY - Twinkle Twinkle
+	TODO: take out hard-coded variable below and add them params */
+	
+	/*name of the song*/
+	/*NumBar*/
+	int numBars = 4;
+	/*Key*/
+	char key = C_MAJ;
+	/*Time signature:
+	Timesig = Ts1-1 * 16 + Ts2-1 
+	so for 4/4= 51
+	so for 3/4= 35*/
+	unsigned char timesignature = 51;
+
+
+	/*Take ints from char away*/
+	int ts1 = (timesignature/16)+1;
+	int ts2 = (timesignature%16)+1;
+	set_time_signature(ts1, ts2, fbp);
+	/*Draw the key*/
+	draw_key(fbp, key);
+	/*Drawing the bars*/
+}
+
+/*Old load song file - to be deleted when new one is working 
 void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 	unsigned char buf[2];
 	int i, ynote;
 	
-	/* for now, assume song is is in time signature 4 4 - common time*/
+	//for now, assume song is is in time signature 4 4 - common time
 	set_time_signature(4,4, fbp);
-	/*draw bars on staff*/
+	
+	//draw bars on staff
 	draw_bar(fbp);
 
 	for (i = 0; i < NUM_NOTES && fread(buf, 1, 2, song) == 2; i++) {
@@ -332,4 +367,4 @@ void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
 		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
 		draw_note(i, ynote, fbp, BLACK, 1);
 	}
-}
+}*/

@@ -90,11 +90,19 @@ int main(int argc, char** argv){
 	
 	/*draw staff on screen*/
 	draw_staff(fbp);	
-	
-	/*variables for reading song*/
+		
+	/*Testing code for Winter
+	Testing the new Song format
+	load song only take fbp for now
+
+	TO-DO: Fix when new song format is done */
+	load_song(fbp);
+
+	/*Testing code for Fall
+	variables for reading song
 	FILE *song = fopen(SONG, "rb");
 	load_song(song, fbp);
-	fclose(song);
+	fclose(song);*/
 
 	/*writes the thing to a pnm hopefully --update: it does*/
 	screen_capture(fbp, "screenshot.pnm");
