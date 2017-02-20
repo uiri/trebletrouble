@@ -42,6 +42,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
 	int expected[NUM_NOTES];
 	int i;
+	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
 
@@ -58,19 +59,20 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	/* get_lcd_input(si); */
 
 	/* Allocate data buffer for whole note ?? */
-	wave = makeWave(duration);
 	/* This run has an intentional mistake in the song*/
 	for (i = 0; i < NUM_NOTES; i++) {
+		wave = makeWave(duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
 		if (recordWAV(wave,duration)) {
 			printf("Oh no! An error with the mic!\n");
 			continue;
 		}
-		compare_notes(expected[i], find_freq(get_pitch(wave)), i, fbp);
+		pitch = get_pitch(wave);
+		printf("Recognized pitch %f\n", pitch);
+		compare_notes(expected[i], find_freq(pitch), i, fbp);
+		waveDestroy(wave);
 	}
-
-	waveDestroy(wave);
 	/* get_lcd_input(si); */
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);
