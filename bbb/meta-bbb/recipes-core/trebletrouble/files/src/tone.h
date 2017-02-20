@@ -3,7 +3,11 @@
 #ifndef TONE_H_
 #define TONE_H_
 
+/* 44100 hertz, cd quality audio */
 #define SAMPLE_RATE 44100.0
+
+/* 1 for MONO, 2 for stereo */
+#define NUM_CHANS 1
 
 typedef struct WaveHeader{
 
@@ -40,7 +44,7 @@ typedef struct Wave {
 
 float get_pitch(Wave* wave, uint32_t duration);
 void waveAddSample(Wave* wave, const float* samples, int channel);
-void tone(Wave* wave, int duration);
+Wave* makeWave(int duration);
 void waveDestroy(Wave* wave);
 
 #endif
