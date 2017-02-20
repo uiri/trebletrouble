@@ -32,9 +32,10 @@
 #include <stdint.h>
 #include <signal.h>
 #include <time.h>
-#include <alsa/asoundlib.h>
 #include <sys/time.h>
+
 #include "simpleAlsa.h"
+
 struct timeval start,last;
  
 int64_t tv_to_u(struct timeval s)

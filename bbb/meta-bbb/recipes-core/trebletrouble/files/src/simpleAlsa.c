@@ -44,7 +44,7 @@
 #include <stdio.h>
 #include <sndfile.h>
 #include <math.h>
-
+#include "tone.h"
 
 #define PCM_DEVICE "default"
 /* WAV code */
@@ -156,5 +156,18 @@ void play_sndfile(snd_pcm_t *pcm_handle)
 		sound(pcm_handle, buf, readcount);
 	}
 	sf_seek(infile,0,SEEK_SET);
+	free(buf);
+}
+
+void play_wave(snd_pcm_t *pcm_handle, Wave* wav)
+{
+	int *buf, size, i;
+	size = frames * wav->header.numChannels * (wav->header.bitsPerSample / 8);
+	buf = malloc(size);
+	for (i = 0;i < wav->size;i++) {
+		memcpy(buf, wav->data + i, size);
+		i += size;
+		sound(pcm_handle, buf, size);
+	}
 	free(buf);
 }
