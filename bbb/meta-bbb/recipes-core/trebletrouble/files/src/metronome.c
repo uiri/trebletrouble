@@ -50,11 +50,13 @@ void beat(int delay)
 	struct timeval tv;
 	int dir;
 	int64_t d, corr, slp, cur, next;
+	unsigned int samplerate;
 	tv = start;
 	d = corr = 0;
 	dir = 0;
 	next = tv_to_u(start) + delay;
-	pcm_handle=init_pcm(infilename,&buf);
+	samplerate = init_sndfile(infilename,&buf);
+	pcm_handle=init_pcm(samplerate);
 	while (1) {
 		gettimeofday(&tv, 0);
 		slp = next - tv_to_u(tv) - corr;

@@ -58,20 +58,13 @@ static SNDFILE *infile = NULL;
 #define alloca(x) __builtin_alloca(x)
 #endif
 
-snd_pcm_t * init_pcm(char *infilename,short **buf)
+snd_pcm_t * init_pcm(unsigned int samplerate)
 {
-	SF_INFO sfinfo;
 	snd_pcm_hw_params_t *params;
 	snd_pcm_t *pcm_handle;
 	int dir;
 	unsigned int tmp,pcm;
 	dir = 0;
-	if ( access( infilename, F_OK) ==-1) {
-		printf("File doesn't exists");
-	} else{
-		/* printf("File does exist!"); */
-	}
-	infile = sf_open(infilename, SFM_READ, &sfinfo);
         /* Open the PCM device in playback mode */
 	if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
 				SND_PCM_STREAM_PLAYBACK, 0)) < 0)
@@ -100,7 +93,7 @@ snd_pcm_t * init_pcm(char *infilename,short **buf)
 
 	/* Set sample rate */
 	pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params,
-					      (unsigned int*)&sfinfo.samplerate,
+					      &samplerate,
 					      &dir);
 	if (pcm < 0)
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
@@ -114,11 +107,25 @@ snd_pcm_t * init_pcm(char *infilename,short **buf)
 	snd_pcm_hw_params_get_rate(params, &tmp, 0);
 	/* Write parameters */
 	snd_pcm_hw_params(pcm_handle, params);
-	/* Allocate buffer to hold single period */
 	snd_pcm_hw_params_get_period_size(params, &frames, &dir);
-	*buf = malloc(frames * sfinfo.channels * sizeof(short));
 	return pcm_handle;
 }
+
+unsigned int init_sndfile(char *infilename, short **buf)
+{
+	SF_INFO sfinfo;
+	if ( access( infilename, F_OK) ==-1) {
+		printf("File doesn't exists");
+	} else {
+		/* printf("File does exist!"); */
+	}
+	infile = sf_open(infilename, SFM_READ, &sfinfo);
+
+	/* Allocate buffer to hold single period */
+	*buf = malloc(frames * sfinfo.channels * sizeof(short));
+	return sfinfo.samplerate;
+}
+
 
 void cleanup_pcm(snd_pcm_t *pcm_handle,short *buf)
 {
