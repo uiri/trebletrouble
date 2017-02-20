@@ -5,14 +5,14 @@
 
 #include "tone.h"
 
+#define NUM_FREQS 11
+
 int main(void)
 {
         
-        int numFrequencies = 11;
-	int freqList[numFrequencies];
+	int freqList[NUM_FREQS];
 	int freq, i;
-	float durationList[numFrequencies];
-	float pitch[numFrequencies];
+	float durationList[NUM_FREQS];
 	float duration;
         
         /*freq = 880;
