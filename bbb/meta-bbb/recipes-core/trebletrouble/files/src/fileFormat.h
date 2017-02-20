@@ -1,40 +1,36 @@
 
 /* Different lengths of Notes*/
-#define SEMIBREVE       (1.0)
-#define MINIM           (1.0/2)
-#define CROTCHET        (1.0/4)
-#define QUAVER          (1.0/8)
-#define SEMIQUAVER      (1.0/16)
-#define DEMISEMIQUAVER  (1.0/32)
+#define SEMIBREVE       32
+#define MINIM           16
+#define CROTCHET        8
+#define QUAVER          4
+#define SEMIQUAVER      2
+#define DEMISEMIQUAVER  1
+
+#define TWINKLE_FILENAME "TwinkleTwinkle.bin"
 
 /* Struct for Note*/
 typedef struct {
 	/*Will be defined by a helper function*/
 	int duration;
-	double frequency;
+	float frequency;
 	int quantumvalue;
 	/*dotted will be 1 or 0*/
 	int dotted;
-	
-	
-}note;
+	}note;
 
 /* Evaluation for how many notes per bar to be done in code*/
 typedef struct{
-	
-	int NumNotes;
-	note * value;
+	int numNotes;
 }bar;
 
-
-
-
 typedef struct {
-	char name[50];
 	int bpm;
-	int NumBars;
-	char Key[1];
-	char timeSignature[3];
+	int numBars;
+	int numNotes;
+	char key;
+	unsigned char timeSignature;
+	char name[50];
 }songFormatHeader;
 
 typedef struct {
@@ -45,6 +41,6 @@ typedef struct {
 }song;
 
 
-int millisec(int bpm, double note);
+int millisec(int bpm, float note);
 
 void makeBin();
