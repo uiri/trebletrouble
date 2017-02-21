@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "simpleAlsa.h"
 #include "audio_recorder.h"
 
 /* added to fix implicit delcaration warnings for alloca in target files */
@@ -76,7 +77,7 @@ int recordWAV(Wave* wave, uint32_t duration)
     goto END_BUF;
   }
 
-  for (i = ((duration * 1000) / (hdr->sampleRate/ frames)); i > 0; i--) {
+  for (i = ((duration * 1000 * frames) / hdr->sampleRate); i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
     if (err >= 0) {
       err *= hdr -> numChannels * (hdr -> bitsPerSample / 8);

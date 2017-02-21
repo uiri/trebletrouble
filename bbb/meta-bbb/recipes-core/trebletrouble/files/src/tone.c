@@ -9,7 +9,7 @@
 
 #define FFT_SIZE 15
 
-#define BITS_PER_SAMPLE 32
+#define BITS_PER_SAMPLE 16
 
 /* This macro calculates the maximum value for a N-bit signed integer */
 #define MAX_INT(N) ((1<<(N-1))-1)
@@ -63,7 +63,7 @@ float get_pitch(Wave* wave) {
   waveData = calloc(wave->nSamples, sizeof(float));
 
   for (i = 0; i < wave->nSamples; i++) {
-    waveData[i] = ((float)((int*)wave->data)[i])
+    waveData[i] = ((float)((short*)wave->data)[i])
                   / (MAX_INT(wave->header.bitsPerSample));
   }
 
@@ -73,18 +73,13 @@ float get_pitch(Wave* wave) {
 
   max = 0;
   for (i = 0; i < (SAMPLE_RATE / 2); i++) {
-    /* check if there's any imaginary values */
-    /* waveval = sqrt(imaginary_wave[i] * imaginary_wave[i] + wave[i] * wave[i]); */
     if (waveData[i] > max) {
       max = waveData[i];
-	  /* if (samples[i] > max) { */
-	  /* 	  max = samples[i]; */
       max_index = i;
     }
-    /* } */
   }
   free(waveData);
-  pitch = ((float)max_index) * SAMPLE_RATE / (1 << (FFT_SIZE-1));
+  pitch = ((float)max_index) * SAMPLE_RATE / (1 << FFT_SIZE);
 
   return pitch;
 }
@@ -145,11 +140,10 @@ void waveAddSample(Wave* wave, float sample) {
 	sample32bit = (long long int) (MAX_INT(wave->header.bitsPerSample)*sample);
 	toLittleEndian(4, (void*) &sample32bit);
 	sample_bytes = (char*)&sample32bit;
-	wave->data[ wave->index + 0 ] = sample_bytes[0];
-	wave->data[ wave->index + 1 ] = sample_bytes[1];
-	wave->data[ wave->index + 2 ] = sample_bytes[2];
-	wave->data[ wave->index + 3 ] = sample_bytes[3];
-	wave->index += 4;
+	wave->data[ wave->index ++ ] = sample_bytes[0];
+	wave->data[ wave->index ++ ] = sample_bytes[1];
+	/* wave->data[ wave->index ++ ] = sample_bytes[2]; */
+	/* wave->data[ wave->index ++ ] = sample_bytes[3]; */
 }
 
 void waveDestroy( Wave* wave) {
