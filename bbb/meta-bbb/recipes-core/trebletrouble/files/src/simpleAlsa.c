@@ -56,21 +56,9 @@ static SNDFILE *infile = NULL;
 #define alloca(x) __builtin_alloca(x)
 #endif
 
-snd_pcm_t * init_pcm(unsigned int samplerate)
+void init_pcm_params(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params, unsigned int samplerate, int *dir)
 {
-	snd_pcm_hw_params_t *params;
-	snd_pcm_t *pcm_handle;
-	int dir;
-	unsigned int tmp,pcm;
-	dir = 0;
-        /* Open the PCM device in playback mode */
-	if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
-				SND_PCM_STREAM_PLAYBACK, 0)) < 0)
-		printf("ERROR: Can't open \"%s\" PCM device. %s\n",
-		       PCM_DEVICE, snd_strerror(pcm));
-	/* Allocate parameters object and fill it with default values*/
-	snd_pcm_hw_params_alloca(&params);
-	snd_pcm_hw_params_any(pcm_handle, params);
+	unsigned int pcm;
 	/* Set parameters */
 	pcm = snd_pcm_hw_params_set_access(pcm_handle, params,
 					   SND_PCM_ACCESS_RW_INTERLEAVED);
@@ -92,10 +80,28 @@ snd_pcm_t * init_pcm(unsigned int samplerate)
 	/* Set sample rate */
 	pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params,
 					      &samplerate,
-					      &dir);
+					      dir);
 	if (pcm < 0)
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
 
+}
+
+snd_pcm_t * init_pcm(unsigned int samplerate)
+{
+	snd_pcm_hw_params_t *params;
+	snd_pcm_t *pcm_handle;
+	int dir;
+	unsigned int tmp,pcm;
+	dir = 0;
+	/* Open the PCM device in playback mode */
+	if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
+				SND_PCM_STREAM_PLAYBACK, 0)) < 0)
+		printf("ERROR: Can't open \"%s\" PCM device. %s\n",
+		       PCM_DEVICE, snd_strerror(pcm));
+
+	snd_pcm_hw_params_alloca(&params);
+	snd_pcm_hw_params_any(pcm_handle, params);
+	init_pcm_params(pcm_handle, params, samplerate, &dir);
 	/* Resume information */
 	snd_pcm_hw_params_get_channels(params, &tmp);
 	if (tmp == 1)
