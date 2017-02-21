@@ -5,12 +5,12 @@
 
 
 
-int main(int argc, char** argv){
-	
-	song ttls;
-	note * notes;
-	createTwinkle();
-	notes=readTwinkle(&ttls);
+int main(int argc, char** argv)
+{
+	Song ttls;
+	Note * notes;
+	makeBin(TWINKLE_FILENAME);
+	notes=readTwinkle(&ttls,TWINKLE_FILENAME);
 	printHeader(&ttls);
 	printNote(notes);
 	//parseBar(&ttls,notes);

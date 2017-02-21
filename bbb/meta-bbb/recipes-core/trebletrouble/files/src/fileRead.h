@@ -1,47 +1,47 @@
 /*Helper Methods*/
 
-/*Creates TwinkleTwinkle.bin*/
-void createTwinkle();
+/*use makeBin() to create TwinkleTwinkle.bin*/
 
-/* Reads the TwinkleTwinkle.bin pupulates songheader, rferences firs bar in ttls
-   returns the first note of the song 
+
+/* Reads the TwinkleTwinkle.bin pupulates songheader, references the first bar in ttls
+   returns the first note of the Song 
    THIS METHOD MUST BE CALLED IN ORDER TO PARSE THE SONG TWINKLE TWINKLE
 */
-note * readTwinkle(song *ttls);
+Note * readTwinkle(Song *ttls, char * filename);
 
 /*Will print out all of the bars as well as notes*/
-void parseBar(song *ttls,note * notes);
-/*will free allocated memory call this function, once you are done playing the song*/
-void freeSong(song * ttls);
+void parseBar(Song *ttls,Note * notes);
+/*will free allocated memory call this function, once you are done playing the Song*/
+void freeSong(Song * ttls);
 
 /*Increments to the following bar in memory*/
-void incBar(song *ttls);
+void incBar(Song *ttls);
 
-/*Increments to the following note in memory*/
-void incNote(note * notes);
+/*Increments to the following Note in memory*/
+void incNote(Note * notes);
 
 
 
 //Note API
-/* Basically your getters for the note members*/
-int getDuration(note *notes);
-int getFrequency(note *notes);
-int getNoteValue(note *notes);
+/* Basically your getters for the Note members*/
+int getDuration(Note *notes);
+int getFrequency(Note *notes);
+int getNoteValue(Note *notes);
 
-/*This method does a print statement of what values your note is holding*/
-void printNote(note *notes);
+/*This method does a print statement of what values your Note is holding*/
+void printNote(Note *notes);
 
 //Header API
-/* Getters for your song members, mainly information about the song*/
-char * getName(song * ttls);
-int getBpm(song * ttls);
-int getNumBars(song * ttls);
-int getNumNotes(song * ttls);
-char getKey(song * ttls);
-unsigned char getTS(song * ttls);
+/* Getters for your Song members, mainly information about the Song*/
+char * getName(Song * ttls);
+int getBpm(Song * ttls);
+int getNumBars(Song * ttls);
+int getNumNotes(Song * ttls);
+char getKey(Song * ttls);
+unsigned char getTS(Song * ttls);
 
-/*This method does a print statement of what your song info is*/ 
-void printHeader(song * ttls);
+/*This method does a print statement of what your Song info is*/ 
+void printHeader(Song * ttls);
 
 
 

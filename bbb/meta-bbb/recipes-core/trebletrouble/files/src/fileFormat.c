@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include "fileFormat.h"
-void makeBin() {
+void makeBin(char * filename) {
 	
 	int i;
 	int j;
-	songFormatHeader sfh = {100,4,14,'C',51,"twinkle twinkle little star"};
-	//12 bars of twinkle twinkle 
+	SongFormatHeader sfh = {100,4,14,C_FLAT_MAJ,51,"twinkle twinkle little star"};
+	//4 bars of twinkle twinkle 
 	
-	bar allBars[4];
-	note allNotes [14];
+	Bar allBars[4];
+	Note allNotes [14];
 	
 	i=0;
 	j=0;
@@ -106,31 +106,31 @@ void makeBin() {
 	
 	
 
-	allBars[j]. numNotes =4;
+	allBars[j] =4;
 	j++;
 	
 
-	allBars[j]. numNotes =3;
+	allBars[j] =3;
 	j++;
 
 
-	allBars[j]. numNotes =4;
+	allBars[j] =4;
 	j++;
 
 
-	allBars[j]. numNotes =3;
+	allBars[j] =3;
 	
 	
 	/* Create the file */
-	FILE *fh = fopen (TWINKLE_FILENAME, "wb+");
-	fwrite(&sfh,sizeof(songFormatHeader),1,fh);
-	fwrite (allBars, sizeof (bar), 4, fh);
-        fwrite(allNotes,sizeof(note),14,fh);
+	FILE *fh = fopen (filename, "wb+");
+	fwrite(&sfh,sizeof(SongFormatHeader),1,fh);
+	fwrite (allBars, sizeof (Bar), 4, fh);
+        fwrite(allNotes,sizeof(Note),14,fh);
 	fclose(fh);
 }
 
-int millisec(int bpm, float note) {
-	return (int)(
+float millisec(int bpm, float note) {
+	return (float)(
      60      /* seconds */
      * 1000  /* milliseconds per second */
      * note
