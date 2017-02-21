@@ -39,40 +39,7 @@ int recordWAV(Wave* wave, uint32_t duration)
   snd_pcm_hw_params_any(handle, params);
 
   /* ### Set the desired hardware paramteteres. ### */
-
-  /* Interleaved mode */
-  err = snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
-  if (err) {
-    fprintf(stderr, "Error setting interleaved mode: %s\n", snd_strerror(err));
-    goto END_PCM;
-  }
-
-  /* Signed 16-bit litte-endian format */
-  if (hdr-> bitsPerSample == 16) {
-    err = snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16_LE);
-  } else {
-    err = snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_U8);
-  }
-
-  if (err) {
-    fprintf(stderr, "Error setting format: %s\n", snd_strerror(err)); 
-    goto END_PCM;
-  }
-
-  /* Two channels (stereo) */
-  err = snd_pcm_hw_params_set_channels(handle, params, hdr -> numChannels);
-  if (err) {
-    fprintf(stderr, "Error setting channels: %s\n", snd_strerror(err));
-    goto END_PCM;
-  }
-
-  /* 44100 bits/second sampling rate (CD quality) */
-  sampleRate = hdr->sampleRate;
-  err = snd_pcm_hw_params_set_rate_near(handle, params, &sampleRate, &dir);
-  if (err) {
-    fprintf(stderr, "Error setting sampling rate (%d): %s\n", sampleRate, snd_strerror(err));
-    goto END_PCM;
-  }
+  init_pcm_params(handle, params, hdr->sampleRate, &dir, hdr->numChannels);
 
   /* Set period size */
   err = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);

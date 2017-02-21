@@ -56,7 +56,8 @@ static SNDFILE *infile = NULL;
 #define alloca(x) __builtin_alloca(x)
 #endif
 
-void init_pcm_params(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params, unsigned int samplerate, int *dir)
+void init_pcm_params(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params,
+		     unsigned int samplerate, int *dir, int channels)
 {
 	unsigned int pcm;
 	/* Set parameters */
@@ -72,7 +73,7 @@ void init_pcm_params(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params, unsigne
 		printf("ERROR: Can't set format. %s\n", snd_strerror(pcm));
 
 	/* Setting channels */
-	pcm = snd_pcm_hw_params_set_channels(pcm_handle, params,1);
+	pcm = snd_pcm_hw_params_set_channels(pcm_handle, params,channels);
 	if (pcm < 0)
 		printf("ERROR: Can't set channels number. %s\n",
 		       snd_strerror(pcm));
@@ -101,7 +102,7 @@ snd_pcm_t * init_pcm(unsigned int samplerate)
 
 	snd_pcm_hw_params_alloca(&params);
 	snd_pcm_hw_params_any(pcm_handle, params);
-	init_pcm_params(pcm_handle, params, samplerate, &dir);
+	init_pcm_params(pcm_handle, params, samplerate, &dir, 1);
 	/* Resume information */
 	snd_pcm_hw_params_get_channels(params, &tmp);
 	if (tmp == 1)
