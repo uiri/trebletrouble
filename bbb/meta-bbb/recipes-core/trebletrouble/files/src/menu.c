@@ -77,7 +77,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 		compare_notes(expected[i], find_freq(pitch), i, fbp);
 		waveDestroy(wave);
 	}
-	cleanup_pcm(&pcmh);
+	cleanup_pcm(pcmh);
 	/* get_lcd_input(si); */
 	/* Reset notes to black */
 	clear_notes(0, expected, actual, fbp);

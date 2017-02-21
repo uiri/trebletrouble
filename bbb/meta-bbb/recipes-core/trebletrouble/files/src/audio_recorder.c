@@ -16,7 +16,6 @@ int recordWAV(Wave* wave, uint32_t duration)
   snd_pcm_t *handle;
   snd_pcm_hw_params_t *params;
   unsigned int sampleRate;
-  int dir;
   WaveHeader* hdr;
   snd_pcm_uframes_t frames;
   const char *device; /* Integrated system microphone */

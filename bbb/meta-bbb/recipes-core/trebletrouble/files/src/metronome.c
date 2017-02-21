@@ -70,7 +70,7 @@ void beat(int delay)
 		corr = (corr + d) / 2;
 		next += delay;
  	}
-	cleanup_pcm(&pcm_handle);
+	cleanup_pcm(pcm_handle);
 }
  
 void metronome(int bpm)
