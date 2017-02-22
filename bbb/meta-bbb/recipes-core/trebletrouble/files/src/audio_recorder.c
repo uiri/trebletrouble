@@ -12,8 +12,7 @@
 
 int recordWAV(Wave* wave, uint32_t duration)
 {
-  int err;
-  int size;
+  int err, i, size, dir;
   snd_pcm_t *handle;
   snd_pcm_hw_params_t *params;
   unsigned int sampleRate;
@@ -111,12 +110,9 @@ int recordWAV(Wave* wave, uint32_t duration)
     goto END_BUF;
   }
 
-  int totalFrames = 0;
-  int i = ((duration * 1000) / (hdr->sampleRate/ frames));
-  for(; i > 0; i--) {
+  for (i = ((duration * 1000) / (hdr->sampleRate/ frames)); i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
     if (err >= 0) {
-      totalFrames += err;
       err *= hdr -> numChannels * (hdr -> bitsPerSample / 8);
       memcpy(wave->data + wave->index, buffer, err);
       wave->index += err;
