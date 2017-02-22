@@ -11,6 +11,9 @@
 
 #define BITS_PER_SAMPLE 32
 
+/* This macro calculates the maximum value for a N-bit signed integer */
+#define MAX_INT(N) ((1<<(N-1))-1)
+
 /*
  * The audio format will be PCM.
  *  
@@ -60,7 +63,8 @@ float get_pitch(Wave* wave) {
   waveData = calloc(wave->nSamples, sizeof(float));
 
   for (i = 0; i < wave->nSamples; i++) {
-    waveData[i] = ((float)((int*)wave->data)[i]) / (1<<(wave->header.bitsPerSample-1));
+    waveData[i] = ((float)((int*)wave->data)[i])
+                  / (MAX_INT(wave->header.bitsPerSample));
   }
 
   initfft(FFT_SIZE);
@@ -138,7 +142,7 @@ void waveAddSample(Wave* wave, float sample) {
 	if (wave->index >= wave->size)
 		return;
 
-	sample32bit = (long long int) ((1<<(wave->header.bitsPerSample-1))*sample);
+	sample32bit = (long long int) (MAX_INT(wave->header.bitsPerSample)*sample);
 	toLittleEndian(4, (void*) &sample32bit);
 	sample_bytes = (char*)&sample32bit;
 	wave->data[ wave->index + 0 ] = sample_bytes[0];
