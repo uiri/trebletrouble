@@ -53,10 +53,10 @@ void parseBar(Song* ttls,Note * notes)
 //Free Song
 void freeSong(Song* ttls)
 {
-
+	
 	free(ttls->fbar);
 	free(ttls->sfh);
-
+	free(ttls);
 }
 
 
