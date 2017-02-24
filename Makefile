@@ -32,7 +32,7 @@ install-sdcard:
 install-sdcard-boot:
 	OETMP=bbb/build/tmp ./bbb/meta-bbb/scripts/copy_boot.sh $(SD)
 
-bin/display_test: package/src/display_test.c bin/display.o bin/gdisplay.o
+bin/display_test: package/src/display_test.c bin/display.o bin/gdisplay.o bin/fileFormat.o bin/fileRead.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 bin/tone_test: package/src/tone_test.c bin/tone.o bin/libfft.o
@@ -41,7 +41,7 @@ bin/tone_test: package/src/tone_test.c bin/tone.o bin/libfft.o
 bin/record_test: package/src/record_test.c bin/tone.o bin/libfft.o bin/alsa.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm -lasound -lsndfile
 
-display_test: bin/display_test 
+display_test: bin/display_test bin/format_test
 
 bin/format_test: package/src/fileFormat_test.c bin/fileFormat.o bin/fileRead.o
 	$(CC) $(CFLAGS) $^ -o $@

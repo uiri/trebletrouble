@@ -79,6 +79,6 @@ void colour_screen(char* fbp, short colour);
 void draw_staff(char* fbp);
 void compare_notes(int expected, int actual, int i, char* fbp);
 void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fbp);
-void load_song(char *fbp);
+void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature);
 
 #endif

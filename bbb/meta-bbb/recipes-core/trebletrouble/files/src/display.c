@@ -32,6 +32,8 @@
 
 #include "colours.h"
 #include "display.h"
+#include "fileFormat.h"
+#include "fileRead.h"
 
 extern int DISP_WIDTH;
 extern long SCREENSIZE;
@@ -106,9 +108,9 @@ void set_time_signature(int t1,int t2, char *fbp){
 	x_start = x_start+20;
 }
 
-void draw_bar(char *fbp, int numBars,int numPass){
+void draw_bar(char *fbp, int x_pos){
 	int y = 90;
-	bitblit(BAR, fbp, x_start+(XS*4*pass)-5,y);
+	bitblit(BAR, fbp, x_pos-5,y);
 	/*TODO: Delete when for loop has been written in load_notes*/
 	/*
 	for(;numBars>0;numBars--){
@@ -383,30 +385,22 @@ void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fb
 	}
 }
 
-void load_song(char *fbp){
-	unsigned char buf[2];
-	int i, ynote;
+void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature){
+//	unsigned char buf[2];
+//	int i, ynote;
 
 	/*TESTING ONLY - Twinkle Twinkle
-	TODO: take out hard-coded variable below and add them params */
-	
-	/*name of the song*/
-	/*NumBar*/
-	int numBars = 2;
-	/*Key*/
-	char key = E_FLAT_MAJ;
-	/*Time signature:
+	Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1 
 	so for 4/4= 51
 	so for 3/4= 35*/
-	unsigned char timesignature = 51;
 	
 	/*Draw the key, return the current x value*/	
 	x_start = draw_key(fbp, key);
 
 	/*Take ints from char away*/
-	int ts1 = (timesignature/16)+1;
-	int ts2 = (timesignature%16)+1;
+	int ts1 = (timeSignature/16)+1;
+	int ts2 = (timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
 
 }

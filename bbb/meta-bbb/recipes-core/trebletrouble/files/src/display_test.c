@@ -32,7 +32,10 @@
 
 #include "colours.h"
 #include "display.h"
+#include "fileFormat.h"
+#include "fileRead.h"
 
+#define TWINKLE "Twinkle-display.bin"
 extern long SCREENSIZE;
 extern int DISP_WIDTH;
 
@@ -92,11 +95,18 @@ int main(int argc, char** argv){
 	draw_staff(fbp);	
 		
 	/*Testing code for Winter
-	Testing the new Song format
-	load song only take fbp for now
+	Testing the new Song format*/
+	Song * ttls;
+	ttls = (Song *)malloc(sizeof(ttls));
+	Note * notes;
+	makeBin(TWINKLE);
+	notes = readTwinkle(ttls,TWINKLE);
 
-	TO-DO: Fix when new song format is done */
-	load_song(fbp);
+	printHeader(ttls);
+	printNote(notes);	
+	
+
+	load_song(fbp,getBpm(ttls),getNumBars(ttls),getNumNotes(ttls),getKey(ttls),getTimeSig(ttls));
 
 	/*Testing code for Fall
 	variables for reading song
@@ -109,6 +119,7 @@ int main(int argc, char** argv){
 	
 	/*~goodbye friends~*/
 	free(fbp);
+	freeSong(ttls);
 	return 0;
 
 }
