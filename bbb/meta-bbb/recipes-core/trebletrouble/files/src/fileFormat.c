@@ -4,7 +4,7 @@ void makeBin(char * filename) {
 	
 	int i;
 	int j;
-	SongFormatHeader sfh = {100,4,14,C_FLAT_MAJ,51,"twinkle twinkle little star"};
+	SongFormatHeader sfh = {100,4,14,C_MAJ,51,"twinkle twinkle little star"};
 	//4 bars of twinkle twinkle 
 	Bar allBars[4];
 	Note allNotes [14];
