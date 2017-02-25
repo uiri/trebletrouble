@@ -34,7 +34,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include "simpleAlsa.h"
+#include "alsa.h"
 
 struct timeval start,last;
  

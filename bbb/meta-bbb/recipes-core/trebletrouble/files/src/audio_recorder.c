@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "simpleAlsa.h"
+#include "alsa.h"
 #include "audio_recorder.h"
 
 /* added to fix implicit delcaration warnings for alloca in target files */
