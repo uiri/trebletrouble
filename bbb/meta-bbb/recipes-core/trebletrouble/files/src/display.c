@@ -31,9 +31,9 @@
 #include <string.h>
 
 #include "colours.h"
-#include "display.h"
 #include "fileFormat.h"
 #include "fileRead.h"
+#include "display.h"
 
 extern int DISP_WIDTH;
 extern long SCREENSIZE;
@@ -385,12 +385,12 @@ void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fb
 	}
 }
 
-void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature){
+void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature, Note * notes){
 //	unsigned char buf[2];
 //	int i, ynote;
 
-	/*TESTING ONLY - Twinkle Twinkle
-	Time signature:
+
+	/*Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1 
 	so for 4/4= 51
 	so for 3/4= 35*/
@@ -402,6 +402,9 @@ void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned
 	int ts1 = (timeSignature/16)+1;
 	int ts2 = (timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
+
+	/*Draw the notes*/
+	printNote(notes);
 
 }
 

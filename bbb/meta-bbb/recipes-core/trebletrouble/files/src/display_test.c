@@ -31,9 +31,9 @@
 #include <stdlib.h>
 
 #include "colours.h"
-#include "display.h"
 #include "fileFormat.h"
 #include "fileRead.h"
+#include "display.h"
 
 #define TWINKLE "Twinkle-display.bin"
 extern long SCREENSIZE;
@@ -106,7 +106,7 @@ int main(int argc, char** argv){
 	printNote(notes);	
 	
 
-	load_song(fbp,getBpm(ttls),getNumBars(ttls),getNumNotes(ttls),getKey(ttls),getTimeSig(ttls));
+	load_song(fbp,getBpm(ttls),getNumBars(ttls),getNumNotes(ttls),getKey(ttls),getTimeSig(ttls), notes);
 
 	/*Testing code for Fall
 	variables for reading song
