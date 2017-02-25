@@ -2,6 +2,7 @@
 #define DISPLAY_H_
 
 #include <stdio.h>
+#include "fileFormat.h"
 
 #define NOTE_PIC "/srv/trebletrouble/note.pnm"
 #define L_PIC "/srv/trebletrouble/note_l.pnm"
