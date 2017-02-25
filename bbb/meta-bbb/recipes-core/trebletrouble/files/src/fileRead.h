@@ -23,8 +23,8 @@ void incNote(Note * notes);
 
 //Note API
 /* Basically your getters for the Note members*/
-int getDuration(Note *notes);
-int getFrequency(Note *notes);
+float getDuration(Note *notes);
+float getFrequency(Note *notes);
 int getNoteValue(Note *notes);
 
 /*This method does a print statement of what values your Note is holding*/
