@@ -4,8 +4,7 @@
 #include <malloc.h>
 #include <stdio.h>
 
-#include "audio_recorder.h"
-#include "simpleAlsa.h"
+#include "alsa.h"
 
 #define REPEAT                 10  /* Do it 10 times */
 #define DURATION               1   /* Record for DURATION sec each iteration */

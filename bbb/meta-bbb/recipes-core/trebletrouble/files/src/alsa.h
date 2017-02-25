@@ -12,5 +12,6 @@ void init_pcm_params(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params,
 void play_sndfile(snd_pcm_t *pcm_handle);
 void play_wave(snd_pcm_t *pcm_handle, Wave* wav);
 void sound(snd_pcm_t *pcm_handle, short *buf, int readcount);
+int recordWAV(Wave* wave, uint32_t duration);
 
 #endif

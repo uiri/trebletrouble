@@ -36,7 +36,6 @@
 #include "input.h"
 #include "metronome.h"
 #include "alsa.h"
-#include "audio_recorder.h"
 
 void play_song_menu(char* fbp, ScreenInput *si) {
 	FILE *song;
