@@ -2,7 +2,6 @@
 
 /*use makeBin() to create TwinkleTwinkle.bin*/
 
-
 /* Reads the TwinkleTwinkle.bin pupulates songheader, references the first bar in ttls
    returns the first note of the Song 
    THIS METHOD MUST BE CALLED IN ORDER TO PARSE THE SONG TWINKLE TWINKLE
@@ -20,8 +19,6 @@ void incBar(Song *ttls);
 /*Increments to the following Note in memory*/
 void incNote(Note * notes);
 
-
-
 //Note API
 /* Basically your getters for the Note members*/
 int getDuration(Note *notes);
@@ -38,10 +35,7 @@ int getBpm(Song * ttls);
 int getNumBars(Song * ttls);
 int getNumNotes(Song * ttls);
 char getKey(Song * ttls);
-unsigned char getTS(Song * ttls);
+unsigned char getTimeSig(Song * ttls);
 
 /*This method does a print statement of what your Song info is*/ 
 void printHeader(Song * ttls);
-
-
-
