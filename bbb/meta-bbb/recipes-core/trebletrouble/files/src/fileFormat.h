@@ -1,4 +1,5 @@
-
+#ifndef FILEFORMAT_H_
+#define FILEFORMAT_H_
 /* Different lengths of Notes*/
 #define SEMIBREVE       32
 #define MINIM           16
@@ -71,3 +72,5 @@ typedef struct {
 float millisec(int bpm, float note);
 
 void makeBin(char * filename);
+
+#endif

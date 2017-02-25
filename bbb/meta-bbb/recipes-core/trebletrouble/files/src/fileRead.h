@@ -1,3 +1,5 @@
+#ifndef FILEREAD_H_
+#define FILEREAD_H_
 /*Helper Methods*/
 
 /*use makeBin() to create TwinkleTwinkle.bin*/
@@ -39,3 +41,5 @@ unsigned char getTimeSig(Song * ttls);
 
 /*This method does a print statement of what your Song info is*/ 
 void printHeader(Song * ttls);
+
+#endif
