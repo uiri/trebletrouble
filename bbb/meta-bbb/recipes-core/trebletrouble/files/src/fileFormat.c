@@ -13,25 +13,25 @@ void makeBin(char * filename) {
 	j=0;
 	//Fist Bar
 	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =261.6; 
+	allNotes[i].frequency =261.626; 
         allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
         allNotes[i].dotted = 0; 
 	i++;
         
         allNotes[i].quantumvalue = CROTCHET; 
-        allNotes[i].frequency =261.6; 
+        allNotes[i].frequency =261.626; 
         allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
         allNotes[i].dotted = 0; 
 	i++;
                 	
         allNotes[i].quantumvalue = CROTCHET; 
-        allNotes[i].frequency =392.0; 
+        allNotes[i].frequency =392.628; 
         allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
                 	
         allNotes[i].quantumvalue = CROTCHET; 
-        allNotes[i].frequency =392.0; 
+        allNotes[i].frequency =392.628; 
         allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
         allNotes[i].dotted = 0; 
 	i++;
@@ -50,7 +50,7 @@ void makeBin(char * filename) {
 	i++;
         
 	allNotes[i].quantumvalue = MINIM; 
-	allNotes[i].frequency =415.3; 
+	allNotes[i].frequency =415.305; 
 	allNotes[i].duration = millisec(sfh.bpm,MINIM);
 	allNotes[i].dotted = 0; 
 	i++;
@@ -58,25 +58,25 @@ void makeBin(char * filename) {
 	//Third Bar
 
 	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =349.2; 
+	allNotes[i].frequency =349.228; 
 	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
         
        	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =349.2; 
+	allNotes[i].frequency =349.228; 
 	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
         
 	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =329.63; 
+	allNotes[i].frequency =329.628; 
 	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
 
 	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =329.63; 
+	allNotes[i].frequency =329.628; 
 	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
@@ -84,19 +84,19 @@ void makeBin(char * filename) {
 	//Fourth Bar
 	
 	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =293.66; 
+	allNotes[i].frequency =293.665; 
 	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
 		
 	allNotes[i].quantumvalue = CROTCHET; 
-	allNotes[i].frequency =293.66; 
+	allNotes[i].frequency =293.665; 
 	allNotes[i].duration = millisec(sfh.bpm,CROTCHET);
 	allNotes[i].dotted = 0; 
 	i++;
 
 	allNotes[i].quantumvalue = MINIM; 
-	allNotes[i].frequency =261.6; 
+	allNotes[i].frequency =261.626; 
 	allNotes[i].duration = millisec(sfh.bpm,MINIM);
 	allNotes[i].dotted = 0; 
 	i++;
