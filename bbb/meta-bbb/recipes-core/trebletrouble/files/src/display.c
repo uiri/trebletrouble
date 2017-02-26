@@ -87,25 +87,25 @@ void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 	 150 = 90+30+30*/
 	if(ynote < 150){
 		if (value == 2)
-			bitblit_colour(S_N_F, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(S_N_F, fbp, get_xnote(i), ynote, colour);
 		else if (value == 4)
-			bitblit_colour(E_N_F, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(E_N_F, fbp, get_xnote(i), ynote, colour);
 		else if (value == 8) 
-			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote, colour);
 		else if (value == 16)
-			bitblit_colour(H_N_F, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(H_N_F, fbp, get_xnote(i), ynote, colour);
 		else
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
 
 	}else{
 		if (value == 2)
-			bitblit_colour(S_N, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(S_N, fbp, get_xnote(i), ynote-105, colour);
 		else if (value == 4)
-			bitblit_colour(E_N, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(E_N, fbp, get_xnote(i), ynote-105, colour);
 		else if (value == 8) 
-			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-105, colour);
 		else if (value == 16)
-			bitblit_colour(H_N, fbp, get_xnote(i), ynote-15, colour);
+			bitblit_colour(H_N, fbp, get_xnote(i), ynote-105, colour);
 		else
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
 	}
@@ -193,6 +193,56 @@ int draw_key(char *fbp, char key){
 	return p;
 }
 
+int find_octave_ynote(double freq){
+	if (freq <= FREQS[2])
+		return 0;/*0*/
+	else if (freq <= FREQS[14])
+		return 0;/*1*/
+	else if  (freq <= FREQS[26])
+		return 450;/*2*/
+	else if  (freq <= FREQS[38])
+		return 345;/*3*/ 
+	else if  (freq <= FREQS[50])
+		return 240;/*4*/
+	else if  (freq <= FREQS[62])
+		return 135;/*5*/
+	else if  (freq <= FREQS[74])
+		return 30;/*6*/
+	else if  (freq <= FREQS[86])
+		return 0;/*7*/
+
+	return 0; 
+}
+
+int find_note(int ind){
+/* 	0 - C
+	1 - D
+	2 - E
+	3 - F
+	4 - G
+	5 - A
+	6 - B */
+	int note;
+	/* for Flats */
+	note = (ind % 12);
+	if (note <= 1)
+		return 75; /*A*/
+	else if (note == 2)
+		return 90; /*B*/
+	else if (note <= 4)
+		return 0; /*C*/
+	else if (note <= 6)
+		return 15; /*D*/
+	else if (note == 7)
+		return 30; /*E*/
+	else if (note <= 9)
+		return 45; /*F*/
+	else if(note <= 11)
+		return 60; /*G*/
+
+	return 0;
+}
+
 /* External API */
 int find_freq(double freq) {
 	if (freq <= FREQS[0])
@@ -202,26 +252,6 @@ int find_freq(double freq) {
 	return find_freq_recur(freq, KEYS / 2, KEYS);
 }
 
-int find_octave(double freq){
-	if (freq <= FREQS[3])
-		return 0;
-	else if (freq <= FREQS[15])
-		return 1;
-	else if  (freq <= FREQS[27])
-		return 2; 
-	else if  (freq <= FREQS[39])
-		return 3; 
-	else if  (freq <= FREQS[51])
-		return 4;
-	else if  (freq <= FREQS[63])
-		return 5; 
-	else if  (freq <= FREQS[75])
-		return 6; 
-	else if  (freq <= FREQS[87])
-		return 7; 
-
-	return 8;  
-}
 
 int find_ind(char note, int oct){
 	int ind, v;
@@ -416,7 +446,7 @@ void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fb
 }
 
 void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature, Note * notes){
-	int i, ynote, time, note, octave;
+	int i, ynote, time, note, octave, lnote;
 	double freq;
 
 	/*Time signature:
@@ -432,6 +462,7 @@ void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned
 	int ts2 = (timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
 
+	
 	for (i = 0; i < numNotes; i++){
 		printf("Note %d\n", i);
 		time = getNoteValue(notes);
@@ -439,9 +470,11 @@ void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned
 		printf("   Freq: %f\n", freq);
 		
 		note = find_freq(freq);
-		octave = find_octave(freq);
-				
-		ynote =;
+		octave = find_octave_ynote(freq);
+		lnote = find_note(note);
+
+		/*ynote =(240 - (((octave-4)*105)+(((lnote+7)%7)*15)));*/
+		ynote  = octave - lnote;
 		printf("  ynote= %d \n note:%d, octave:%d\n", ynote, note, octave);
 		
 		draw_note(i, ynote, fbp, BLACK, time);
