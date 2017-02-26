@@ -102,8 +102,8 @@ int main(int argc, char** argv){
 	makeBin(TWINKLE);
 	notes = readTwinkle(ttls,TWINKLE);
 
-	printHeader(ttls);
-	printNote(notes);	
+//	printHeader(ttls);
+//	printNote(notes);	
 	
 
 	load_song(fbp,getBpm(ttls),getNumBars(ttls),getNumNotes(ttls),getKey(ttls),getTimeSig(ttls), notes);

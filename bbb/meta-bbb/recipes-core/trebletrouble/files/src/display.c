@@ -70,11 +70,9 @@ int get_xnote(int i) {
 	   each subsequent note is 34 px further */
 	return x_start + i*XS;
 }
+			
+void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 
-void draw_note(int i, int ynote, char* fbp, short colour, int time) {
-		
-	/* Fall code - to be deleted when new format is working
-	draw lines if notes are above/below staff
 	if(ynote < 61){
 		bitblit(L_PIC, fbp, get_xnote(i)-3, 45);
 	}
@@ -85,20 +83,32 @@ void draw_note(int i, int ynote, char* fbp, short colour, int time) {
 		bitblit(L_PIC, fbp, get_xnote(i)-3, 225);
 	}
 
-	*if ynote on treble clef is above B - flip the stem
-	*150 = 90+30+30
+	/*if ynote on treble clef is above B - flip the stem
+	 150 = 90+30+30*/
 	if(ynote < 150){
-		if (time == 1)
+		if (value == 2)
+			bitblit_colour(S_N_F, fbp, get_xnote(i), ynote-15, colour);
+		else if (value == 4)
+			bitblit_colour(E_N_F, fbp, get_xnote(i), ynote-15, colour);
+		else if (value == 8) 
 			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote-15, colour);
-		else 
+		else if (value == 16)
+			bitblit_colour(H_N_F, fbp, get_xnote(i), ynote-15, colour);
+		else
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
-	}else{
-		if (time == 1)
-			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-105, colour);
-		else 
-			bitblit_colour(W_N, fbp, get_xnote(i), ynote-105, colour);
 
-	}*/
+	}else{
+		if (value == 2)
+			bitblit_colour(S_N, fbp, get_xnote(i), ynote-15, colour);
+		else if (value == 4)
+			bitblit_colour(E_N, fbp, get_xnote(i), ynote-15, colour);
+		else if (value == 8) 
+			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-15, colour);
+		else if (value == 16)
+			bitblit_colour(H_N, fbp, get_xnote(i), ynote-15, colour);
+		else
+			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
+	}
 }
 
 void set_time_signature(int t1,int t2, char *fbp){
@@ -109,8 +119,7 @@ void set_time_signature(int t1,int t2, char *fbp){
 }
 
 void draw_bar(char *fbp, int x_pos){
-	int y = 90;
-	bitblit(BAR, fbp, x_pos-5,y);
+	bitblit(BAR, fbp, x_pos-5,90);
 	/*TODO: Delete when for loop has been written in load_notes*/
 	/*
 	for(;numBars>0;numBars--){
@@ -191,6 +200,27 @@ int find_freq(double freq) {
 	if (FREQS[KEYS-1] <= freq)
 		return KEYS-1;
 	return find_freq_recur(freq, KEYS / 2, KEYS);
+}
+
+int find_octave(double freq){
+	if (freq <= FREQS[3])
+		return 0;
+	else if (freq <= FREQS[15])
+		return 1;
+	else if  (freq <= FREQS[27])
+		return 2; 
+	else if  (freq <= FREQS[39])
+		return 3; 
+	else if  (freq <= FREQS[51])
+		return 4;
+	else if  (freq <= FREQS[63])
+		return 5; 
+	else if  (freq <= FREQS[75])
+		return 6; 
+	else if  (freq <= FREQS[87])
+		return 7; 
+
+	return 8;  
 }
 
 int find_ind(char note, int oct){
@@ -386,9 +416,8 @@ void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fb
 }
 
 void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature, Note * notes){
-//	unsigned char buf[2];
-//	int i, ynote;
-
+	int i, ynote, time, note, octave;
+	double freq;
 
 	/*Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1 
@@ -403,9 +432,22 @@ void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned
 	int ts2 = (timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
 
-	/*Draw the notes*/
-	printNote(notes);
-
+	for (i = 0; i < numNotes; i++){
+		printf("Note %d\n", i);
+		time = getNoteValue(notes);
+		freq = getFrequency(notes);
+		printf("   Freq: %f\n", freq);
+		
+		note = find_freq(freq);
+		octave = find_octave(freq);
+				
+		ynote =;
+		printf("  ynote= %d \n note:%d, octave:%d\n", ynote, note, octave);
+		
+		draw_note(i, ynote, fbp, BLACK, time);
+		printf("   value: %d\n", time);
+		notes++;
+	}	
 }
 
 /*Old load song file - to be deleted when new one is working 
