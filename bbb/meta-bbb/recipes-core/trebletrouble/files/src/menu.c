@@ -45,8 +45,8 @@
 void play_song_menu(char* fbp, ScreenInput *si) {
 /*	FILE *song;
 	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
-	int expected[NUM_NOTES];
-	int i;*/
+	int expected[NUM_NOTES];*/
+	int i;
 	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
@@ -65,8 +65,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	notes = readTwinkle(ttls, TWINKLE);
 
 	load_song(fbp, notes, ttls);
-	freesong(ttls);
-	get_lcd_inputs(si);	
+	freeSong(ttls);
 
 	/*old song format code below*/
 	/*variables for reading song*/
@@ -78,7 +77,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 
 	pcmh = init_pcm(SAMPLE_RATE);
 
-	for (i = 0; i < NUM_NOTES; i++) {
+	for (i = 0; i < ttls->sfh->numNotes; i++) {
 		wave = makeWave(duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
@@ -89,7 +88,7 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 		play_wave(pcmh, wave);
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
-		compare_notes(expected[i], find_freq(pitch), i, fbp);
+		/*compare_notes(expected[i], find_freq(pitch), i, fbp);*/
 		waveDestroy(wave);
 	}
 
