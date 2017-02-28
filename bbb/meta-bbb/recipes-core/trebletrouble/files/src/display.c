@@ -86,32 +86,32 @@ void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 
 	/*if ynote on treble clef is above B - flip the stem
 	 150 = 90+30+30*/
-	if(ynote < 150){
-		if (value == 2){
+	if(ynote < 150) {
+		if (value == 2) {
 			bitblit_colour(S_N_F, fbp, get_xnote(i), ynote, colour);
-		}else if (value == 4){
+		} else if (value == 4) {
 			bitblit_colour(E_N_F, fbp, get_xnote(i), ynote, colour);
-		}else if (value == 8){
+		} else if (value == 8) {
 			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote, colour);
-		}else if (value == 16){
+		} else if (value == 16) {
 			bitblit_colour(H_N_F, fbp, get_xnote(i), ynote, colour);
 			NOTESP += NSP;
-		}else{
+		} else {
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
 			NOTESP += NSP*4;
 		}
 
-	}else{
-		if (value == 2){
+	} else {
+		if (value == 2) {
 			bitblit_colour(S_N, fbp, get_xnote(i), ynote-105, colour);
-		}else if (value == 4){
+		} else if (value == 4) {
 			bitblit_colour(E_N, fbp, get_xnote(i), ynote-105, colour);
-		}else if (value == 8){
+		} else if (value == 8) {
 			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-105, colour);
-		}else if (value == 16){
+		} else if (value == 16) {
 			bitblit_colour(H_N, fbp, get_xnote(i), ynote-105, colour);
 			NOTESP += NSP;
-		}else{
+		} else {
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
 			NOTESP += NSP*4;
 		}
@@ -469,10 +469,7 @@ void load_song(char *fbp, Note * notes, Song * song){
 	int ts1 = (song->sfh->timeSignature/16)+1;
 	int ts2 = (song->sfh->timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
-	printf("w numNotes:%d\n", song->sfh->numNotes);
-	printf("j numBars:%d\n", song->sfh->numBars);
-	printf("i fbar%d\n",*fbar);
-	
+
 	for(j = 0, i=0; j < song->sfh->numNotes; j++){
 		
 		if ( i == *fbar){
