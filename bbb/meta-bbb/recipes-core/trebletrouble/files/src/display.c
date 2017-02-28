@@ -440,9 +440,9 @@ void compare_notes(int expected, int actual, int i, char* fbp) {
 	draw_note(i, get_ynote(actual), fbp, colour, 1);
 }
 
-void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fbp) {
+void clear_notes(int i, int *expected, int *actual, char* fbp, int len) {
 	int actual_ynote;
-	for (; i < NUM_NOTES; i++) {
+	for (; i < len; i++) {
 		actual_ynote = get_ynote(actual[i]);
 		draw_note(i, actual_ynote, fbp, WHITE, 1);
 		if (!(actual_ynote%30))
