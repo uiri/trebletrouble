@@ -97,29 +97,19 @@ int main(int argc, char** argv){
 	/*Testing code for Winter
 	Testing the new Song format*/
 	Song * ttls;
-	ttls = (Song *)malloc(sizeof(ttls));
+	ttls = malloc(sizeof(ttls));
 	Note * notes;
 	makeBin(TWINKLE);
 	notes = readTwinkle(ttls,TWINKLE);
 
-//	printHeader(ttls);
-//	printNote(notes);	
-	
-
-	load_song(fbp,getBpm(ttls),getNumBars(ttls),getNumNotes(ttls),getKey(ttls),getTimeSig(ttls), notes);
-
-	/*Testing code for Fall
-	variables for reading song
-	FILE *song = fopen(SONG, "rb");
-	load_song(song, fbp);
-	fclose(song);*/
+	load_song(fbp, notes, ttls);
 
 	/*writes the thing to a pnm hopefully --update: it does*/
 	screen_capture(fbp, "screenshot.pnm");
 	
 	/*~goodbye friends~*/
 	free(fbp);
-	freeSong(ttls);
+	freeSong(ttls); 
 	return 0;
 
 }

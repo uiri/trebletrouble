@@ -10,7 +10,7 @@ bin/gui.o: src/gui.c
 bin/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-bin/trebletrouble: src/ugfx/.build/libugfx.a src/app.c bin/display.o bin/input.o bin/alsa.o bin/metronome.o bin/menu.o bin/gui.o bin/tone.o bin/libfft.o
+bin/trebletrouble: src/ugfx/.build/libugfx.a src/app.c bin/display.o bin/input.o bin/alsa.o bin/metronome.o bin/menu.o bin/gui.o bin/tone.o bin/libfft.o bin/fileRead.o bin/fileFormat.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) $(INCLUDES)
 
 src/ugfx/.build/libugfx.a:

@@ -37,8 +37,9 @@
 
 extern int DISP_WIDTH;
 extern long SCREENSIZE;
-/*x_start for new song format*/
+
 static int x_start;
+static int BARSP;
 
 #define KEYS 88
 
@@ -68,11 +69,10 @@ int find_freq_recur(double freq, int i, int len) {
 int get_xnote(int i) {
 	/* First note is at 145,
 	   each subsequent note is 34 px further */
-	return x_start + i*XS;
+	return x_start + i*XS + BARSP;
 }
 			
 void draw_note(int i, int ynote, char* fbp, short colour, int value) {
-
 	if(ynote < 61){
 		bitblit(L_PIC, fbp, get_xnote(i)-3, 45);
 	}
@@ -115,25 +115,12 @@ void set_time_signature(int t1,int t2, char *fbp){
 	int y = 90;
 	bitblit(TIME_STAMP[t1], fbp, x_start, y);
 	bitblit(TIME_STAMP[t2], fbp, x_start, y+60);
-	x_start = x_start+20;
+	x_start = x_start+25;
 }
 
 void draw_bar(char *fbp, int x_pos){
-	bitblit(BAR, fbp, x_pos-5,90);
-	/*TODO: Delete when for loop has been written in load_notes*/
-	/*
-	for(;numBars>0;numBars--){
-		bitblit(BAR, fbp, x_start+(XS*4*pass)-5, y);
-		pass++;	
-	}*/
-	/* Fall code - to be deleted when new format is working
-	hard coded bar spaces for now
-	with xstart being defined in display.h, and there's 4 notes per bar
-	each bar will be 160 apart
-	int y = 90;
-	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4)-5, y);
-	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*2)-5, y);
-	bitblit("/srv/trebletrouble/bar.pnm", fbp, XSTART+(XS*4*3)-5, y);*/
+	BARSP+= 15;
+	bitblit(BAR, fbp,get_xnote(x_pos)-10,90);
 }
 
 int draw_key(char *fbp, char key){
@@ -147,22 +134,28 @@ int draw_key(char *fbp, char key){
 		if (0x40 & key){
 			bitblit(SHARP, fbp, p, y-15);
 			p = p+m;
-		}if(0x20 & key){
+		}
+		if(0x20 & key){
 			bitblit(SHARP, fbp, p, y+30);
 			p = p+m;
-		}if(0x10 & key){
+		}
+		if(0x10 & key){
 			bitblit(SHARP, fbp, p, y-30);
 			p = p+m;
-		}if(0x08 & key){
+		}	
+		if(0x08 & key){
 			bitblit(SHARP, fbp, p, y+15);
 			p = p+m;
-		}if(0x04 & key){
+		}
+		if(0x04 & key){
 			bitblit(SHARP, fbp, p, y+60);
 			p = p+m;
-		}if(0x02 & key){
+		}
+		if(0x02 & key){
 			bitblit(SHARP, fbp, p, y);
 			p = p+m;
-		}if(0x01 & key){
+		}
+		if(0x01 & key){
 			bitblit(SHARP, fbp, p, y+45);
 			p = p+m;
 		}
@@ -170,22 +163,28 @@ int draw_key(char *fbp, char key){
 		if (0x40 & key){
 			bitblit(FLAT, fbp, p, y+45);
 			p = p+m;
-		}if(0x20 & key){
+		}
+		if(0x20 & key){
 			bitblit(FLAT, fbp, p, y);
 			p = p+m;
-		}if(0x10 & key){
+		}
+		if(0x10 & key){
 			bitblit(FLAT, fbp, p, y+60);
 			p = p+m;
-		}if(0x08 & key){
+		}
+		if(0x08 & key){
 			bitblit(FLAT, fbp, p, y+15);
 			p = p+m;
-		}if(0x04 & key){
+		}
+		if(0x04 & key){
 			bitblit(FLAT, fbp, p, y+75);
 			p = p+m;
-		}if(0x02 & key){
+		}	
+		if(0x02 & key){
 			bitblit(FLAT, fbp, p, y+30);
 			p = p+m;
-		}if(0x01 & key){
+		}
+		if(0x01 & key){
 			bitblit(FLAT, fbp, p, y+90);
 			p = p+m;
 		}
@@ -445,58 +444,50 @@ void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fb
 	}
 }
 
-void load_song(char *fbp, int bpm, int numBars, int numNotes, char key, unsigned char timeSignature, Note * notes){
-	int i, ynote, time, note, octave, lnote;
+void load_song(char *fbp, Note * notes, Song * song){
+	int i, j,ynote, time, note, octave, lnote, *fbar;
 	double freq;
 
+	fbar = song->fbar;
 	/*Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1 
 	so for 4/4= 51
 	so for 3/4= 35*/
 	
 	/*Draw the key, return the current x value*/	
-	x_start = draw_key(fbp, key);
-
+	x_start = draw_key(fbp, song->sfh->key);
+	BARSP = 0;
 	/*Take ints from char away*/
-	int ts1 = (timeSignature/16)+1;
-	int ts2 = (timeSignature%16)+1;
+	int ts1 = (song->sfh->timeSignature/16)+1;
+	int ts2 = (song->sfh->timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
-
+	printf("w numNotes:%d\n", song->sfh->numNotes);
+	printf("j numBars:%d\n", song->sfh->numBars);
+	printf("i fbar%d\n",*fbar);
 	
-	for (i = 0; i < numNotes; i++){
-		printf("Note %d\n", i);
+	for(j = 0, i=0; j < song->sfh->numNotes; j++){
+		
+		if ( i == *fbar){
+			draw_bar(fbp, j);
+			fbar++;
+			i = 0;
+		}
+
+		printf("Note %d\n", j);
 		time = getNoteValue(notes);
 		freq = getFrequency(notes);
 		printf("   Freq: %f\n", freq);
-		
 		note = find_freq(freq);
 		octave = find_octave_ynote(freq);
 		lnote = find_note(note);
 
-		/*ynote =(240 - (((octave-4)*105)+(((lnote+7)%7)*15)));*/
 		ynote  = octave - lnote;
-		printf("  ynote= %d \n note:%d, octave:%d\n", ynote, note, octave);
-		
-		draw_note(i, ynote, fbp, BLACK, time);
+
+		draw_note(j, ynote, fbp, BLACK, time);
 		printf("   value: %d\n", time);
 		notes++;
+		i++;
+		
 	}	
+
 }
-
-/*Old load song file - to be deleted when new one is working 
-void load_song(FILE *song, char *fbp, int expected[NUM_NOTES]) {
-	unsigned char buf[2];
-	int i, ynote;
-	
-	//for now, assume song is is in time signature 4 4 - common time
-	set_time_signature(4,4, fbp);
-	
-	//draw bars on staff
-	draw_bar(fbp);
-
-	for (i = 0; i < NUM_NOTES && fread(buf, 1, 2, song) == 2; i++) {
-		expected[i] = find_ind(buf[0], buf[1] - '0');
-		ynote =(240 - (((buf[1]-'4') * 105) + (((buf[0]-'C'+7)%7)*15)));
-		draw_note(i, ynote, fbp, BLACK, 1);
-	}
-}*/
