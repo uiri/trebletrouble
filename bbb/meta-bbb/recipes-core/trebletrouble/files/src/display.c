@@ -402,6 +402,8 @@ int get_ynote(int i) {
 	 * A0 is at index 0, so the value of actual will be 0 in that case.
 	 * We want to re-index it so that C0 is 0 which means adding 9 for the
 	 * calculations hence the subtraction after we have the value for ynote.
+	 * Modulo 12 accounts for where the index is within the octave. Now we
+	 * need to map these to letter notes:
 	 *	0, 1  -> C ( 0 )
 	 *	2, 3  -> D ( 1 )
 	 *	4     -> E ( 2 )
