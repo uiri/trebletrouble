@@ -47,7 +47,7 @@ typedef struct {
 	int quantumvalue;
 	/*dotted will be 1 or 0*/
 	int dotted;
-	}Note;
+} Note;
 
 /* Evaluation for how many notes per bar to be done in code*/
 typedef int Bar;
@@ -59,14 +59,15 @@ typedef struct {
 	char key;
 	unsigned char timeSignature;
 	char name[50];
-}SongFormatHeader;
+} SongFormatHeader;
 
 typedef struct {
 
 	SongFormatHeader * sfh;
 	Bar * fbar;
+	int* expected;
 	
-}Song;
+} Song;
 
 
 float millisec(int bpm, float note);

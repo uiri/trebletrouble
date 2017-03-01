@@ -42,15 +42,16 @@
 
 #define TWINKLE "Twinkle-display.bin"
 
-void play_song_menu(char* fbp, ScreenInput *si) {
-/*	FILE *song;
-	int actual[NUM_NOTES] = {39, 41, 43, 44, 46, 48, 49, 51, 53, 55, 56, 58, 60, 62, 63, 65};
-	int expected[NUM_NOTES];*/
+void play_song_menu(char* fbp, ScreenInput *si)
+{
+	FILE* songfile;
 	int i;
 	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
 	snd_pcm_t *pcmh;
+	Song* song;
+	Note* notes;
 	
 	colour_screen(fbp, WHITE);
 	
@@ -58,26 +59,18 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 	draw_staff(fbp);
 	
 	/*Code for new song format*/
-	Song * ttls;
-	ttls = malloc(sizeof(ttls));
-	Note * notes;
+	song = malloc(sizeof(song));
+
+	/* Need to change this to proper file I/O */
+	/* songfile = fopen(SONG, "rb");*/
 	makeBin(TWINKLE);
-	notes = readTwinkle(ttls, TWINKLE);
-
-	load_song(fbp, notes, ttls);
-	freeSong(ttls);
-
-	/*old song format code below*/
-	/*variables for reading song*/
-/*	song = fopen(SONG, "rb");
-	
-	load_song(song, fbp, expected);
-	fclose(song);
-	 get_lcd_input(si); */
+	notes = readTwinkle(song, TWINKLE);
+	/*fclose(songfile);*/
+	load_song(fbp, notes, song);
 
 	pcmh = init_pcm(SAMPLE_RATE);
 
-	for (i = 0; i < ttls->sfh->numNotes; i++) {
+	for (i = 0; i < song->sfh->numNotes; i++) {
 		wave = makeWave(duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
@@ -85,34 +78,25 @@ void play_song_menu(char* fbp, ScreenInput *si) {
 			printf("Oh no! An error with the mic!\n");
 			continue;
 		}
+
 		play_wave(pcmh, wave);
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
-		/*compare_notes(expected[i], find_freq(pitch), i, fbp);*/
+		/* need to store the found freqs in actuals or something */
+		compare_notes(song->expected[i], find_freq(pitch), i, fbp);
 		waveDestroy(wave);
 	}
 
 	cleanup_pcm(pcmh);
 
-	/* Allocate data buffer for whole note ?? */
-	/* This run has an intentional mistake in the song*/
-	/*	for (i = 0; i < NUM_NOTES; i++) {
-		compare_notes(expected[i], actual[i], i, fbp);
-		sleep(1);
-	}*/
-
-	/* get_lcd_input(si); */
 	/* Reset notes to black */
-/*	clear_notes(0, expected, actual, fbp);*/
-	/* get_lcd_input(si); */
-	/* This run is perfect ;) */
-/*	for (i = 0; i < NUM_NOTES; i++) {
-		compare_notes(expected[i], expected[i], i, fbp);
-		sleep(1);
-	}*/
+	/* Need to fix this. Length needs to come from somewhere... */
+	/*clear_notes(0, song->expected, actual, fbp, len);*/
+	freeSong(song);
 }
 
-void metronome_menu(char* fbp, ScreenInput *si) {
+void metronome_menu(char* fbp, ScreenInput *si)
+{
 	colour_screen(fbp, GREEN);
 	metronome(100);
 }

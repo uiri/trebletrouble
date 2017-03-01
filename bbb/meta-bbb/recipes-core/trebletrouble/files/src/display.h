@@ -10,7 +10,6 @@
 #define FLAT "/srv/trebletrouble/flat.pnm"
 #define SHARP "/srv/trebletrouble/sharp.pnm" 
 #define BAR "/srv/trebletrouble/bar.pnm"
-#define NUM_NOTES 16
 
 /*Below are pictures for the notes and rests:
 _F for flipped, _N for note and _R for rest
@@ -79,7 +78,7 @@ void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);
 void compare_notes(int expected, int actual, int i, char* fbp);
-void clear_notes(int i, int expected[NUM_NOTES], int actual[NUM_NOTES], char* fbp);
+void clear_notes(int i, int *expected, int *actual, char* fbp, int len);
 void load_song(char *fbp, Note * notes, Song * song);
 
 #endif
