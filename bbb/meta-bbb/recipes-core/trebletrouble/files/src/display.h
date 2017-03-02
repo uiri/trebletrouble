@@ -71,6 +71,7 @@ S: Sixteenth */
 
 int find_freq(double freq);
 int find_ind(char note, int oct);
+int normalize_freq(int index);
 
 int bitblit(char* filename, char* fbp, int x, int y);
 int bitblit_colour(char* filename, char* fbp, int x, int y, short colour);
