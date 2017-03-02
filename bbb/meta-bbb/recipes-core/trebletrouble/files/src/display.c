@@ -201,56 +201,6 @@ int draw_key(char *fbp, char key){
 	return p;
 }
 
-int find_octave_ynote(double freq){
-	if (freq <= FREQS[CALC_OCTAVE_BOUND(0)])
-		return 481;
-	else if (freq <= FREQS[CALC_OCTAVE_BOUND(1)])
-		return 481;
-	else if  (freq <= FREQS[CALC_OCTAVE_BOUND(2)])
-		return 450;
-	else if  (freq <= FREQS[CALC_OCTAVE_BOUND(3)])
-		return 345;
-	else if  (freq <= FREQS[CALC_OCTAVE_BOUND(4)])
-		return 240;
-	else if  (freq <= FREQS[CALC_OCTAVE_BOUND(5)])
-		return 135;
-	else if  (freq <= FREQS[CALC_OCTAVE_BOUND(6)])
-		return 30;
-	else if  (freq <= FREQS[CALC_OCTAVE_BOUND(7)])
-		return -75;
-
-	return 0; 
-}
-
-int find_note(int ind){
-/* 	0 - C
-	1 - D
-	2 - E
-	3 - F
-	4 - G
-	5 - A
-	6 - B */
-	int note;
-	/* for Flats */
-	note = (ind % 12);
-	if (note <= 1)
-		return 75; /*A*/
-	else if (note == 2)
-		return 90; /*B*/
-	else if (note <= 4)
-		return 0; /*C*/
-	else if (note <= 6)
-		return 15; /*D*/
-	else if (note == 7)
-		return 30; /*E*/
-	else if (note <= 9)
-		return 45; /*F*/
-	else if(note <= 11)
-		return 60; /*G*/
-
-	return 0;
-}
-
 /* External API */
 int find_freq(double freq) {
 	if (freq <= FREQS[0])
@@ -471,7 +421,7 @@ void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int valu
 }
 
 void load_song(char *fbp, Note * notes, Song * song){
-	int i, j,ynote, time, note, octave, lnote, *fbar;
+	int i, j,ynote, time, note, *fbar;
 	double freq;
 
 	fbar = song->fbar;
@@ -482,6 +432,7 @@ void load_song(char *fbp, Note * notes, Song * song){
 	
 	/*Draw the key, return the current x value*/	
 	x_start = draw_key(fbp, song->sfh->key);
+
 	BARSP = 0;
 	NOTESP = 0;
 	/*Take ints from char away*/
@@ -497,21 +448,21 @@ void load_song(char *fbp, Note * notes, Song * song){
 			i = 0;
 		}
 
-		printf("Note %d\n", j);
+		/*printf("Note %d\n", j);*/
 		time = getNoteValue(notes);
 		freq = getFrequency(notes);
-		printf("   Freq: %f\n", freq);
+		/*printf("   Freq: %f\n", freq);*/
 		note = find_freq(freq);
-		octave = find_octave_ynote(freq);
-		lnote = find_note(note);
-
-		ynote  = octave - lnote;
+		ynote  = get_ynote(note);
 
 		draw_note(j, ynote, fbp, BLACK, time);
-		printf("   value: %d\n", time);
+		/*printf("   value: %d\n", time);*/
+
 		notes++;
 		i++;
 		
-	}	
+	}
+	NOTESP = 0;
+	BARSP = 0;	
 
 }
