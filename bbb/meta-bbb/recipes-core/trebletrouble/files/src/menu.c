@@ -89,6 +89,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	}
 
 	cleanup_pcm(pcmh);
+	sleep(10);
 
 	/* Reset notes to black */
 	/* Need to fix this. Length needs to come from somewhere... */
