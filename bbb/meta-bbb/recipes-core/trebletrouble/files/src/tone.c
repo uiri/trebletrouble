@@ -73,7 +73,7 @@ float get_pitch(Wave* wave) {
 
   max = 0;
   for (i = 0; i < (SAMPLE_RATE / 2); i++) {
-    if (waveData[i] > max) {
+    if (waveData[i] > max && i != 2*max_index) {
       max = waveData[i];
       max_index = i;
     }
