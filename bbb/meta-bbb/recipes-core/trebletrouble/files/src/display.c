@@ -201,9 +201,9 @@ int draw_key(char *fbp, char key){
 
 int find_octave_ynote(double freq){
 	if (freq <= FREQS[2])
-		return 0;/*0*/
+		return 481;/*0*/
 	else if (freq <= FREQS[14])
-		return 0;/*1*/
+		return 481;/*1*/
 	else if  (freq <= FREQS[26])
 		return 450;/*2*/
 	else if  (freq <= FREQS[38])
@@ -215,7 +215,7 @@ int find_octave_ynote(double freq){
 	else if  (freq <= FREQS[74])
 		return 30;/*6*/
 	else if  (freq <= FREQS[86])
-		return 0;/*7*/
+		return -75;/*7*/
 
 	return 0; 
 }
@@ -276,7 +276,13 @@ int bitblit_colour(char* filename, char* fbp, int x, int y, short colour) {
 	FILE* fd;
 	int i, j, w, h, vw;
 	unsigned char buf[3], px[2];
-
+	
+	if (y < 0 || y > 480)
+		return -4;
+	
+	if (x < 0 || x > 800)
+		return -5;
+	
 	if (!fbp)
 		return -3;
 
@@ -437,19 +443,19 @@ int get_ynote(int i) {
 	return (240 - (15*j + 105*(i/12 - 4)));
 }
 
-void compare_notes(int expected, int actual, int i, char* fbp) {
+void compare_notes(int expected, int actual, int i, char* fbp, int value) {
 	short colour = actual == expected ? GREEN : RED;
-	draw_note(i, get_ynote(actual), fbp, colour, 1);
+	draw_note(i, get_ynote(actual), fbp, colour, value);
 }
 
-void clear_notes(int i, int *expected, int *actual, char* fbp, int len) {
+void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {
 	int actual_ynote;
 	for (; i < len; i++) {
 		actual_ynote = get_ynote(actual[i]);
 		draw_note(i, actual_ynote, fbp, WHITE, 1);
 		if (!(actual_ynote%30))
 			bitblit(L_PIC, fbp, get_xnote(i)-3, get_ynote(actual[i])-14);
-		draw_note(i, get_ynote(expected[i]), fbp, BLACK, 1);
+		draw_note(i, get_ynote(expected[i]), fbp, BLACK, value);
 	}
 }
 
