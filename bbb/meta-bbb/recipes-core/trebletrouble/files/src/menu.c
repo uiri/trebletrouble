@@ -94,6 +94,8 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	/* Need to fix this. Length needs to come from somewhere... */
 	/*clear_notes(0, song->expected, actual, fbp, len);*/
 	freeSong(song);
+
+	colour_screen(fbp, WHITE);
 }
 
 void metronome_menu(char* fbp, ScreenInput *si)
