@@ -44,6 +44,9 @@
 
 #include "src/gwin/gwin_label.h"
 
+#include "colours.h"
+#include "display.h"
+
 extern GDisplay* GDISP;
 
 // GListeners
@@ -189,6 +192,7 @@ void guiCreate(void)
 	createPagePage0();
 
 	// Select the default display page
+	colour_screen(GDISP->board, WHITE);
 	guiShowPage(0);
 
 }
