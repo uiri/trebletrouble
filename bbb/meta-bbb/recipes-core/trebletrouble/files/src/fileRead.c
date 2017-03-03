@@ -83,9 +83,9 @@ Note * readTwinkle(Song* ttls, char * filename)
 		printf("Unable to open file!");
 		return 0;
 	}
-	ttls->sfh = (SongFormatHeader *)malloc(sizeof(SongFormatHeader));
+	ttls->sfh = malloc(sizeof(SongFormatHeader));
 	printf("Read %ld bytes for header\n", fread(ttls->sfh, sizeof(SongFormatHeader), 1, twinkle));
-	ttls->fbar = (Bar *)malloc(sizeof(Bar)*ttls->sfh->numBars+sizeof(Note)*ttls->sfh->numNotes);
+	ttls->fbar = malloc(sizeof(Bar)*ttls->sfh->numBars+sizeof(Note)*ttls->sfh->numNotes);
 	fread(ttls->fbar, sizeof(Bar)*ttls->sfh->numBars+sizeof(Note)*ttls->sfh->numNotes,1,twinkle);
 	notes = (Note *)(ttls->fbar + ttls->sfh->numBars);
 	fclose(twinkle);
@@ -103,7 +103,7 @@ void parseBar(Song* ttls,Note * notes)
 
 	//read the Bars and the notes in the bar
 	for (i = 0 ; i< ttls->sfh->numBars;i++) {
-		for (j = 0; j < *(ttls->fbar);j++) {
+		for (j = 0; j < ttls->fbar->notes ;j++) {
 			notes++;
 		}
 		ttls->fbar ++;

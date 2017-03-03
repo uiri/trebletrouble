@@ -50,7 +50,10 @@ typedef struct {
 } Note;
 
 /* Evaluation for how many notes per bar to be done in code*/
-typedef int Bar;
+typedef struct{
+	int notes;
+	int barspace;	
+} Bar;
 
 typedef struct {
 	int bpm;

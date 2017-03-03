@@ -105,19 +105,19 @@ void makeBin(char * filename) {
 	
 	
 
-	allBars[j] =4;
+	allBars[j].notes =4;
 	j++;
 	
 
-	allBars[j] =3;
+	allBars[j].notes =3;
 	j++;
 
 
-	allBars[j] =4;
+	allBars[j].notes =4;
 	j++;
 
 
-	allBars[j] =3;
+	allBars[j].notes =3;
 	
 	
 	/* Create the file */

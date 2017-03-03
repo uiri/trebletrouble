@@ -45,14 +45,14 @@
 void play_song_menu(char* fbp, ScreenInput *si)
 {
 	FILE* songfile;
-	int i, value;
+	int i, value, j;
 	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
 	snd_pcm_t *pcmh;
 	Song* song;
 	Note* notes;
-	
+	Bar* fbar;	
 	colour_screen(fbp, WHITE);
 	
 	/*draw staff on screen*/
@@ -67,10 +67,16 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	notes = readTwinkle(song, TWINKLE);
 	/*fclose(songfile);*/
 	load_song(fbp, notes, song);
-
+	
+	fbar = song->fbar;
 	pcmh = init_pcm(SAMPLE_RATE);
 
-	for (i = 0; i < song->sfh->numNotes; i++) {
+	for (i = 0, j=0; i < song->sfh->numNotes; i++, j++) {
+		if ( j == fbar->notes){
+			fbar++;
+			j = 0;
+		}
+
 		wave = makeWave(duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
@@ -84,7 +90,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
 		value = getNoteValue(notes+i);
-		compare_notes(song->expected[i], find_freq(pitch), i, fbp,value);
+		compare_notes(song->expected[i], find_freq(pitch), i, fbp, value, fbar->barspace);
 		waveDestroy(wave);
 	}
 

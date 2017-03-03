@@ -33,7 +33,6 @@ S: Sixteenth */
 #define Q_R "/srv/trebletrouble/quarter_r.pnm"
 #define E_R "/srv/trebletrouble/eighth_r.pnm"
 #define S_R "/srv/trebletrouble/sixteenth_r.pnm"
-
 /*XS is the x space between notes on the xaxis */
 #define XS 42
 
@@ -78,7 +77,7 @@ int bitblit_colour(char* filename, char* fbp, int x, int y, short colour);
 void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);
-void compare_notes(int expected, int actual, int i, char* fbp, int value);
+void compare_notes(int expected, int actual, int i, char* fbp, int value, int barspace);
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value);
 void load_song(char *fbp, Note * notes, Song * song);
 

@@ -404,9 +404,11 @@ int get_ynote(int i) {
 	return (240 - (15*j + 105*(i/12 - 4)));
 }
 
-void compare_notes(int expected, int actual, int i, char* fbp, int value) {
+void compare_notes(int expected, int actual, int i, char* fbp, int value, int barspace) {
 	short colour = actual == expected ? GREEN : RED;
+	BARSP = barspace;	
 	draw_note(i, get_ynote(actual), fbp, colour, value);
+	BARSP = 0;
 }
 
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {
@@ -421,8 +423,10 @@ void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int valu
 }
 
 void load_song(char *fbp, Note * notes, Song * song){
-	int i, j,ynote, time, note, *fbar;
+	int i, j, ynote, time, note;
 	double freq;
+
+	Bar* fbar;
 
 	fbar = song->fbar;
 	/*Time signature:
@@ -442,9 +446,10 @@ void load_song(char *fbp, Note * notes, Song * song){
 
 	for(j = 0, i=0; j < song->sfh->numNotes; j++){
 		
-		if ( i == *fbar){
+		if ( i == fbar->notes){
 			draw_bar(fbp, j);
 			fbar++;
+			fbar->barspace = BARSP;
 			i = 0;
 		}
 
@@ -452,12 +457,12 @@ void load_song(char *fbp, Note * notes, Song * song){
 		time = getNoteValue(notes);
 		freq = getFrequency(notes);
 		/*printf("   Freq: %f\n", freq);*/
+		
 		note = find_freq(freq);
 		ynote  = get_ynote(note);
 
 		draw_note(j, ynote, fbp, BLACK, time);
 		/*printf("   value: %d\n", time);*/
-
 		notes++;
 		i++;
 		
