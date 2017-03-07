@@ -404,9 +404,11 @@ int get_ynote(int i) {
 	return (240 - (15*j + 105*(i/12 - 4)));
 }
 
-void compare_notes(int expected, int actual, int i, char* fbp, int value, int barspace) {
-	short colour = actual == expected ? GREEN : RED;
-	BARSP = barspace;	
+void compare_notes(Song* song, int actual, int i, char* fbp, int value, int barspace)
+{
+	int* expected = song->expected + i;
+	short colour = actual == *expected ? GREEN : RED;
+	BARSP = barspace;
 	draw_note(i, get_ynote(actual), fbp, colour, value);
 	BARSP = 0;
 }

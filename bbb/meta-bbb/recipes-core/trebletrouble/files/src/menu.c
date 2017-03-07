@@ -93,7 +93,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		/* need to store the found freqs in actuals or something */
 		value = getNoteValue(notes+i);
 	        actuals[i] = find_freq(pitch);
-		compare_notes(song->expected[i], actuals[i], i, fbp, value, fbar->barspace);
+		compare_notes(song, actuals[i], i, fbp, value, fbar->barspace);
 		waveDestroy(wave);
 	}
 
