@@ -45,14 +45,14 @@
 void play_song_menu(char* fbp, ScreenInput *si)
 {
 	FILE* songfile;
-	int i, value, j;
+	int i, value, *actuals, j;
 	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
 	snd_pcm_t *pcmh;
 	Song* song;
 	Note* notes;
-	Bar* fbar;	
+	Bar* fbar;
 	colour_screen(fbp, WHITE);
 	
 	/*draw staff on screen*/
@@ -60,7 +60,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	
 	/*Code for new song format*/
 	song = malloc(sizeof(song));
-
+	
 	/* Need to change this to proper file I/O */
 	/* songfile = fopen(SONG, "rb");*/
 	makeBin(TWINKLE);
@@ -70,6 +70,8 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	
 	fbar = song->fbar;
 	pcmh = init_pcm(SAMPLE_RATE);
+
+	actuals = malloc(sizeof(int) * song->sfh->numNotes);
 
 	for (i = 0, j=0; i < song->sfh->numNotes; i++, j++) {
 		if ( j == fbar->notes){
@@ -90,7 +92,8 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
 		value = getNoteValue(notes+i);
-		compare_notes(song->expected[i], find_freq(pitch), i, fbp, value, fbar->barspace);
+	        actuals[i] = find_freq(pitch);
+		compare_notes(song->expected[i], actuals[i], i, fbp, value, fbar->barspace);
 		waveDestroy(wave);
 	}
 
@@ -101,6 +104,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	/* Need to fix this. Length needs to come from somewhere... */
 	/*clear_notes(0, song->expected, actual, fbp, len);*/
 	freeSong(song);
+	free(actuals);
 
 	colour_screen(fbp, WHITE);
 }
