@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "colours.h"
 #include "fileFormat.h"
@@ -416,6 +417,7 @@ int get_ynote(int i) {
 	return (240 - (15*j + 105*(i/12 - 4)));
 }
 
+
 int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp, int barspace)
 {
 	int k, notes_back;
@@ -443,6 +445,84 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 	BARSP = 0;
 
 	return notes_back;
+}
+
+Bar* find_worst_bar(Song* song, Note* notes, int* actuals) {
+
+	int i, *numWrongNotes , j;
+	float **errorPercentage;
+	Bar *fbar, *worstBar;
+
+	fbar = song->fbar;
+
+	numWrongNotes = malloc(sizeof(int) * song->sfh->numNotes);
+	errorPercentage = malloc(sizeof(float) * song->sfh->numBars);
+
+  	for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
+	       
+	 	if (i == fbar->notes) {
+		  	
+		  	// calculate the percentage error per bar and set the worst bar
+		  	errorPercentage[fbar - song->fbar] = ( numWrongNotes[fbar - song->fbar] ) / fbar->notes;
+
+			// set the the worst bar by comparing the maximum %error of the current bar and the last bar.
+			if ( (fbar - song->fbar) > 0) { 
+				if ( errorPercentage[fbar - song->fbar] >= errorPercentage[ (fbar - song->fbar) - 1] )
+			    		worstBar = fbar;
+			}
+			else {
+			  	worstBar = song->fbar;
+			}
+		  	
+			fbar++;
+			i = 0;
+
+     	        }
+	
+		// increment the number of wrong notes in this bar if it does not match expected
+		if (song->expected[j] != actuals[j]) {
+			numWrongNotes[fbar - song->fbar]++;
+		}
+
+		notes++;
+
+	}
+
+	free(numWrongNotes);
+	free(errorPercentage);
+
+	return worstBar;
+
+}
+
+void draw_worst_bar(char* fbp, Bar* worstBar, Note* notes, Song* song) {
+ 	Bar *fbar;
+	int i, j, ynote, time, note;		
+	double freq;
+	short colour = ORANGE;
+
+	fbar = song->fbar;
+
+	for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
+	  	
+		if (fbar == worstBar) {
+		        time = getNoteValue(notes);
+			freq = getFrequency(notes);
+
+			note = find_freq(freq);
+			ynote = get_ynote(note);
+    
+			draw_note(j, ynote, fbp, colour, time);
+	        }
+
+		if (i == fbar->notes) {
+		        fbar++; 		
+		}
+		
+		notes++;
+	
+       	}
+
 }
 
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {

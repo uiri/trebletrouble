@@ -52,7 +52,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	snd_pcm_t *pcmh;
 	Song* song;
 	Note* notes;
-	Bar* fbar;
+	Bar* fbar, *worstBar;
 	colour_screen(fbp, WHITE);
 	
 	/*draw staff on screen*/
@@ -97,7 +97,8 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		i -= k;
 		waveDestroy(wave);
 	}
-
+	worstBar = find_worst_bar(song, notes, actuals);
+	draw_worst_bar(fbp, worstBar, notes, song);
 	cleanup_pcm(pcmh);
 	sleep(10);
 
