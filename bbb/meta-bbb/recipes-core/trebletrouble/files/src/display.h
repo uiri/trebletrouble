@@ -81,4 +81,8 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value);
 void load_song(char *fbp, Note * notes, Song * song);
 
+void draw_worst_bar(char* fbp, Bar* worstBar, Note* notes, Song* song);
+Bar* find_worst_bar(Song* song, Note* notes, int* actuals);
+
+
 #endif
