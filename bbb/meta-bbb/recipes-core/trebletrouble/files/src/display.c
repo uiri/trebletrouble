@@ -74,7 +74,23 @@ int get_xnote(int i) {
 	   each subsequent note is 34 px further */
 	return x_start + i*XS + BARSP + NOTESP;
 }
-			
+
+void add_notespace(int value)
+{
+	if (value == 16)
+		NOTESP += NSP;
+	else if (value == 32)
+		NOTESP += NSP*4;
+}
+
+void remove_notespace(int value)
+{
+	if (value == 16)
+		NOTESP -= NSP;
+	else if (value == 32)
+		NOTESP -= NSP*4;
+}
+
 void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 	if(ynote < 61){
 		bitblit(L_PIC, fbp, get_xnote(i)-3, 45);
@@ -97,12 +113,9 @@ void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 			bitblit_colour(Q_N_F, fbp, get_xnote(i), ynote, colour);
 		} else if (value == 16) {
 			bitblit_colour(H_N_F, fbp, get_xnote(i), ynote, colour);
-			NOTESP += NSP;
 		} else {
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
-			NOTESP += NSP*4;
 		}
-
 	} else {
 		if (value == 2) {
 			bitblit_colour(S_N, fbp, get_xnote(i), ynote-105, colour);
@@ -112,12 +125,11 @@ void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 			bitblit_colour(Q_N, fbp, get_xnote(i), ynote-105, colour);
 		} else if (value == 16) {
 			bitblit_colour(H_N, fbp, get_xnote(i), ynote-105, colour);
-			NOTESP += NSP;
 		} else {
 			bitblit_colour(W_N, fbp, get_xnote(i), ynote-15, colour);
-			NOTESP += NSP*4;
 		}
 	}
+	add_notespace(value);
 }
 
 void set_time_signature(int t1,int t2, char *fbp){
