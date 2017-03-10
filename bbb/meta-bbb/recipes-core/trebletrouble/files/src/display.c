@@ -416,21 +416,33 @@ int get_ynote(int i) {
 	return (240 - (15*j + 105*(i/12 - 4)));
 }
 
-void compare_notes(Song* song, int actual, int i, int j, char* fbp, int value, int barspace)
+int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp, int barspace)
 {
+	int k, notes_back;
 	int* expected = song->expected + i;
-	short colour = *expected == actual ? GREEN : RED;
-	while (colour == RED && j--) {
-		if (actual == *expected) {
-			i = (expected - song->expected);
+	short colour = (*expected == actuals[i]) ? GREEN : RED;
+
+	for (notes_back = 0; colour == RED && (j - notes_back); notes_back++) {
+		if (actuals[i] == *(expected - notes_back)) {
+			actuals[i - notes_back] = actuals[i];
+			i -= notes_back;
 			colour = GREEN;
-		} else {
-			expected--;
+			break;
 		}
 	}
+
+	if (colour == RED)
+		notes_back = 0;
+
+	for (k = 1; k < notes_back+1; k++) {
+		remove_notespace(getNoteValue(note-k));
+	}
+
 	BARSP = barspace;
-	draw_note(i, get_ynote(actual), fbp, colour, value);
+	draw_note(i, get_ynote(actuals[i]), fbp, colour, getNoteValue(note-notes_back));
 	BARSP = 0;
+
+	return notes_back;
 }
 
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {

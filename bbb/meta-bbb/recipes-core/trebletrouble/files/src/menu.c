@@ -45,7 +45,7 @@
 void play_song_menu(char* fbp, ScreenInput *si)
 {
 	FILE* songfile;
-	int i, value, *actuals, j;
+	int i, j, k, value, *actuals;
 	float pitch;
 	Wave* wave;
 	uint32_t duration = 1; /* 1 sec*/
@@ -91,9 +91,10 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
-		value = getNoteValue(notes+i);
 	        actuals[i] = find_freq(pitch);
-		compare_notes(song, actuals[i], i, j, fbp, value, fbar->barspace);
+		k = compare_notes(song, notes+i, actuals, i, j, fbp, fbar->barspace);
+		j -= k;
+		i -= k;
 		waveDestroy(wave);
 	}
 
