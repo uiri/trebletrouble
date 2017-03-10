@@ -181,7 +181,7 @@ void play_wave(snd_pcm_t *pcm_handle, Wave* wav)
 	free(buf);
 }
 
-int recordWAV(Wave* wave, uint32_t duration)
+int recordWAV(Wave* wave, float duration)
 {
   int err, i, size, dir;
   snd_pcm_t *handle;

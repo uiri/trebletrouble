@@ -45,10 +45,10 @@
 void play_song_menu(char* fbp, ScreenInput *si)
 {
 	FILE* songfile;
-	int i, j, k, value, *actuals;
+	int i, j, k, *actuals;
 	float pitch;
 	Wave* wave;
-	uint32_t duration = 1; /* 1 sec*/
+	float duration = 1.0;
 	snd_pcm_t *pcmh;
 	Song* song;
 	Note* notes;

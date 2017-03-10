@@ -44,7 +44,7 @@ typedef struct Wave {
 
 float get_pitch(Wave* wave);
 void waveAddSample(Wave* wave, float sample);
-Wave* makeWave(int duration);
+Wave* makeWave(float duration);
 void waveDestroy(Wave* wave);
 
 #endif

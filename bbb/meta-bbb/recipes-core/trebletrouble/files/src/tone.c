@@ -84,7 +84,7 @@ float get_pitch(Wave* wave) {
   return pitch;
 }
 
-Wave* makeWave(int duration) {
+Wave* makeWave(float duration) {
 	/* Define some variables for the sound */
 	Wave* wave;
 
