@@ -417,7 +417,6 @@ int get_ynote(int i) {
 	return (240 - (15*j + 105*(i/12 - 4)));
 }
 
-
 int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp, int barspace)
 {
 	int k, notes_back;
@@ -445,6 +444,7 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 	BARSP = 0;
 
 	return notes_back;
+ 
 }
 
 Bar* find_worst_bar(Song* song, Note* notes, int* actuals) {
@@ -519,13 +519,11 @@ void draw_worst_bar(char* fbp, Bar* worstBar, Note* notes, Song* song) {
 
 		if (i == fbar->notes) {
   		        fbar++;
-			i = 0;
-			
+		        	i = 0;
 		}
 		
 		notes++;
-	
-       	}
+  }
 	
 }
 

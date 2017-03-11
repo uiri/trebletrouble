@@ -53,7 +53,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	Song* song;
 	Note* notes;
 	Bar* fbar, *worstBar;
-	colour_screen(fbp, WHITE);
+  colour_screen(fbp, WHITE);
 	
 	/*draw staff on screen*/
 	draw_staff(fbp);
