@@ -449,8 +449,8 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 
 Bar* find_worst_bar(Song* song, Note* notes, int* actuals) {
 
-	int i, *numWrongNotes , j;
-	float **errorPercentage;
+	int i, *numWrongNotes, j;
+	float *errorPercentage;
 	Bar *fbar, *worstBar;
 
 	fbar = song->fbar;
@@ -506,23 +506,27 @@ void draw_worst_bar(char* fbp, Bar* worstBar, Note* notes, Song* song) {
 	for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
 	  	
 		if (fbar == worstBar) {
-		        time = getNoteValue(notes);
+		  
+			time = getNoteValue(notes);
 			freq = getFrequency(notes);
 
 			note = find_freq(freq);
 			ynote = get_ynote(note);
-    
+	    
 			draw_note(j, ynote, fbp, colour, time);
+					
 	        }
 
 		if (i == fbar->notes) {
-		        fbar++; 		
+  		        fbar++;
+			i = 0;
+			
 		}
 		
 		notes++;
 	
        	}
-
+	
 }
 
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {
