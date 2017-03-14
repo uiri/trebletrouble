@@ -123,14 +123,11 @@ Wave* makeWave(float duration) {
 	wave->header.subChunk2Id[2] = 't';
 	wave->header.subChunk2Id[3] = 'a';
 
-	wave->size = (long long int)( (wave->header.byteRate * duration) / 1000);
 	wave->header.chunkSize = 4 + 8 + 16 + 8 + wave->size;
 	wave->header.subChunk1Size = 16;
 	wave->header.subChunk2Size = wave->size;
 
-	wave->data = malloc(wave->size);
-	wave->index = 0;
-	wave->nSamples = (long long int)( wave->size / (BITS_PER_SAMPLE / 8));
+	wave->nSamples = (long long int)( (wave->header.byteRate * duration) / (1000 * (BITS_PER_SAMPLE / 8)));
 
 	fft_log2 = 1 << FFT_SIZE;
 	if (wave->nSamples) {
@@ -139,6 +136,10 @@ Wave* makeWave(float duration) {
 		}
 	}
 	wave->nSamples = fft_log2;
+
+	wave->size = wave->nSamples * (BITS_PER_SAMPLE / 8);
+	wave->data = malloc(wave->size);
+	wave->index = 0;
 
 	return wave;
 }
