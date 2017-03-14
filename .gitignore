@@ -3,6 +3,7 @@ bbb/meta-bbb/recipes-core/trebletrouble/files/bin/*
 bin/
 screenshot.pnm
 screenshot.png
+Twinkle-display.bin
 pseudo_1.7.5.bb
 poky-krogoth/meta/recipes-devtools/pseudo/files/pseudo-glibc-rtld-next-workaround.patch
 bbb/build/conf/sanity_info
