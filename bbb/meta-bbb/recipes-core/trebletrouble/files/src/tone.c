@@ -57,7 +57,7 @@ void toLittleEndian(const long long int size, void* value) {
 
 float get_pitch(Wave* wave) {
   float *imaginary_wave, max, pitch, *waveData;
-  int max_index, i;
+	int max_index, i, fft_size;
 
   imaginary_wave = calloc(wave->nSamples, sizeof(float));
   waveData = calloc(wave->nSamples, sizeof(float));
@@ -67,7 +67,11 @@ float get_pitch(Wave* wave) {
                   / (MAX_INT(wave->header.bitsPerSample));
   }
 
-  initfft(FFT_SIZE);
+  fft_size = 1;
+  while ((1 << fft_size) < wave->nSamples)
+	fft_size++;
+
+  initfft(fft_size);
   fft(waveData,imaginary_wave,0);
   free(imaginary_wave);
 
@@ -79,7 +83,7 @@ float get_pitch(Wave* wave) {
     }
   }
   free(waveData);
-  pitch = ((float)max_index) * SAMPLE_RATE / (1 << FFT_SIZE);
+  pitch = ((float)max_index) * SAMPLE_RATE / (1 << fft_size);
 
   return pitch;
 }
@@ -87,6 +91,7 @@ float get_pitch(Wave* wave) {
 Wave* makeWave(float duration) {
 	/* Define some variables for the sound */
 	Wave* wave;
+	int fft_log2;
 
 	/* Create a mono(1), 32-bit sound and set the duration */
 	wave = malloc(sizeof(Wave));
@@ -118,14 +123,22 @@ Wave* makeWave(float duration) {
 	wave->header.subChunk2Id[2] = 't';
 	wave->header.subChunk2Id[3] = 'a';
 
-	wave->size = (long long int)( wave->header.byteRate * duration );
+	wave->size = (long long int)( (wave->header.byteRate * duration) / 1000);
 	wave->header.chunkSize = 4 + 8 + 16 + 8 + wave->size;
 	wave->header.subChunk1Size = 16;
 	wave->header.subChunk2Size = wave->size;
 
 	wave->data = malloc(wave->size);
 	wave->index = 0;
-	wave->nSamples = (long long int) wave-> header.numChannels * wave->header.sampleRate * duration;
+	wave->nSamples = (long long int)( wave->size / (BITS_PER_SAMPLE / 8));
+
+	fft_log2 = 1 << FFT_SIZE;
+	if (wave->nSamples) {
+		while (fft_log2 > wave->nSamples) {
+			fft_log2 >>= 1;
+		}
+	}
+	wave->nSamples = fft_log2;
 
 	return wave;
 }

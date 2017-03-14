@@ -247,7 +247,7 @@ int recordWAV(Wave* wave, float duration)
     goto END_BUF;
   }
 
-  for (i = ((duration * 1000 * frames) / hdr->sampleRate); i > 0; i--) {
+  for (i = ((duration * frames) / hdr->sampleRate); i > 0; i--) {
     err = snd_pcm_readi(handle, buffer, frames);
     if (err >= 0) {
       err *= hdr -> numChannels * (hdr -> bitsPerSample / 8);

@@ -48,7 +48,6 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	int i, j, k, *actuals;
 	float pitch;
 	Wave* wave;
-	float duration = 1.0;
 	snd_pcm_t *pcmh;
 	Song* song;
 	Note* notes;
@@ -79,10 +78,10 @@ void play_song_menu(char* fbp, ScreenInput *si)
 			j = 0;
 		}
 
-		wave = makeWave(duration);
+		wave = makeWave(notes[i].duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
-		if (recordWAV(wave,duration)) {
+		if (recordWAV(wave, notes[i].duration)) {
 			printf("Oh no! An error with the mic!\n");
 			continue;
 		}
