@@ -128,14 +128,9 @@ void makeBin(char * filename) {
 	fclose(fh);
 }
 
-float millisec(int bpm, float note) {
-	return (float)(
-     60      /* seconds */
-     * 1000  /* milliseconds per second */
-     * note
-     / (bpm *32)
-		     );  
-}    
-
-
-
+float millisec(int bpm, float note)
+{
+	/* (60 seconds per minute * 1000 milliseconds per second) 
+	 * / (beats per minute * adjustment factor) */
+	return (float)(60 * 1000 * note) / (bpm * 32);
+}
