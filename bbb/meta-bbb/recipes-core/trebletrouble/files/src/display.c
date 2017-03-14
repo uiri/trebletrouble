@@ -449,86 +449,85 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 
 Bar* find_worst_bar(Song* song, Note* notes, int* actuals) {
 
-	int i, *numWrongNotes, j;
-	float *errorPercentage;
-	Bar *fbar, *worstBar;
+  int i, *numWrongNotes, j;
+  float *errorPercentage;
+  Bar *fbar, *worstBar;
 
-	fbar = song->fbar;
+  fbar = song->fbar;
 
-	numWrongNotes = malloc(sizeof(int) * song->sfh->numNotes);
-	errorPercentage = malloc(sizeof(float) * song->sfh->numBars);
+  numWrongNotes = malloc(sizeof(int) * song->sfh->numBars);
+  errorPercentage = malloc(sizeof(float) * song->sfh->numBars);
 
-  	for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
+  for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
 	       
-	 	if (i == fbar->notes) {
+    if (i == fbar->notes) {
 		  	
-		  	// calculate the percentage error per bar and set the worst bar
-		  	errorPercentage[fbar - song->fbar] = ( numWrongNotes[fbar - song->fbar] ) / fbar->notes;
+      // calculate the percentage error per bar
+      errorPercentage[fbar - song->fbar] = ( numWrongNotes[fbar - song->fbar] ) / fbar->notes;
 
-			// set the the worst bar by comparing the maximum %error of the current bar and the last bar.
-			if ( (fbar - song->fbar) > 0) { 
-				if ( errorPercentage[fbar - song->fbar] >= errorPercentage[ (fbar - song->fbar) - 1] )
-			    		worstBar = fbar;
-			}
-			else {
-			  	worstBar = song->fbar;
-			}
+      // set the the worst bar by comparing the maximum %error of the current bar and the last bar.
+      if ( (fbar - song->fbar) > 0) { 
+	if ( errorPercentage[fbar - song->fbar] >= errorPercentage[ (fbar - song->fbar) - 1] )
+	  worstBar = fbar;
+      } else {
+	worstBar = song->fbar;
+      }
 		  	
-			fbar++;
-			i = 0;
+      fbar++;
+      i = 0;
 
-     	        }
+    }
 	
-		// increment the number of wrong notes in this bar if it does not match expected
-		if (song->expected[j] != actuals[j]) {
-			numWrongNotes[fbar - song->fbar]++;
-		}
+    // increment the number of wrong notes in this bar if it does not match expected
+    if (song->expected[j] != actuals[j]) {
+      numWrongNotes[fbar - song->fbar]++;
+    }
 
-		notes++;
+    notes++;
+		
+  }
 
-	}
+  free(numWrongNotes);
+  free(errorPercentage);
 
-	free(numWrongNotes);
-	free(errorPercentage);
-
-	return worstBar;
+  return worstBar;
 
 }
 
 void draw_worst_bar(char* fbp, Bar* worstBar, Note* notes, Song* song) {
- 	Bar *fbar;
-	int i, j, ynote, time, note;		
-	double freq;
-	short colour = ORANGE;
+  Bar *fbar;
+  int i, j, ynote, time, note;		
+  double freq;
+  short colour = ORANGE;
 
-	fbar = song->fbar;
+  fbar = song->fbar;
 
-	for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
-	  	
-		if (fbar == worstBar) {
-		  
-			time = getNoteValue(notes);
-			freq = getFrequency(notes);
+  for (j = 0, i = 0; j < song->sfh->numNotes; i++, j++) {
 
-			note = find_freq(freq);
-			ynote = get_ynote(note);
-	    
-			draw_note(j, ynote, fbp, colour, time);
-					
-	        }
-
-		if (i == fbar->notes) {
-  		        fbar++;
-			i = 0;
+    if (i == fbar->notes) {
+      fbar++;
+      i = 0;
 			
-		}
-		
-		notes++;
-	
-       	}
-	
-}
+    }
+	  	
+    if (fbar == worstBar) {
 
+      time = getNoteValue(notes);
+      freq = getFrequency(notes);
+
+      note = find_freq(freq);
+      ynote = get_ynote(note);
+	    
+      draw_note(j, ynote, fbp, colour, time);
+	        
+    }
+
+    notes++;
+	
+  }
+
+}
+	
 void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {
 	int actual_ynote;
 	for (; i < len; i++) {
