@@ -82,7 +82,7 @@ void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int valu
 void load_song(char *fbp, Note * notes, Song * song);
 
 void draw_worst_bar(char* fbp, Bar* worstBar, Note* notes, Song* song);
-Bar* find_worst_bar(Song* song, Note* notes, int* actuals);
+Bar* find_worst_bar(Song* song, int* actuals);
 
 
 #endif

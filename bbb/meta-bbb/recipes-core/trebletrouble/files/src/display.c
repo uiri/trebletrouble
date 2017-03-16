@@ -447,7 +447,7 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 	return notes_back;
 }
 
-Bar* find_worst_bar(Song* song, Note* notes, int* actuals) {
+Bar* find_worst_bar(Song* song, int* actuals) {
 
   int i, *numWrongNotes, j;
   float *errorPercentage;
@@ -482,8 +482,6 @@ Bar* find_worst_bar(Song* song, Note* notes, int* actuals) {
     if (song->expected[j] != actuals[j]) {
       numWrongNotes[fbar - song->fbar]++;
     }
-
-    notes++;
 		
   }
 
