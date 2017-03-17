@@ -43,7 +43,7 @@ bin/record_test: package/src/record_test.c bin/tone.o bin/libfft.o bin/alsa.o
 
 display_test: bin/display_test
 
-bin/format_test: package/src/fileFormat_test.c bin/fileFormat.o bin/fileRead.o
+bin/format_test: package/src/fileFormat_test.c  bin/fileFormat.o bin/fileRead.o bin/find_freq.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 fileFormat_test: bin/format_test

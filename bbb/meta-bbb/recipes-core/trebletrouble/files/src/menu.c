@@ -39,7 +39,7 @@
 #include "input.h"
 #include "metronome.h"
 #include "alsa.h"
-
+#include "find_freq.h"
 #define TWINKLE "Twinkle-display.bin"
 
 void play_song_menu(char* fbp, ScreenInput *si)
