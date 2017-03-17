@@ -464,16 +464,20 @@ void load_song(char *fbp, Note * notes, Song * song){
 
 	fbar = song->fbar;
 	/*Time signature:
-	Timesig = Ts1-1 * 16 + Ts2-1 
+	Timesig = Ts1-1 * 16 + Ts2-1
 	so for 4/4= 51
 	so for 3/4= 35*/
-	
-	/*Draw the key, return the current x value*/	
+
+	/*Draw the key, return the current x value*/
 	x_start = draw_key(fbp, song->sfh->key);
 
 	BARSP = 0;
 	NOTESP = 0;
-	/*Take ints from char away*/
+	/*
+	 * Take ints from char away
+	 * Don't forget to change millisec calculations if the timeSignature
+	 * format changes!
+	 */
 	int ts1 = (song->sfh->timeSignature/16)+1;
 	int ts2 = (song->sfh->timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);

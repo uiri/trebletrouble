@@ -73,7 +73,7 @@ typedef struct {
 } Song;
 
 
-float millisec(int bpm, float note);
+float millisec(int bpm, unsigned char ts, float note);
 
 void makeBin(char * filename);
 
