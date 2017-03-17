@@ -34,6 +34,8 @@
 #include "fileFormat.h"
 #include "fileRead.h"
 #include "display.h"
+#include "find_freq.h"
+
 
 extern int DISP_WIDTH;
 extern long SCREENSIZE;
@@ -42,9 +44,7 @@ static int x_start;
 static int BARSP;
 static int NOTESP;
 
-#define KEYS 88
 #define NSP 30
-double FREQS[KEYS] = {27.5, 29.1352, 30.8677, 32.7032, 34.6478, 36.7081, 38.8909, 41.2034, 43.6535, 46.2493, 48.9994, 51.9131, 55.0, 58.2705, 61.7354, 65.4064, 69.2957, 73.4162, 77.7817, 82.4069, 87.3071, 92.4986, 97.9989, 103.826, 110.0, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563, 164.814, 174.614, 184.997, 195.998, 207.652, 220.0, 233.082, 246.942, 261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995, 415.305, 440.0, 466.164, 493.883, 523.251, 554.365, 587.330, 622.254, 659.255, 698.456, 739.989, 783.991, 830.609, 880.0, 932.328, 987.767, 1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760.0, 1864.66, 1975.53, 2093.0, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.0, 3729.31, 3951.07, 4186.01};
 
 #define CALC_OCTAVE_BOUND(N) (12*N + 2)
 
@@ -53,21 +53,6 @@ char *OCTAVE[9] = {"/srv/trebletrouble/0.pnm", "/srv/trebletrouble/1.pnm", "/srv
 char *TIME_STAMP[10] = {"","","/srv/trebletrouble/2_ts.pnm","/srv/trebletrouble/3_ts.pnm","/srv/trebletrouble/4_ts.pnm","/srv/trebletrouble/5_ts.pnm","","/srv/trebletrouble/7_ts.pnm","/srv/trebletrouble/8_ts.pnm", ""};
 
 /* Internal functions */
-int find_freq_recur(double freq, int i, int len) {
-	while (1) {
-		if (FREQS[i] <= freq) {
-			if (freq <= FREQS[i+1]) {
-				if ((freq - FREQS[i]) < (FREQS[i+1] - freq))
-					return i;
-				else
-					return i+1;
-			} else
-				i += (len%2 == 0 ? len/4 : len/4 + 1);
-		} else
-			i -= (len%2 == 0 ? len/4 : len/4 + 1);
-		len /= 2;
-	}
-}
 
 int get_xnote(int i) {
 	/* First note is at 145,
@@ -202,13 +187,6 @@ int draw_key(char *fbp, char key){
 }
 
 /* External API */
-int find_freq(double freq) {
-	if (freq <= FREQS[0])
-		return 0;
-	if (FREQS[KEYS-1] <= freq)
-		return KEYS-1;
-	return find_freq_recur(freq, KEYS / 2, KEYS);
-}
 
 
 int find_ind(char note, int oct){
