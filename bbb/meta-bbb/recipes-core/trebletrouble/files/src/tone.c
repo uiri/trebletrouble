@@ -55,40 +55,43 @@ void toLittleEndian(const long long int size, void* value) {
   }
 }
 
-float get_pitch(Wave* wave) {
-  float *imaginary_wave, max, pitch, *waveData;
+float get_pitch(Wave* wave)
+{
+	float *imaginary_wave, max, pitch, *waveData;
 	int max_index, i, fft_size;
 
-  imaginary_wave = calloc(wave->nSamples, sizeof(float));
-  waveData = calloc(wave->nSamples, sizeof(float));
+	imaginary_wave = calloc(wave->nSamples, sizeof(float));
+	waveData = calloc(wave->nSamples, sizeof(float));
 
-  for (i = 0; i < wave->nSamples; i++) {
-    waveData[i] = ((float)((short*)wave->data)[i])
-                  / (MAX_INT(wave->header.bitsPerSample));
-  }
+	for (i = 0; i < wave->nSamples; i++) {
+		waveData[i] = ((float)((short*)wave->data)[i])
+			/ (MAX_INT(wave->header.bitsPerSample));
+	}
 
-  fft_size = 1;
-  while ((1 << fft_size) < wave->nSamples)
-	fft_size++;
+	fft_size = 1;
+	while ((1 << fft_size) < wave->nSamples)
+		fft_size++;
 
-  initfft(fft_size);
-  fft(waveData,imaginary_wave,0);
-  free(imaginary_wave);
+	initfft(fft_size);
+	fft(waveData,imaginary_wave,0);
+	free(imaginary_wave);
 
-  max = 0;
-  for (i = 0; i < (SAMPLE_RATE / 2); i++) {
-    if (waveData[i] > max && i != 2*max_index) {
-      max = waveData[i];
-      max_index = i;
-    }
-  }
-  free(waveData);
-  pitch = ((float)max_index) * SAMPLE_RATE / (1 << fft_size);
+	max = 0;
+	for (i = 0; i < (SAMPLE_RATE / 2); i++) {
+		if (waveData[i] > max && i != 2*max_index) {
+			max = waveData[i];
+			max_index = i;
+		}
+	}
 
-  return pitch;
+	free(waveData);
+	pitch = ((float)max_index) * SAMPLE_RATE / (1 << fft_size);
+
+	return pitch;
 }
 
-Wave* makeWave(float duration) {
+Wave* makeWave(float duration)
+{
 	/* Define some variables for the sound */
 	Wave* wave;
 	int fft_log2;

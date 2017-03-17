@@ -66,7 +66,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	notes = readTwinkle(song, TWINKLE);
 	/*fclose(songfile);*/
 	load_song(fbp, notes, song);
-	
+
 	fbar = song->fbar;
 	pcmh = init_pcm(SAMPLE_RATE);
 
@@ -90,7 +90,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
-	        actuals[i] = find_freq(pitch);
+		actuals[i] = find_freq(pitch);
 		k = compare_notes(song, notes+i, actuals, i, j, fbp, fbar->barspace);
 		j -= k;
 		i -= k;
