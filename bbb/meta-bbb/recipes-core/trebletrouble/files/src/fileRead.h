@@ -1,5 +1,6 @@
 #ifndef FILEREAD_H_
 #define FILEREAD_H_
+#include "fileFormat.h"
 /*Helper Methods*/
 
 /*use makeBin() to create TwinkleTwinkle.bin*/
@@ -8,6 +9,7 @@
    returns the first note of the Song 
    THIS METHOD MUST BE CALLED IN ORDER TO PARSE THE SONG TWINKLE TWINKLE
 */
+
 Note * readTwinkle(Song *ttls, char * filename);
 
 /*Will print out all of the bars as well as notes*/
