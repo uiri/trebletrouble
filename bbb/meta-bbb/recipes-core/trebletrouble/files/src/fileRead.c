@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include<stdlib.h>
 #include "fileFormat.h"
-#include "display.h"
-
+#include "find_freq.h"
 //Free Song
 void freeSong(Song* ttls)
 {
@@ -103,8 +102,10 @@ void parseBar(Song* ttls,Note * notes)
 
 	//read the Bars and the notes in the bar
 	for (i = 0 ; i< ttls->sfh->numBars;i++) {
-		for (j = 0; j < ttls->fbar->notes ;j++) {
+		for (j = 0; j < ttls->fbar->notes-1 ;j++) {
+			printNote(notes);
 			notes++;
+			
 		}
 		ttls->fbar ++;
 	}

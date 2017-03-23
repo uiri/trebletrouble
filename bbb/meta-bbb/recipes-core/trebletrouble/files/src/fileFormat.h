@@ -9,6 +9,7 @@
 #define DEMISEMIQUAVER  1
 
 #define TWINKLE_FILENAME "TwinkleTwinkle.bin"
+#define DEMO "demo.bin"
 #define C_FLAT_MAJ  0b01111111
 #define A_FLAT_MIN  0b01111111
 #define G_FLAT_MAJ  0b01111110
@@ -60,7 +61,7 @@ typedef struct {
 	int numBars;
 	int numNotes;
 	char key;
-	unsigned char timeSignature;
+	unsigned char timeSignature;//This is for ASCII code
 	char name[50];
 } SongFormatHeader;
 
@@ -75,6 +76,12 @@ typedef struct {
 
 float millisec(int bpm, unsigned char ts, float note);
 
-void makeBin(char * filename);
+void makeBin(char * filename, char * binname);
+
+void rl(FILE * fp,char * str);
+
+char eval(int key);
+
+int find_quantum_value(char * check,char  *str1,char  *str2,char *str3,char *str4,char *str5,char *str6);
 
 #endif
