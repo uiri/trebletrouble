@@ -97,8 +97,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		i -= k;
 		waveDestroy(wave);
 	}
-	worstBar = find_worst_bar(song, notes, actuals);
-	draw_worst_bar(fbp, worstBar, notes, song);
+	worstBar = find_worst_bar(song, actuals);
 	cleanup_pcm(pcmh);
 	sleep(10);
 
