@@ -5,6 +5,10 @@
 #include "fileFormat.h"
 
 
+void rl(FILE * fp,char * str);
+char eval(int key);
+
+
 char  eval(int key){
 	
 	char a_key;
@@ -116,14 +120,13 @@ void makeBin(char * filename, char * binname)
 	Bar allBars[sfh.numBars];
 	Note allNotes[sfh.numNotes];
 		
-	for (j = 0;j<sfh.numBars;j++)
-		{
+	for (j = 0;j<sfh.numBars;j++){
 			rl(fp,str);
 			allBars[j].notes = atoi(str);
 
-		}
-	for (i = 0;i<sfh.numNotes;i++)
-		{
+	}
+	
+	for (i = 0;i<sfh.numNotes;i++){
 		rl(fp,str);
 		allNotes[i].quantumvalue =atoi(str); 
 		rl(fp,str);
@@ -131,7 +134,8 @@ void makeBin(char * filename, char * binname)
 		allNotes[i].duration = millisec(sfh.bpm,sfh.timeSig,allNotes[i].quantumvalue);
 		rl(fp,str);
 		allNotes[i].dotted = atoi(str);
-		}
+	}
+
 	
 	/* Create the file */
 	

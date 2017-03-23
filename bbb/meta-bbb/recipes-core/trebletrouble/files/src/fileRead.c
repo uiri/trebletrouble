@@ -102,7 +102,7 @@ void parseBar(Song* ttls,Note * notes)
 
 	//read the Bars and the notes in the bar
 	for (i = 0 ; i< ttls->sfh->numBars;i++) {
-		for (j = 0; j < ttls->fbar->notes-1 ;j++) {
+		for (j = 0; j < ttls->fbar->notes;j++) {
 			printNote(notes);
 			notes++;
 			
