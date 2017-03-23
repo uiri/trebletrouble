@@ -131,7 +131,7 @@ void makeBin(char * filename, char * binname)
 		allNotes[i].quantumvalue =atoi(str); 
 		rl(fp,str);
 		allNotes[i].frequency = atof(str);
-		allNotes[i].duration = millisec(sfh.bpm,sfh.timeSig,allNotes[i].quantumvalue);
+		allNotes[i].duration = millisec(sfh.bpm,sfh.timeSignature,allNotes[i].quantumvalue);
 		rl(fp,str);
 		allNotes[i].dotted = atoi(str);
 	}
@@ -143,8 +143,8 @@ void makeBin(char * filename, char * binname)
 	strcat(binname, ".bin");
 	FILE *fh = fopen (binname, "wb+");
 	fwrite(&sfh,sizeof(SongFormatHeader),1,fh);
-	fwrite (allBars, sizeof (Bar), 4, fh);
-        fwrite(allNotes,sizeof(Note),14,fh);
+	fwrite (allBars, sizeof (Bar),sfh.numBars, fh);
+        fwrite(allNotes,sizeof(Note),sfh.numNotes,fh);
 	fclose(fh);
 	
 }

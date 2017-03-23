@@ -10,6 +10,7 @@ int main(int argc, char** argv)
 {
 	Song * ttls;
 	char tname [50] ;
+	int i;
 	ttls =(Song *)malloc (sizeof(ttls));
 	Note * notes;
 	char binname[80];
@@ -18,14 +19,16 @@ int main(int argc, char** argv)
 	makeBin(argv[1],binname);
 	notes=readTwinkle(ttls,binname);
 	printHeader(ttls);
+	for(i= 0;i<ttls->sfh->numNotes;i++){
 	printNote(notes);
 	notes++;
-	printNote(notes);
-	notes++;
-	printNote(notes);
-	notes++;
-	printNote(notes);
-	notes++;
+	}
+	//printNote(notes);
+	//notes++;
+	//printNote(notes);
+	//notes++;
+	//printNote(notes);
+	//notes++;
 	//parseBar(ttls,notes);
 	freeSong(ttls);
 	return 1;
