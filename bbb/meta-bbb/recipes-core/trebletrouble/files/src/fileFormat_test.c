@@ -13,7 +13,6 @@ int main(int argc, char** argv)
 	ttls =(Song *)malloc (sizeof(ttls));
 	Note * notes;
 	char binname[80];
-	strcpy(tname,argv[1]);
 	makeBin(argv[1],binname);
 	notes=readTwinkle(ttls,binname);
 	printHeader(ttls);
