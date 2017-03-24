@@ -35,7 +35,7 @@
 #include "fileRead.h"
 #include "display.h"
 
-#define TWINKLE "Twinkle-display.bin"
+#define TWINKLE "Twinkle-display-twice.bin"
 extern long SCREENSIZE;
 extern int DISP_WIDTH;
 
