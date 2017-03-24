@@ -79,13 +79,13 @@ void remove_notespace(int value)
 
 void draw_note(int i, int ynote, char* fbp, short colour, int value) {
 	if(ynote < 61){
-		bitblit(L_PIC, fbp, get_xnote(i)-3, 45);
+		bitblit_colour(L_PIC, fbp, get_xnote(i)-3, 45, colour);
 	}
 	if(ynote < 31){
-		bitblit(L_PIC, fbp, get_xnote(i)-3, 15);
+		bitblit_colour(L_PIC, fbp, get_xnote(i)-3, 15, colour);
 	}
 	if(ynote > 239){
-		bitblit(L_PIC, fbp, get_xnote(i)-3, 225);
+		bitblit_colour(L_PIC, fbp, get_xnote(i)-3, 225, colour);
 	}
 
 	/*if ynote on treble clef is above B - flip the stem
@@ -199,6 +199,16 @@ int draw_key(char *fbp, char key){
 	return p;
 }
 
+void draw_staff_lines(char *fbp){
+	/* place staff (five lines) on screen */
+	int i;
+	int x = 0;
+	int y = 90;
+	int m = 30;
+	/* draw the lines of the staff */
+	for(i=0; i < 5; i++, y+=m)
+		bitblit("/srv/trebletrouble/line.pnm", fbp, x, y);
+}
 /* External API */
 
 
@@ -335,12 +345,8 @@ int bitblit(char* filename, char* fbp, int x, int y) {
 }
 
 void draw_staff(char* fbp){
-	/* place staff (five lines) on screen */
-	int i;
-	int x = 0;
 	int y = 90;
 	/* m is the space between the lines */
-	int m = 30;
 	int start =0;
 	int end = 800;
 	/* draw clef and end lines */
@@ -348,9 +354,7 @@ void draw_staff(char* fbp){
 	bitblit("/srv/trebletrouble/bar.pnm", fbp, end-16, y);
 	bitblit("/srv/trebletrouble/end.pnm", fbp, end-7, y);
 
-	/* draw the lines of the staff */
-	for(i=0; i < 5; i++, y+=m)
-		bitblit("/srv/trebletrouble/line.pnm", fbp, x, y);
+	draw_staff_lines(fbp);
 }
 
 int get_ynote(int i) {
@@ -479,6 +483,36 @@ void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int valu
 			bitblit(L_PIC, fbp, get_xnote(i)-3, get_ynote(actual[i])-14);
 		draw_note(i, get_ynote(expected[i]), fbp, BLACK, value);
 	}
+
+void clear_all_notes(Song* song, Note* note, int* actuals, char* fbp){
+	int actual_ynote, i, j, time;
+	int length = song->sfh->numNotes;
+
+	BARSP = 0;
+	NOTESP = 0;
+
+	Bar* fbar;
+	fbar = song -> fbar;
+
+	for(i=0, j=0; i < length; i++){
+		if (j == fbar -> notes){
+			BARSP+=10;
+			fbar++;
+			fbar->barspace = BARSP;
+			j = 0;
+		}
+		time = getNoteValue(note);
+		actual_ynote = get_ynote(actuals[i]);
+
+		draw_note(i, actual_ynote, fbp, WHITE, time);
+		note++;
+		j++;
+		
+	}
+	draw_staff_lines(fbp);
+	NOTESP = 0;
+	BARSP = 0;
+
 }
 
 void load_song(char *fbp, Note * notes, Song * song){

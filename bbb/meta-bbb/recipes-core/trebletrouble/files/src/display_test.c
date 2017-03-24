@@ -96,20 +96,36 @@ int main(int argc, char** argv){
 		
 	/*Testing code for Winter
 	Testing the new Song format*/
-	Song * ttls;
-	ttls = malloc(sizeof(ttls));
+	Song * song;
+	ttls = malloc(sizeof(song));
 	Note * notes;
 	makeBin(TWINKLE);
-	notes = readTwinkle(ttls,TWINKLE);
+	notes = readTwinkle(song,TWINKLE);
 
-	load_song(fbp, notes, ttls);
+	load_song(fbp, notes, song);
 
+	clear_all_notes(song, notes, song->expected, fbp);
+	/*for(i=0, j=0; i < song->sfh->numNotes; i++, j++){
+		if (j == fbar->notes){
+			fbar++;
+			j = 0;
+		}
+
+		actuals = song->expected;
+		
+		k= clear_notes(song, notes+i, actuals, i,j, fbp, fbar->barspace);
+		j -=k;
+		i -=k;
+
+		song->expected++;
+		
+	}*/	
 	/*writes the thing to a pnm hopefully --update: it does*/
 	screen_capture(fbp, "screenshot.pnm");
 	
 	/*~goodbye friends~*/
 	free(fbp);
-	freeSong(ttls); 
+	freeSong(song); 
 	return 0;
 
 }
