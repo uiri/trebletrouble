@@ -9,3 +9,6 @@ poky-krogoth/meta/recipes-devtools/pseudo/files/pseudo-glibc-rtld-next-workaroun
 bbb/build/conf/sanity_info
 build/
 bbb/meta-bbb/recipes-core/trebletrouble/files/src/ugfx/resources/ugfx/demos/
+.DS_Store
+bbb/meta-bbb/recipes-core/trebletrouble/.DS_Store
+bbb/meta-bbb/recipes-core/trebletrouble/files/.DS_Store
