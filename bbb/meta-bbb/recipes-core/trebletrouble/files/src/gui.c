@@ -60,10 +60,194 @@ GHandle ghButton1_1;
 GHandle ghButton1;
 GHandle ghLabel1;
 
+GHandle ghContainerFeedbackPage;
+GHandle ghProgressbar4;
+GHandle ghTextedit1;
+GHandle ghProgressbar1;
+GHandle ghProgressbar2;
+GHandle ghTextedit2;
+GHandle ghProgressbar3;
+GHandle ghTextedit3;
+GHandle ghTextedit4;
+
 // Fonts
 font_t dejavu_sans_16;
 font_t dejavu_sans_16_anti_aliased;
 font_t dejavu_sans_32;
+
+static void createPageFeedbackPage(void)
+{
+  GWidgetInit wi;
+  gwinWidgetClearInit(&wi);
+
+
+  // create container widget: ghContainerFeedbackPage
+  wi.g.show = FALSE;
+  wi.g.x = 0;
+  wi.g.y = 0;
+  wi.g.width = 640;
+  wi.g.height = 480;
+  wi.g.parent = 0;
+  wi.text = "Container";
+  wi.customDraw = 0;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghContainerFeedbackPage = gwinContainerCreate(0, &wi, 0);
+
+  // create container widget: ghContainer1
+  wi.g.show = TRUE;
+  wi.g.x = 50;
+  wi.g.y = 110;
+  wi.g.width = 400;
+  wi.g.height = 300;
+  wi.g.parent = ghContainerFeedbackPage;
+  wi.text = "Container1";
+  wi.customDraw = gwinContainerDraw_Std;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghContainer1 = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+
+  // Create progressbar widget: ghProgressbar4
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 240;
+  wi.g.width = 200;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "% Correct";
+  wi.customDraw = gwinProgressbarDraw_Std;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghProgressbar4 = gwinProgressbarCreate(0, &wi);
+  gwinProgressbarSetRange(ghProgressbar4, 0, 100);
+  gwinProgressbarSetPosition(ghProgressbar4, 25);
+
+  // Create textedit widget: ghTextedit1
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 40;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar 1";
+  wi.customDraw = gwinTexteditDefaultDraw;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghTextedit1 = gwinTexteditCreate(0, &wi, 0);
+
+  // Create progressbar widget: ghProgressbar1
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 60;
+  wi.g.width = 200;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "% Correct";
+  wi.customDraw = gwinProgressbarDraw_Std;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghProgressbar1 = gwinProgressbarCreate(0, &wi);
+  gwinProgressbarSetRange(ghProgressbar1, 0, 100);
+  gwinProgressbarSetPosition(ghProgressbar1, 25);
+
+  // Create progressbar widget: ghProgressbar2
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 120;
+  wi.g.width = 200;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "% Correct";
+  wi.customDraw = gwinProgressbarDraw_Std;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghProgressbar2 = gwinProgressbarCreate(0, &wi);
+  gwinProgressbarSetRange(ghProgressbar2, 0, 100);
+  gwinProgressbarSetPosition(ghProgressbar2, 25);
+
+  // Create textedit widget: ghTextedit2
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 100;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar 2";
+  wi.customDraw = gwinTexteditDefaultDraw;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghTextedit2 = gwinTexteditCreate(0, &wi, 0);
+
+  // Create progressbar widget: ghProgressbar3
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 180;
+  wi.g.width = 200;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "% Correct";
+  wi.customDraw = gwinProgressbarDraw_Std;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghProgressbar3 = gwinProgressbarCreate(0, &wi);
+  gwinProgressbarSetRange(ghProgressbar3, 0, 100);
+  gwinProgressbarSetPosition(ghProgressbar3, 25);
+
+  // Create textedit widget: ghTextedit3
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 160;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar 3";
+  wi.customDraw = gwinTexteditDefaultDraw;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghTextedit3 = gwinTexteditCreate(0, &wi, 0);
+
+  // Create textedit widget: ghTextedit4
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 220;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar 4";
+  wi.customDraw = gwinTexteditDefaultDraw;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghTextedit4 = gwinTexteditCreate(0, &wi, 0);
+
+  // Create label widget: ghLabel1
+  wi.g.show = TRUE;
+  wi.g.x = 50;
+  wi.g.y = 70;
+  wi.g.width = 180;
+  wi.g.height = 32;
+  wi.g.parent = ghContainerFeedbackPage;
+  wi.text = "Feedback";
+  wi.customDraw = gwinLabelDrawJustifiedLeft;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghLabel1 = gwinLabelCreate(0, &wi);
+  gwinLabelSetBorder(ghLabel1, FALSE);
+  gwinSetFont(ghLabel1, dejavu_sans_32);
+  gwinRedraw(ghLabel1);
+
+  // create button widget: ghButton1
+  wi.g.show = TRUE;
+  wi.g.x = 480;
+  wi.g.y = 380;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainerFeedbackPage;
+  wi.text = "Return";
+  wi.customDraw = gwinButtonDraw_Normal;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghButton1 = gwinButtonCreate(0, &wi);
+}
 
 static void createPagePage0(void)
 {
@@ -164,6 +348,9 @@ void guiShowPage(unsigned pageIndex)
 	case 0:
 		gwinShow(ghContainerPage0);
 		break;
+	case 1: 
+	  	gwinShow(ghContainerFeedbackPage);
+		break;
 
 	default:
 		break;
@@ -190,6 +377,7 @@ void guiCreate(void)
 
 	// Create all the display pages
 	createPagePage0();
+	createPageFeedbackPage();
 
 	// Select the default display page
 	colour_screen(GDISP->board, WHITE);
@@ -219,7 +407,8 @@ void guiEventLoop(void)
 			}
 			gwinHide(ghContainerPage0);
 			menu_item(fbp, NULL);
-			gwinShow(ghContainerPage0);
+			gwinShow(ghContainerFeedbackPage);
+			gwinHide(ghContainerPage0);
 			break;
 		default:
 			break;

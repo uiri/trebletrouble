@@ -16,11 +16,21 @@
 extern GListener glistener;
 
 // GHandles
+extern GHandle ghContainerFeedbackPage;
 extern GHandle ghContainerPage0;
 extern GHandle ghContainer1;
+extern GHandle ghProgressbar4;
+extern GHandle ghProgressbar3;
+extern GHandle ghProgressbar2;
+extern GHandle ghProgressbar1;
+extern GHandle ghTextedit4;
+extern GHandle ghTextedit3;
+extern GHandle ghTextedit2;
+extern GHandle ghTextedit1;
 extern GHandle ghButton1_2;
 extern GHandle ghButton1_1;
 extern GHandle ghButton1;
+extern GHandle ghLabel1;
 extern GHandle ghTextedit1;
 
 // Function Prototypes
