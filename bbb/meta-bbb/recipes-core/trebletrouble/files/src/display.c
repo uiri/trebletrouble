@@ -515,13 +515,7 @@ void clear_all_notes(Song* song, Note* note, int* actuals, char* fbp){
 
 }
 
-void load_song(char *fbp, Note * notes, Song * song){
-	int i, j, ynote, time, note;
-	double freq;
-
-	Bar* fbar;
-
-	fbar = song->fbar;
+void load_start_song(char *fbp, Song * song){
 	/*Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1
 	so for 4/4= 51
@@ -530,8 +524,6 @@ void load_song(char *fbp, Note * notes, Song * song){
 	/*Draw the key, return the current x value*/
 	x_start = draw_key(fbp, song->sfh->key);
 
-	BARSP = 0;
-	NOTESP = 0;
 	/*
 	 * Take ints from char away
 	 * Don't forget to change millisec calculations if the timeSignature
@@ -540,6 +532,16 @@ void load_song(char *fbp, Note * notes, Song * song){
 	int ts1 = (song->sfh->timeSignature/16)+1;
 	int ts2 = (song->sfh->timeSignature%16)+1;
 	set_time_signature(ts1, ts2, fbp);
+}
+/*loads a partial part of the song, given the 4 bars at a time.*/
+void load_song(char *fbp, Note * notes, Song * song){
+	int i, j, ynote, time, note;
+	double freq;
+	Bar* fbar;
+	fbar = song->fbar;
+
+	BARSP = 0;
+	NOTESP = 0;
 
 	for(j = 0, i=0; j < song->sfh->numNotes; j++){
 		
