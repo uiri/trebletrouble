@@ -61,14 +61,17 @@ GHandle ghButton1;
 GHandle ghLabel1;
 
 GHandle ghContainerFeedbackPage;
+GHandle ghContainer1;
 GHandle ghProgressbar4;
-GHandle ghTextedit1;
 GHandle ghProgressbar1;
 GHandle ghProgressbar2;
-GHandle ghTextedit2;
 GHandle ghProgressbar3;
-GHandle ghTextedit3;
-GHandle ghTextedit4;
+GHandle ghLabel6;
+GHandle ghLabel5;
+GHandle ghLabel4;
+GHandle ghLabel3;
+GHandle ghLabel2;
+GHandle ghButton2;
 
 // Fonts
 font_t dejavu_sans_16;
@@ -122,19 +125,6 @@ static void createPageFeedbackPage(void)
   gwinProgressbarSetRange(ghProgressbar4, 0, 100);
   gwinProgressbarSetPosition(ghProgressbar4, 25);
 
-  // Create textedit widget: ghTextedit1
-  wi.g.show = TRUE;
-  wi.g.x = 30;
-  wi.g.y = 40;
-  wi.g.width = 120;
-  wi.g.height = 20;
-  wi.g.parent = ghContainer1;
-  wi.text = "Bar 1";
-  wi.customDraw = gwinTexteditDefaultDraw;
-  wi.customParam = 0;
-  wi.customStyle = 0;
-  ghTextedit1 = gwinTexteditCreate(0, &wi, 0);
-
   // Create progressbar widget: ghProgressbar1
   wi.g.show = TRUE;
   wi.g.x = 30;
@@ -165,19 +155,6 @@ static void createPageFeedbackPage(void)
   gwinProgressbarSetRange(ghProgressbar2, 0, 100);
   gwinProgressbarSetPosition(ghProgressbar2, 25);
 
-  // Create textedit widget: ghTextedit2
-  wi.g.show = TRUE;
-  wi.g.x = 30;
-  wi.g.y = 100;
-  wi.g.width = 120;
-  wi.g.height = 20;
-  wi.g.parent = ghContainer1;
-  wi.text = "Bar 2";
-  wi.customDraw = gwinTexteditDefaultDraw;
-  wi.customParam = 0;
-  wi.customStyle = 0;
-  ghTextedit2 = gwinTexteditCreate(0, &wi, 0);
-
   // Create progressbar widget: ghProgressbar3
   wi.g.show = TRUE;
   wi.g.x = 30;
@@ -192,32 +169,6 @@ static void createPageFeedbackPage(void)
   ghProgressbar3 = gwinProgressbarCreate(0, &wi);
   gwinProgressbarSetRange(ghProgressbar3, 0, 100);
   gwinProgressbarSetPosition(ghProgressbar3, 25);
-
-  // Create textedit widget: ghTextedit3
-  wi.g.show = TRUE;
-  wi.g.x = 30;
-  wi.g.y = 160;
-  wi.g.width = 120;
-  wi.g.height = 20;
-  wi.g.parent = ghContainer1;
-  wi.text = "Bar 3";
-  wi.customDraw = gwinTexteditDefaultDraw;
-  wi.customParam = 0;
-  wi.customStyle = 0;
-  ghTextedit3 = gwinTexteditCreate(0, &wi, 0);
-
-  // Create textedit widget: ghTextedit4
-  wi.g.show = TRUE;
-  wi.g.x = 30;
-  wi.g.y = 220;
-  wi.g.width = 120;
-  wi.g.height = 20;
-  wi.g.parent = ghContainer1;
-  wi.text = "Bar 4";
-  wi.customDraw = gwinTexteditDefaultDraw;
-  wi.customParam = 0;
-  wi.customStyle = 0;
-  ghTextedit4 = gwinTexteditCreate(0, &wi, 0);
 
   // Create label widget: ghLabel1
   wi.g.show = TRUE;
@@ -235,6 +186,62 @@ static void createPageFeedbackPage(void)
   gwinSetFont(ghLabel1, dejavu_sans_32);
   gwinRedraw(ghLabel1);
 
+  // Create label widget: ghLabel2
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 40;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar1";
+  wi.customDraw = gwinLabelDrawJustifiedLeft;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghLabel2 = gwinLabelCreate(0, &wi);
+  gwinLabelSetBorder(ghLabel2, FALSE);
+
+  // Create label widget: ghLabel3
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 100;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar2";
+  wi.customDraw = gwinLabelDrawJustifiedLeft;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghLabel3 = gwinLabelCreate(0, &wi);
+  gwinLabelSetBorder(ghLabel3, FALSE);
+
+  // Create label widget: ghLabel4
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 160;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar3";
+  wi.customDraw = gwinLabelDrawJustifiedLeft;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghLabel4 = gwinLabelCreate(0, &wi);
+  gwinLabelSetBorder(ghLabel4, FALSE);
+
+  // Create label widget: ghLabel5
+  wi.g.show = TRUE;
+  wi.g.x = 30;
+  wi.g.y = 220;
+  wi.g.width = 120;
+  wi.g.height = 20;
+  wi.g.parent = ghContainer1;
+  wi.text = "Bar4";
+  wi.customDraw = gwinLabelDrawJustifiedLeft;
+  wi.customParam = 0;
+  wi.customStyle = 0;
+  ghLabel5 = gwinLabelCreate(0, &wi);
+  gwinLabelSetBorder(ghLabel5, FALSE);
+
   // create button widget: ghButton1
   wi.g.show = TRUE;
   wi.g.x = 480;
@@ -246,7 +253,7 @@ static void createPageFeedbackPage(void)
   wi.customDraw = gwinButtonDraw_Normal;
   wi.customParam = 0;
   wi.customStyle = 0;
-  ghButton1 = gwinButtonCreate(0, &wi);
+  ghButton2 = gwinButtonCreate(0, &wi);
 }
 
 static void createPagePage0(void)
@@ -342,6 +349,7 @@ void guiShowPage(unsigned pageIndex)
 {
 	// Hide all pages
 	gwinHide(ghContainerPage0);
+	gwinHide(ghContainerFeedbackPage);
 
 	// Show page selected page
 	switch (pageIndex) {
@@ -400,15 +408,19 @@ void guiEventLoop(void)
 		case GEVENT_GWIN_BUTTON:
 			if (((GEventGWinButton*)pe)->gwin == ghButton1) {
 				menu_item = play_song_menu;
+				gwinShow(ghContainerFeedbackPage);
+				sleep(1000);
 			} else if (((GEventGWinButton*)pe)->gwin == ghButton1_1) {
 				menu_item = metronome_menu;
-			} else {
+			} else if (((GEventGWinButton*)pe)->gwin == ghButton2) {
+			  	gwinShow(ghContainerFeedbackPage);
+			}
+			else {
 				break;
 			}
 			gwinHide(ghContainerPage0);
 			menu_item(fbp, NULL);
-			gwinShow(ghContainerFeedbackPage);
-			gwinHide(ghContainerPage0);
+			gwinShow(ghContainerPage0);
 			break;
 		default:
 			break;
