@@ -81,7 +81,7 @@ void screen_capture(char* fbp, char* filename){
 }
 
 int main(int argc, char** argv){
-
+	int i, j, k;
 	/*set screensize and display_width for testing*/
 	SCREENSIZE = 800*480*2;
 	DISP_WIDTH = 800;
@@ -89,7 +89,7 @@ int main(int argc, char** argv){
 	char* fbp = malloc(SCREENSIZE);
 
 	/*draw colour to screen*/
-	colour_screen(fbp, WHITE);	
+	colour_screen(fbp, WHITE);
 	
 	/*draw staff on screen*/
 	draw_staff(fbp);	
@@ -97,19 +97,30 @@ int main(int argc, char** argv){
 	/*Testing code for Winter
 	Testing the new Song format*/
 	Song * song;
-	ttls = malloc(sizeof(song));
+	song = malloc(sizeof(song));
 	Note * notes;
-	makeBin(TWINKLE);
-	notes = readTwinkle(song,TWINKLE);
+	
+	makeBin(SONG);
+	notes = readTwinkle(song,SONG);
+	Bar* fbar, * fbar_n;
+	fbar = song->fbar;
+	int x_s = load_start_song(fbp, song);
+	fbar_n = load_song(fbp, notes, song, x_s, fbar);
 
-	load_song(fbp, notes, song);
+	for(i=0, j=0, k=0;i < song->sfh->numNotes;i++, j++, notes++){
 
-	clear_all_notes(song, notes, song->expected, fbp);
-	/*for(i=0, j=0; i < song->sfh->numNotes; i++, j++){
-		if (j == fbar->notes){
+		if( j == fbar->notes){
 			fbar++;
 			j = 0;
+			if (fbar == fbar_n){
+				clear_all_notes(song, song->expected+k, fbp, k, i-k);
+				k = i;
+				fbar_n = load_song(fbp, notes, song, x_s, fbar);
+				break; /* This is only a test */
+			}
 		}
+		//compare the notes here
+	}
 
 		actuals = song->expected;
 		
@@ -119,7 +130,7 @@ int main(int argc, char** argv){
 
 		song->expected++;
 		
-	}*/	
+	}	
 	/*writes the thing to a pnm hopefully --update: it does*/
 	screen_capture(fbp, "screenshot.pnm");
 	

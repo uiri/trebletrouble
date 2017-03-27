@@ -78,10 +78,9 @@ void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);
 int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp, int barspace);
-void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value);
-void clear_all_notes(Song* song, Note* note, int* actuals, char* fbp);
-void load_start_song(char *fbp, Song * song);
-void load_song(char *fbp, Note * notes, Song * song);
+void clear_all_notes(Song* song, int* actuals, char* fbp, int ind, int length);
+int load_start_song(char *fbp, Song * song);
+Bar * load_song(char *fbp, Note * notes, Song * song, int x_s, Bar * fbar);
 
 Bar* find_worst_bar(Song* song, int* actuals);
 
