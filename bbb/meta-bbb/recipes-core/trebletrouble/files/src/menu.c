@@ -62,7 +62,6 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	
 	/* Need to change this to proper file I/O */
 	/* songfile = fopen(SONG, "rb");*/
-	makeBin(TWINKLE);
 	notes = readTwinkle(song, TWINKLE);
 	/*fclose(songfile);*/
 	load_song(fbp, notes, song);
