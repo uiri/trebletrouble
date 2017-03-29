@@ -40,7 +40,7 @@
 #include "metronome.h"
 #include "alsa.h"
 #include "find_freq.h"
-#define TWINKLE "Twinkle-display.bin"
+#define TWINKLE "/srv/trebletrouble/TwinkleTwinkleLittleStar.bin"
 
 void play_song_menu(char* fbp, ScreenInput *si)
 {
@@ -58,7 +58,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	draw_staff(fbp);
 	
 	/*Code for new song format*/
-	song = malloc(sizeof(song));
+	song = malloc(sizeof(Song));
 	
 	/* Need to change this to proper file I/O */
 	/* songfile = fopen(SONG, "rb");*/
