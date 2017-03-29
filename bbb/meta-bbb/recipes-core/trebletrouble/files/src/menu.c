@@ -40,18 +40,19 @@
 #include "metronome.h"
 #include "alsa.h"
 #include "find_freq.h"
-#define TWINKLE "/srv/trebletrouble/TwinkleTwinkleLittleStar.bin"
+#define SONG "/srv/trebletrouble/TwinkleTwinkleLittleStar.bin"
 
 void play_song_menu(char* fbp, ScreenInput *si)
 {
-	FILE* songfile;
-	int i, j, k, *actuals;
+	/*FILE* songfile;*/
+	int i, j, k, m, *actuals, x_s;
 	float pitch;
 	Wave* wave;
 	snd_pcm_t *pcmh;
 	Song* song;
-	Note* notes;
-	Bar* fbar, *worstBar;
+	Note* notes, *notes_p;
+	Bar* fbar, *firstNote, *worstBar, *fbar_n, *fbar_p;
+	
 	colour_screen(fbp, WHITE);
 	
 	/*draw staff on screen*/
@@ -60,27 +61,41 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	/*Code for new song format*/
 	song = malloc(sizeof(Song));
 	
-	/* Need to change this to proper file I/O */
-	/* songfile = fopen(SONG, "rb");*/
-	notes = readTwinkle(song, TWINKLE);
-	/*fclose(songfile);*/
-	load_song(fbp, notes, song);
+	////makeBin(SONG);
+	notes = readTwinkle(song, SONG);
 
 	fbar = song->fbar;
 	pcmh = init_pcm(SAMPLE_RATE);
+	x_s = load_start_song(fbp, song);
+	fbar_p = fbar;
+	notes_p = notes;
+	fbar_n = load_song(fbp, notes, song, x_s, fbar);
 
 	actuals = malloc(sizeof(int) * song->sfh->numNotes);
+	firstNote = song->fbar + song->sfh->numBars;
 
-	for (i = 0, j=0; i < song->sfh->numNotes; i++, j++) {
+	for (i = 0, j=0, k=0; k+i < song->sfh->numNotes; i++, j++, notes++) {
 		if ( j == fbar->notes){
 			fbar++;
 			j = 0;
+			printf("Next bar\n");
+			if (fbar == firstNote)
+				break;
+			if( fbar == fbar_n){
+				printf("Clearing notes to draw new bars\n");
+				clear_all_notes(notes_p, fbar_p, actuals+k, fbp);
+				k += i;
+				i = 0;
+				fbar_p = fbar;
+				notes_p = notes;
+				fbar_n = load_song(fbp, notes, song, x_s, fbar);
+			}
 		}
-
-		wave = makeWave(notes[i].duration);
+		printf("Start compare notes\n");
+		wave = makeWave(notes->duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
-		if (recordWAV(wave, notes[i].duration)) {
+		if (recordWAV(wave, notes->duration)) {
 			printf("Oh no! An error with the mic!\n");
 			continue;
 		}
@@ -89,10 +104,11 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
-		actuals[i] = find_freq(pitch);
-		k = compare_notes(song, notes+i, actuals, i, j, fbp, fbar->barspace);
-		j -= k;
-		i -= k;
+		actuals[k+i] = find_freq(pitch);
+		m = compare_notes(song, notes, actuals+k, i, j, fbp, fbar->barspace);
+		printf("End compare notes\n");
+		j -= m;
+		i -= m;
 		waveDestroy(wave);
 	}
 	worstBar = find_worst_bar(song, actuals);

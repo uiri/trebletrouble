@@ -476,69 +476,59 @@ Bar* find_worst_bar(Song* song, int* actuals) {
 
 }
 	
-void clear_notes(int i, int *expected, int *actual, char* fbp, int len, int value) {
-	int actual_ynote;
-	for (; i < len; i++) {
-		actual_ynote = get_ynote(actual[i]);
-		draw_note(i, actual_ynote, fbp, WHITE, 1);
-		if (!(actual_ynote%30))
-			bitblit(L_PIC, fbp, get_xnote(i)-3, get_ynote(actual[i])-14);
-		draw_note(i, get_ynote(expected[i]), fbp, BLACK, value);
-	}
-
-void clear_all_notes(Song* song, int* actuals, char* fbp, int ind, int length){
-	int actual_ynote, i, j, time;
-
-	Note * notes = (Note *)(song->fbar+song->sfh->numBars);
+void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp){
+	int actual_ynote, i, j, time, note, ynote, freq;
 	BARSP = 0;
 	NOTESP = 0;
 	printf("Clearing the notes\n");
 
-	Bar* fbar;
-	fbar = song -> fbar;
-	for(i=0, j=0; i < ind; i++, j++, notes++){
-		if (j == fbar->notes){
-			fbar++;
-			j = 0;
-		}
-	}
-	for(i=0, j=0; i < length; i++, j++, notes++){
+	for (i=0, j=0; get_xnote(i) < END; i++, j++, notes++) {
 		if (j == fbar -> notes){
-			BARSP+=10;
-			fbar++;
-			fbar->barspace = BARSP;
 			j = 0;
+			fbar++;
+			if (get_xnote(i+fbar->notes-1)>= END-30)
+				break;
+			BARSP+=10;
+			fbar->barspace = BARSP;
 		}
 		time = getNoteValue(notes);
 		actual_ynote = get_ynote(actuals[i]);
 
 		draw_note(i, actual_ynote, fbp, WHITE, time);
+		
+		freq = getFrequency(notes);
+		
+		note = find_freq(freq);
+		ynote  = get_ynote(note);
+		draw_note(i, ynote, fbp, WHITE, time);
+
 	}
 	draw_staff_lines(fbp);
 	NOTESP = 0;
 	BARSP = 0;
 
 }
-
-void load_start_song(char *fbp, Song * song){
+int load_start_song(char *fbp, Song * song){
 	/*Time signature:
 	Timesig = Ts1-1 * 16 + Ts2-1
 	so for 4/4= 51
 	so for 3/4= 35*/
-
+	
 	/*Draw the key, return the current x value*/
 	x_start = draw_key(fbp, song->sfh->key);
 	printf("Drawing the notes\n");
-
+	
 	/*
 	 * Take ints from char away
 	 * Don't forget to change millisec calculations if the timeSignature
 	 * format changes!
 	 */
-	int ts1 = (song->sfh->timeSignature/16)+1;
-	int ts2 = (song->sfh->timeSignature%16)+1;
-	set_time_signature(ts1, ts2, fbp);
+	 int ts1 = (song->sfh->timeSignature/16)+1;
+	 int ts2 = (song->sfh->timeSignature%16)+1;
+	 set_time_signature(ts1, ts2, fbp);
+	 return x_start;
 }
+
 /*loads a partial part of the song, given the 4 bars at a time.*/
 Bar * load_song(char *fbp, Note * notes, Song * song, int x_s, Bar * fbar){
 	int i, j, ynote, time, note;
@@ -550,13 +540,14 @@ Bar * load_song(char *fbp, Note * notes, Song * song, int x_s, Bar * fbar){
 
 	for(i = 0, j=0; get_xnote(i) < END; j++, i++, notes++){
 		if ( j == fbar->notes){
-			draw_bar(fbp, i);
 			fbar++;
-			fbar->barspace = BARSP;
-			printf("**:%d\n",fbar-song->fbar);
 			j = 0;
-			if (get_xnote(i+fbar->notes-1)>= END-30)
+			if (get_xnote(i+fbar->notes-1)>= END-30) {
+				fbar--;
 				break;
+			}
+			draw_bar(fbp, i);
+			fbar->barspace = BARSP;
 		}
 
 		time = getNoteValue(notes);
@@ -568,6 +559,7 @@ Bar * load_song(char *fbp, Note * notes, Song * song, int x_s, Bar * fbar){
 		draw_note(i, ynote, fbp, BLACK, time);
 
 	}
+	fbar++;
 	NOTESP = 0;
 	BARSP = 0;
 	return fbar;
