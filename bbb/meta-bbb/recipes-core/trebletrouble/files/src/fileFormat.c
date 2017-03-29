@@ -153,7 +153,7 @@ float millisec(int bpm, unsigned char ts, float note)
 {
 	/* (60 seconds per minute * 1000 milliseconds per second) 
 	 * / (beats per minute * adjustment factor) */
-	float adj = 32.0 / ((float)CROTCHET);
+	float adj = note / ((float)CROTCHET);
 
 	/*
 	 * 6/8, 9/8 and 12/8 use dotted CROTCHETs
@@ -164,7 +164,7 @@ float millisec(int bpm, unsigned char ts, float note)
 	if (ts == 87 || ts == 135 || ts == 183)
 		adj /= 1.5;
 
-	return (float)(60 * 1000 * note) / (bpm * adj);
+	return (float)(60 * 1000 * adj) / (bpm);
 }
 
 void rl(FILE * fp, char *str)
