@@ -32,10 +32,8 @@
 #include "fileRead.h"
 #include "fileFormat.h"
 
-
 void rl(FILE * fp,char * str);
 char eval(int key);
-
 
 char  eval(int key){
 	
@@ -163,8 +161,6 @@ void makeBin(char * filename, char * binname)
 		rl(fp,str);
 		allNotes[i].dotted = atoi(str);
 	}
-
-	
 	/* Create the file */
 	
 	strcpy(binname,sfh.name); 
