@@ -61,7 +61,6 @@ GHandle ghButton1;
 GHandle ghLabel1;
 
 GHandle ghContainerFeedbackPage;
-GHandle ghContainer1;
 GHandle ghProgressbar4;
 GHandle ghProgressbar1;
 GHandle ghProgressbar2;
@@ -88,7 +87,7 @@ static void createPageFeedbackPage(void)
   wi.g.show = FALSE;
   wi.g.x = 0;
   wi.g.y = 0;
-  wi.g.width = 640;
+  wi.g.width = 800;
   wi.g.height = 480;
   wi.g.parent = 0;
   wi.text = "Container";
@@ -101,7 +100,7 @@ static void createPageFeedbackPage(void)
   wi.g.show = TRUE;
   wi.g.x = 50;
   wi.g.y = 110;
-  wi.g.width = 400;
+  wi.g.width = 600;
   wi.g.height = 300;
   wi.g.parent = ghContainerFeedbackPage;
   wi.text = "Container1";
@@ -244,7 +243,7 @@ static void createPageFeedbackPage(void)
 
   // create button widget: ghButton1
   wi.g.show = TRUE;
-  wi.g.x = 480;
+  wi.g.x = 680;
   wi.g.y = 380;
   wi.g.width = 120;
   wi.g.height = 20;
@@ -406,21 +405,22 @@ void guiEventLoop(void)
 			continue;
 		switch (pe->type) {
 		case GEVENT_GWIN_BUTTON:
-			if (((GEventGWinButton*)pe)->gwin == ghButton1) {
+		  	if (((GEventGWinButton*)pe)->gwin == ghButton1) {
 				menu_item = play_song_menu;
-				gwinShow(ghContainerFeedbackPage);
-				sleep(1000);
 			} else if (((GEventGWinButton*)pe)->gwin == ghButton1_1) {
 				menu_item = metronome_menu;
 			} else if (((GEventGWinButton*)pe)->gwin == ghButton2) {
-			  	gwinShow(ghContainerFeedbackPage);
-			}
-			else {
+			  	gwinShow(ghContainerPage0);
+			} else {
 				break;
 			}
 			gwinHide(ghContainerPage0);
 			menu_item(fbp, NULL);
-			gwinShow(ghContainerPage0);
+			if (menu_item == play_song_menu) {
+				gwinShow(ghContainerFeedbackPage);
+			} else {
+				gwinShow(ghContainerPage0);
+			}
 			break;
 		default:
 			break;
