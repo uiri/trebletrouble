@@ -380,7 +380,7 @@ void guiCreate(void)
 	gwinSetDefaultFont(dejavu_sans_16);
 	gwinSetDefaultStyle(&white, FALSE);
 	gwinSetDefaultColor(black_studio);
-	gwinSetDefaultBgColor(magenta_studio);
+	gwinSetDefaultBgColor(white_studio);
 
 	// Create all the display pages
 	createPagePage0();
@@ -405,21 +405,19 @@ void guiEventLoop(void)
 			continue;
 		switch (pe->type) {
 		case GEVENT_GWIN_BUTTON:
+		  gwinHide(ghContainerPage0);
+		  gwinHide(ghContainerFeedbackPage);
 		  	if (((GEventGWinButton*)pe)->gwin == ghButton1) {
 				menu_item = play_song_menu;
+				menu_item(fbp, NULL);
+				gwinShow(ghContainerFeedbackPage);
 			} else if (((GEventGWinButton*)pe)->gwin == ghButton1_1) {
 				menu_item = metronome_menu;
+				menu_item(fbp, NULL);
 			} else if (((GEventGWinButton*)pe)->gwin == ghButton2) {
 			  	gwinShow(ghContainerPage0);
 			} else {
-				break;
-			}
-			gwinHide(ghContainerPage0);
-			menu_item(fbp, NULL);
-			if (menu_item == play_song_menu) {
-				gwinShow(ghContainerFeedbackPage);
-			} else {
-				gwinShow(ghContainerPage0);
+			  	gwinShow(ghContainerPage0);
 			}
 			break;
 		default:
