@@ -68,9 +68,9 @@ float get_pitch(Wave* wave)
 			/ (MAX_INT(wave->header.bitsPerSample));
 	}
 
-	fft_size = 1;
-	while ((1 << fft_size) < wave->nSamples)
-		fft_size++;
+	fft_size = FFT_SIZE;
+	while ((1 << fft_size) > wave->nSamples)
+		fft_size--;
 
 	initfft(fft_size);
 	fft(waveData,imaginary_wave,0);
@@ -134,7 +134,7 @@ Wave* makeWave(float duration)
 
 	fft_log2 = 1 << FFT_SIZE;
 	if (wave->nSamples) {
-		while (fft_log2 > wave->nSamples) {
+		while ((fft_log2 >> 1) > wave->nSamples) {
 			fft_log2 >>= 1;
 		}
 	}
