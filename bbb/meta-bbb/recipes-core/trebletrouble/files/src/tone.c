@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "libfft.h"
+#include "lowpass.h"
 #include "tone.h"
 
 #define FFT_SIZE 15
@@ -58,26 +59,24 @@ void toLittleEndian(const long long int size, void* value) {
 float get_pitch(Wave* wave)
 {
 	float *imaginary_wave, max, pitch, *waveData;
-	int max_index, i, fft_size;
-
-	imaginary_wave = calloc(wave->nSamples, sizeof(float));
-	waveData = calloc(wave->nSamples, sizeof(float));
-
-	for (i = 0; i < wave->nSamples; i++) {
-		waveData[i] = ((float)((short*)wave->data)[i])
-			/ (MAX_INT(wave->header.bitsPerSample));
-	}
+	int max_index, i, fft_size, fft_samples;
 
 	fft_size = FFT_SIZE;
 	while ((1 << fft_size) > wave->nSamples)
 		fft_size--;
+	fft_samples = (1 << fft_size);
+
+	imaginary_wave = calloc(fft_samples, sizeof(float));
+	waveData = malloc(fft_samples * sizeof(float));
+	filter_wavdata(waveData, fft_samples, ((short*)wave->data),
+		       wave->nSamples, MAX_INT(wave->header.bitsPerSample));
 
 	initfft(fft_size);
 	fft(waveData,imaginary_wave,0);
 	free(imaginary_wave);
 
 	max = 0;
-	for (i = 0; i < (SAMPLE_RATE / 2); i++) {
+	for (i = 0; i < FILTER_FREQ; i++) {
 		if (waveData[i] > max && i != 2*max_index) {
 			max = waveData[i];
 			max_index = i;
@@ -85,7 +84,7 @@ float get_pitch(Wave* wave)
 	}
 
 	free(waveData);
-	pitch = ((float)max_index) * SAMPLE_RATE / (1 << fft_size);
+	pitch = ((float)max_index) * SAMPLE_RATE / fft_samples;
 
 	return pitch;
 }
@@ -94,7 +93,6 @@ Wave* makeWave(float duration)
 {
 	/* Define some variables for the sound */
 	Wave* wave;
-	int fft_log2;
 
 	/* Create a mono(1), 32-bit sound and set the duration */
 	wave = malloc(sizeof(Wave));
@@ -130,17 +128,8 @@ Wave* makeWave(float duration)
 	wave->header.subChunk1Size = 16;
 	wave->header.subChunk2Size = wave->size;
 
-	wave->nSamples = (long long int)( (wave->header.byteRate * duration) / (1000 * (BITS_PER_SAMPLE / 8)));
-
-	fft_log2 = 1 << FFT_SIZE;
-	if (wave->nSamples) {
-		while ((fft_log2 >> 1) > wave->nSamples) {
-			fft_log2 >>= 1;
-		}
-	}
-	wave->nSamples = fft_log2;
-
-	wave->size = wave->nSamples * (BITS_PER_SAMPLE / 8);
+	wave->size = (long long int)( (wave->header.byteRate * duration) / 1000);
+	wave->nSamples = wave->size / (wave->header.bitsPerSample / 8);
 	wave->data = malloc(wave->size);
 	wave->index = 0;
 
@@ -159,8 +148,6 @@ void waveAddSample(Wave* wave, float sample) {
 	sample_bytes = (char*)&sample32bit;
 	wave->data[ wave->index ++ ] = sample_bytes[0];
 	wave->data[ wave->index ++ ] = sample_bytes[1];
-	/* wave->data[ wave->index ++ ] = sample_bytes[2]; */
-	/* wave->data[ wave->index ++ ] = sample_bytes[3]; */
 }
 
 void waveDestroy( Wave* wave) {
