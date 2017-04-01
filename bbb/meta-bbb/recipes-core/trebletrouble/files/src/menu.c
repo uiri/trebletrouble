@@ -48,7 +48,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	int i, j, k, *actuals;
 	float pitch;
 	Wave* wave;
-	snd_pcm_t *pcmh;
+	snd_pcm_t *cp_pcmh, *pb_pcmh;
 	Song* song;
 	Note* notes;
 	Bar* fbar, *worstBar;
@@ -67,7 +67,8 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	load_song(fbp, notes, song);
 
 	fbar = song->fbar;
-	pcmh = init_pcm(SAMPLE_RATE);
+	pb_pcmh = init_pcm(SAMPLE_RATE, 0);
+	cp_pcmh = init_pcm(SAMPLE_RATE, 1);
 
 	actuals = malloc(sizeof(int) * song->sfh->numNotes);
 
@@ -80,12 +81,12 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		wave = makeWave(notes[i].duration);
 		/* Change duration based on expected length of note */
 		/* Section: Audio Recording */
-		if (recordWAV(wave, notes[i].duration)) {
+		if (recordWAV(wave, notes[i].duration, cp_pcmh)) {
 			printf("Oh no! An error with the mic!\n");
-			continue;
+			break;
 		}
 
-		play_wave(pcmh, wave);
+		play_wave(pb_pcmh, wave);
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
@@ -96,7 +97,8 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		waveDestroy(wave);
 	}
 	worstBar = find_worst_bar(song, actuals);
-	cleanup_pcm(pcmh);
+	cleanup_pcm(pb_pcmh);
+	cleanup_pcm(cp_pcmh);
 	sleep(10);
 
 	/* Reset notes to black */

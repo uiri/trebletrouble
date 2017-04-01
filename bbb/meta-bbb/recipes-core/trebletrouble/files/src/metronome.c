@@ -56,7 +56,7 @@ void beat(int delay)
 	dir = 0;
 	next = tv_to_u(start) + delay;
 	samplerate = init_sndfile(infilename);
-	pcm_handle=init_pcm(samplerate);
+	pcm_handle=init_pcm(samplerate, 0);
 	while (1) {
 		gettimeofday(&tv, 0);
 		slp = next - tv_to_u(tv) - corr;

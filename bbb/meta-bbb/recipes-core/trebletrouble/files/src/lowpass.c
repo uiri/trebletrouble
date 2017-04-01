@@ -15,5 +15,5 @@ void filter_wavdata(float* output, int out_size, short* input, int in_size, int 
 		f_sample = (float)(*input);
 		*output = f_sample / max;
 	}
-	printf("Wrote %ld of %d. Read %ld of %d.\n", output - ozero, out_size, input - input_start, in_size);
+	printf("Wrote %ld of %d. Read %ld of %d.\n", output - ozero, out_size, input - izero, in_size);
 }

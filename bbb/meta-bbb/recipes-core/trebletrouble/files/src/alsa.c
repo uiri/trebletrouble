@@ -50,7 +50,8 @@
 
 #define PCM_DEVICE "default"
 /* WAV code */
-static snd_pcm_uframes_t frames;
+static snd_pcm_uframes_t pb_frames, cp_frames = 1024;
+static unsigned int cp_sample;
 static SNDFILE *infile = NULL;
 
 /* added to fix implicit declaration warnings for alloca in target files */
@@ -87,34 +88,44 @@ void init_pcm_params(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params,
 	if (pcm < 0)
 		printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
 
+	/* Set period size */
+	if ((pcm = snd_pcm_hw_params_set_period_size_near(pcm_handle, params, &cp_frames, dir))) {
+		printf("Error setting period size: %s\n", snd_strerror(pcm));
+	}
 }
 
-snd_pcm_t * init_pcm(unsigned int samplerate)
+snd_pcm_t * init_pcm(unsigned int samplerate, int capture)
 {
 	snd_pcm_hw_params_t *params;
 	snd_pcm_t *pcm_handle;
 	int dir;
-	unsigned int tmp,pcm;
+	unsigned int pcm;
 	dir = 0;
+	snd_pcm_stream_t mode = capture ? SND_PCM_STREAM_CAPTURE : SND_PCM_STREAM_PLAYBACK;
 	/* Open the PCM device in playback mode */
-	if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
-				SND_PCM_STREAM_PLAYBACK, 0)) < 0)
+	if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE, mode, 0)) < 0)
 		printf("ERROR: Can't open \"%s\" PCM device. %s\n",
 		       PCM_DEVICE, snd_strerror(pcm));
 
 	snd_pcm_hw_params_alloca(&params);
 	snd_pcm_hw_params_any(pcm_handle, params);
 	init_pcm_params(pcm_handle, params, samplerate, &dir, 1);
-	/* Resume information */
-	snd_pcm_hw_params_get_channels(params, &tmp);
-	if (tmp == 1)
-		printf("(mono)\n");
-	else if (tmp == 2)
-		printf("(stereo)\n");
-	snd_pcm_hw_params_get_rate(params, &tmp, 0);
 	/* Write parameters */
 	snd_pcm_hw_params(pcm_handle, params);
-	snd_pcm_hw_params_get_period_size(params, &frames, &dir);
+	if (capture) {
+		if ((pcm = snd_pcm_hw_params_get_period_size(params, &cp_frames, &dir))){
+			fprintf(stderr, "Error retrieving period size: %s\n", snd_strerror(pcm));
+		}
+
+		if ((pcm = snd_pcm_hw_params_get_period_time(params, &cp_sample, &dir))) {
+			fprintf(stderr, "Error retrieving period time: %s\n", snd_strerror(pcm));
+		}
+	} else {
+		snd_pcm_hw_params_get_period_size(params, &pb_frames, &dir);
+	}
+	snd_pcm_start(pcm_handle);
+	snd_pcm_pause(pcm_handle, 1);
+
 	return pcm_handle;
 }
 
@@ -142,7 +153,7 @@ void cleanup_pcm(snd_pcm_t *pcm_handle)
 void sound(snd_pcm_t *pcm_handle, void *buf, int readcount)
 {
 	int pcmrc;
-	pcmrc = snd_pcm_writei(pcm_handle, buf, frames);
+	pcmrc = snd_pcm_writei(pcm_handle, buf, pb_frames);
 	if (pcmrc == -EPIPE) {
 		/* fprintf(stderr, "Underrun!\n"); */
 		snd_pcm_prepare(pcm_handle);
@@ -160,8 +171,8 @@ void play_sndfile(snd_pcm_t *pcm_handle)
 	short readcount;
 	short* buf;
 	/* Allocate 2 in case of stereo */
-	buf = malloc(frames * 2 * sizeof(short));
-	while ((readcount = sf_readf_short(infile, buf, frames))>0) {
+	buf = malloc(pb_frames * 2 * sizeof(short));
+	while ((readcount = sf_readf_short(infile, buf, pb_frames))>0) {
 		sound(pcm_handle, buf, readcount);
 	}
 	sf_seek(infile,0,SEEK_SET);
@@ -171,7 +182,7 @@ void play_sndfile(snd_pcm_t *pcm_handle)
 void play_wave(snd_pcm_t *pcm_handle, Wave* wav)
 {
 	int *buf, size, i;
-	size = frames * wav->header.numChannels * (wav->header.bitsPerSample / 8);
+	size = pb_frames * wav->header.numChannels * (wav->header.bitsPerSample / 8);
 	buf = malloc(size);
 	for (i = 0;i < wav->size;i++) {
 		memcpy(buf, wav->data + i, size);
@@ -181,103 +192,52 @@ void play_wave(snd_pcm_t *pcm_handle, Wave* wav)
 	free(buf);
 }
 
-int recordWAV(Wave* wave, float duration)
+int recordWAV(Wave* wave, float duration, snd_pcm_t *handle)
 {
-  int err, i, size, dir;
-  snd_pcm_t *handle;
-  snd_pcm_hw_params_t *params;
-  unsigned int sampleRate;
-  WaveHeader* hdr;
-  snd_pcm_uframes_t frames;
-  const char *device; /* Integrated system microphone */
-  char *buffer;
+	int err, i, size;
+	WaveHeader* hdr;
+	char *buffer;
 
-  hdr = &(wave->header);
-  frames = 1024;
-  device = "default";
+	hdr = &(wave->header);
 
-  /* Open PCM device for recording (capture). */
-  err = snd_pcm_open(&handle, device, SND_PCM_STREAM_CAPTURE, 0);
-  if (err) {
-      fprintf(stderr, "Unable to open PCM device: %s\n", snd_strerror(err));
-      goto END;
-  }
+	snd_pcm_pause(handle, 0);
 
-  /* Allocate a hardware parameteres object. */
-  snd_pcm_hw_params_alloca(&params);
+	size = cp_frames * hdr -> numChannels * (hdr -> bitsPerSample / 8);
+	buffer = malloc(size);
+	if (!buffer) {
+		fprintf(stdout, "Buffer error.\n");
+		err = -1;
+		goto END;
+	}
 
-  /* Fill it in with default values. */
-  snd_pcm_hw_params_any(handle, params);
+	for (i = ((duration * cp_frames) / cp_sample); i > 0; i--) {
+		err = snd_pcm_readi(handle, buffer, cp_frames);
+		if (err >= 0) {
+			err *= hdr -> numChannels * (hdr -> bitsPerSample / 8);
+			memcpy(wave->data + wave->index, buffer, err);
+			wave->index += err;
+			continue;
+		}
+		if (err == -EPIPE) {
+			fprintf(stderr, "Overrun occurred: %d\n", err);
+		}
+		if (err < 0) {
+			err = snd_pcm_recover(handle, err, 0);
+		}
+		/* Still an error, need to exit. */
+		if (err < 0) {
+			fprintf(stderr, "Error occurred while recording: %s\n", snd_strerror(err));
+			goto END_BUF;
+		}
+	} /* end for loop */
 
-  /* ### Set the desired hardware paramteteres. ### */
-  init_pcm_params(handle, params, hdr->sampleRate, &dir, hdr->numChannels);
+	snd_pcm_pause(handle, 1);
+	free(buffer);
+	return 0;
 
-  /* Set period size */
-  err = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
-  if (err) {
-    fprintf(stderr, "Error setting period size: %s\n", snd_strerror(err));
-    goto END_PCM;
-  }
-
-  /* Write the parameters to the driver */
-  err = snd_pcm_hw_params(handle, params);
-  if (err < 0) {
-    fprintf(stderr, "Unable to set HW parameters: %s\n", snd_strerror(err));
-    goto END_PCM;
-  }
-
-  /* Use a buffer large enough to hold one period */
-  err = snd_pcm_hw_params_get_period_size(params, &frames, &dir);
-  if (err){
-    fprintf(stderr, "Error retrieving period size: %s\n", snd_strerror(err));
-    goto END_PCM;
-  }
-
-  size = frames * hdr -> numChannels * (hdr -> bitsPerSample / 8);
-  buffer = malloc(size);
-  if (!buffer) {
-    fprintf(stdout, "Buffer error.\n");
-    err = -1;
-    goto END_PCM;
-  }
-
-  err = snd_pcm_hw_params_get_period_time(params, &sampleRate, &dir);
-  if (err) {
-    fprintf(stderr, "Error retrieving period time: %s\n", snd_strerror(err));
-    goto END_BUF;
-  }
-
-  for (i = ((duration * frames) / hdr->sampleRate); i > 0; i--) {
-    err = snd_pcm_readi(handle, buffer, frames);
-    if (err >= 0) {
-      err *= hdr -> numChannels * (hdr -> bitsPerSample / 8);
-      memcpy(wave->data + wave->index, buffer, err);
-      wave->index += err;
-      continue;
-    }
-    if (err == -EPIPE) {
-      fprintf(stderr, "Overrun occurred: %d\n", err);
-    }
-    if (err < 0) {
-      snd_pcm_recover(handle, err, 0);
-    }
-    /* Still an error, need to exit. */
-    if (err < 0) {
-      fprintf(stderr, "Error occurred while recording: %s\n", snd_strerror(err));
-      goto END;
-    }
-  } /* end for loop */
-
-  snd_pcm_drain(handle);
-  snd_pcm_close(handle);
-  free(buffer);
-  return 0;
-
-  /* clean up */
- END_BUF:
-  free(buffer);
- END_PCM:
-  snd_pcm_close(handle);
- END:
-  return err;
+	/* clean up */
+END_BUF:
+	free(buffer);
+END:
+	return err;
 }
