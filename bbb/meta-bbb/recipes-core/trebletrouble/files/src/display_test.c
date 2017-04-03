@@ -82,7 +82,7 @@ void screen_capture(char* fbp, char* filename){
 }
 
 int main(int argc, char** argv){
-	int i, j, k;
+	int i, j, k, m;
 	/*set screensize and display_width for testing*/
 	SCREENSIZE = 800*480*2;
 	DISP_WIDTH = 800;
@@ -102,26 +102,40 @@ int main(int argc, char** argv){
 	Note * notes, *notes_p;
 	
 	notes = readTwinkle(song,SONG);
-	Bar* fbar, * fbar_n, *fbar_p;
+	Bar* fbar, * fbar_n, *fbar_p, *firstNote;
 	fbar = song->fbar;
-	int x_s = load_start_song(fbp, song);
+	int x_s = load_start_song(fbp, song->sfh->key, song->sfh->timeSignature);
 	fbar_p = fbar;
 	notes_p = notes;
 	fbar_n = load_song(fbp, notes, song, x_s, fbar);
+	char text[20];
+	
+	firstNote = song->fbar + song->sfh->numBars;
 
-	for(i=0, j=0, k=0;i < song->sfh->numNotes;i++, j++, notes++){
+	for(i=0, j=0, k=0, m=0;i < song->sfh->numNotes;i++, j++, notes++){
 
 		if( j == fbar->notes){
 			fbar++;
 			j = 0;
+			printf("Next Bar\n");
+			if (fbar == firstNote)
+				break;
 			if (fbar == fbar_n){
-				clear_all_notes(notes_p, fbar_p, song->expected+k, fbp);
-				k = i;
+				printf("Clearing note to draw new bars & taking screenshot %d\n", m);
+				snprintf(text, sizeof(text), "screenshot_%d.pnm", m);
+				m++;
+				screen_capture(fbp, text);
+				clear_all_notes(notes_p, fbar_p, song->expected+k, fbp, song->sfh->key, song->sfh->timeSignature);
+				k += i;
+				i = 0;
+				fbar_p = fbar;
+				notes_p = notes;
 				fbar_n = load_song(fbp, notes, song, x_s, fbar);
-				break; /* This is only a test */
 			
 				}
 		}
+		
+		/* */
 		//compare the notes here
 	
 		/*actuals = song->expected;
@@ -133,8 +147,11 @@ int main(int argc, char** argv){
 		song->expected++;*/
 		
 	}	
-	/*writes the thing to a pnm hopefully --update: it does*/
-	screen_capture(fbp, "screenshot.pnm");
+	/*writes the thing to a pnm hopefully --update: it does
+	screen_capture(fbp, "screenshot.pnm");*/
+	snprintf(text, sizeof(text), "screenshot_%d.pnm", m);
+	screen_capture(fbp, text);
+
 	
 	/*~goodbye friends~*/
 	free(fbp);
@@ -142,3 +159,52 @@ int main(int argc, char** argv){
 	return 0;
 
 }
+
+/*
+	int i, j, k, m, *actuals, x_s;
+	float pitch;
+	Wave* wave;
+	snd_pcm_t *pcmh;
+	Song* song;
+	Note* notes, *notes_p;
+	Bar* fbar, *firstNote, *worstBar, *fbar_n, *fbar_p;
+	
+	colour_screen(fbp, WHITE);
+	
+	draw_staff(fbp);
+	
+	song = malloc(sizeof(Song));
+	
+	notes = readTwinkle(song, SONG);
+
+	fbar = song->fbar;
+	pcmh = init_pcm(SAMPLE_RATE);
+	x_s = load_start_song(fbp, song);
+	fbar_p = fbar;
+	notes_p = notes;
+	fbar_n = load_song(fbp, notes, song, x_s, fbar);
+
+	actuals = malloc(sizeof(int) * song->sfh->numNotes);
+	firstNote = song->fbar + song->sfh->numBars;
+
+	for (i = 0, j=0, k=0; k+i < song->sfh->numNotes; i++, j++, notes++) {
+		if ( j == fbar->notes){
+			fbar++;
+			j = 0;
+			printf("Next bar\n");
+			if (fbar == firstNote)
+				break;
+			if( fbar == fbar_n){
+				printf("Clearing notes to draw new bars\n");
+				clear_all_notes(notes_p, fbar_p, actuals+k, fbp);
+				k += i;
+				i = 0;
+				fbar_p = fbar;
+				notes_p = notes;
+				fbar_n = load_song(fbp, notes, song, x_s, fbar);
+			}
+		}
+		printf("Start compare notes\n");
+		wave = makeWave(notes->duration);
+
+*/

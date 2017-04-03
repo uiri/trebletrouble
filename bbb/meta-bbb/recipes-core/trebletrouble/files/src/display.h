@@ -76,9 +76,9 @@ int bitblit_colour(char* filename, char* fbp, int x, int y, short colour);
 void colour_screen(char* fbp, short colour);
 
 void draw_staff(char* fbp);
-int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp, int barspace);
-void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp);
-int load_start_song(char *fbp, Song * song);
+int compare_notes(Song* song, Note* note, int* actuals, int i, int j, int m, char* fbp, int barspace);
+void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp, char key, unsigned char timeSignature);
+int load_start_song(char *fbp, char key, unsigned char timeSignature);
 Bar * load_song(char *fbp, Note * notes, Song * song, int x_s, Bar * fbar);
 
 Bar* find_worst_bar(Song* song, int* actuals);

@@ -61,12 +61,11 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	/*Code for new song format*/
 	song = malloc(sizeof(Song));
 	
-	////makeBin(SONG);
 	notes = readTwinkle(song, SONG);
 
 	fbar = song->fbar;
 	pcmh = init_pcm(SAMPLE_RATE);
-	x_s = load_start_song(fbp, song);
+	x_s = load_start_song(fbp, song->sfh->key, song->sfh->timeSignature);
 	fbar_p = fbar;
 	notes_p = notes;
 	fbar_n = load_song(fbp, notes, song, x_s, fbar);
@@ -83,7 +82,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 				break;
 			if( fbar == fbar_n){
 				printf("Clearing notes to draw new bars\n");
-				clear_all_notes(notes_p, fbar_p, actuals+k, fbp);
+				clear_all_notes(notes_p, fbar_p, actuals+k, fbp, song->sfh->key, song->sfh->timeSignature);
 				k += i;
 				i = 0;
 				fbar_p = fbar;
@@ -105,7 +104,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
 		actuals[k+i] = find_freq(pitch);
-		m = compare_notes(song, notes, actuals+k, i, j, fbp, fbar->barspace);
+		m = compare_notes(song, notes, actuals, k+i, j,i, fbp, fbar->barspace);
 		printf("End compare notes\n");
 		j -= m;
 		i -= m;

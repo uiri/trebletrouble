@@ -402,7 +402,7 @@ int get_ynote(int i) {
 }
 
 
-int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp, int barspace)
+int compare_notes(Song* song, Note* note, int* actuals, int i, int j, int m, char* fbp, int barspace)
 {
 	int k, notes_back;
 	int* expected = song->expected + i;
@@ -425,7 +425,7 @@ int compare_notes(Song* song, Note* note, int* actuals, int i, int j, char* fbp,
 	}
 
 	BARSP = barspace;
-	draw_note(i, get_ynote(actuals[i]), fbp, colour, getNoteValue(note-notes_back));
+	draw_note(m, get_ynote(actuals[i]), fbp, colour, getNoteValue(note-notes_back));
 	BARSP = 0;
 
 	return notes_back;
@@ -476,13 +476,38 @@ Bar* find_worst_bar(Song* song, int* actuals) {
 
 }
 	
-void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp){
-	int actual_ynote, i, j, time, note, ynote, freq;
+int load_start_song(char *fbp, char key, unsigned char timeSignature){
+	/*Time signature:
+	Timesig = Ts1-1 * 16 + Ts2-1
+	so for 4/4= 51
+	so for 3/4= 35*/
+	
+	/*Draw the key, return the current x value*/
+	x_start = draw_key(fbp, key);
+	printf("Drawing the notes\n");
+	
+	/*
+	 * Take ints from char away
+	 * Don't forget to change millisec calculations if the timeSignature
+	 * format changes!
+	 */
+
+	int ts1 = (timeSignature/16)+1;
+	int ts2 = (timeSignature/16)+1;
+	set_time_signature(ts1, ts2, fbp);
+	return x_start;
+}
+void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp, char key, unsigned char timeSignature){
+//	int actual_ynote, i, j, time, note, ynote, freq;
 	BARSP = 0;
 	NOTESP = 0;
-	printf("Clearing the notes\n");
-
-	for (i=0, j=0; get_xnote(i) < END; i++, j++, notes++) {
+	printf("Clearing the notes and screen\n");
+	
+	colour_screen(fbp, WHITE);
+	draw_staff(fbp);
+	load_start_song(fbp, key, timeSignature);	
+		
+/*	for (i=0, j=0; get_xnote(i) < END; i++, j++, notes++) {
 		if (j == fbar -> notes){
 			j = 0;
 			fbar++;
@@ -502,31 +527,11 @@ void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp){
 		ynote  = get_ynote(note);
 		draw_note(i, ynote, fbp, WHITE, time);
 
-	}
+	}*/
 	draw_staff_lines(fbp);
-	NOTESP = 0;
-	BARSP = 0;
+	//NOTESP = 0;
+	//BARSP = 0;
 
-}
-int load_start_song(char *fbp, Song * song){
-	/*Time signature:
-	Timesig = Ts1-1 * 16 + Ts2-1
-	so for 4/4= 51
-	so for 3/4= 35*/
-	
-	/*Draw the key, return the current x value*/
-	x_start = draw_key(fbp, song->sfh->key);
-	printf("Drawing the notes\n");
-	
-	/*
-	 * Take ints from char away
-	 * Don't forget to change millisec calculations if the timeSignature
-	 * format changes!
-	 */
-	 int ts1 = (song->sfh->timeSignature/16)+1;
-	 int ts2 = (song->sfh->timeSignature%16)+1;
-	 set_time_signature(ts1, ts2, fbp);
-	 return x_start;
 }
 
 /*loads a partial part of the song, given the 4 bars at a time.*/
@@ -555,7 +560,7 @@ Bar * load_song(char *fbp, Note * notes, Song * song, int x_s, Bar * fbar){
 		
 		note = find_freq(freq);
 		ynote  = get_ynote(note);
-
+		printf("Drawing %d note at %d\n",i,ynote);	
 		draw_note(i, ynote, fbp, BLACK, time);
 
 	}
