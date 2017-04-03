@@ -48,7 +48,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	int i, j, k, *actuals;
 	float pitch;
 	Wave* wave;
-	snd_pcm_t *cp_pcmh, *pb_pcmh;
+	snd_pcm_t *cp_pcmh;
 	Song* song;
 	Note* notes;
 	Bar* fbar, *worstBar;
@@ -67,7 +67,6 @@ void play_song_menu(char* fbp, ScreenInput *si)
 	load_song(fbp, notes, song);
 
 	fbar = song->fbar;
-	pb_pcmh = init_pcm(SAMPLE_RATE, 0);
 	cp_pcmh = init_pcm(SAMPLE_RATE, 1);
 
 	actuals = malloc(sizeof(int) * song->sfh->numNotes);
@@ -86,7 +85,6 @@ void play_song_menu(char* fbp, ScreenInput *si)
 			break;
 		}
 
-		play_wave(pb_pcmh, wave);
 		pitch = get_pitch(wave);
 		printf("Recognized pitch %f\n", pitch);
 		/* need to store the found freqs in actuals or something */
@@ -97,7 +95,6 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		waveDestroy(wave);
 	}
 	worstBar = find_worst_bar(song, actuals);
-	cleanup_pcm(pb_pcmh);
 	cleanup_pcm(cp_pcmh);
 	sleep(10);
 
