@@ -246,7 +246,7 @@ static void createPageFeedbackPage(void)
   wi.g.x = 680;
   wi.g.y = 380;
   wi.g.width = 120;
-  wi.g.height = 20;
+  wi.g.height = 100;
   wi.g.parent = ghContainerFeedbackPage;
   wi.text = "Return";
   wi.customDraw = gwinButtonDraw_Normal;
