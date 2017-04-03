@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "libfft.h"
-#include "lowpass.h"
+#include "filter.h"
 #include "tone.h"
 
 #define FFT_SIZE 15
