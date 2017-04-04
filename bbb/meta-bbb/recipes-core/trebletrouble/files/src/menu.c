@@ -44,7 +44,6 @@
 
 void play_song_menu(char* fbp, ScreenInput *si)
 {
-	/*FILE* songfile;*/
 	int i, j, k, m, *actuals, x_s;
 	float pitch;
 	Wave* wave;
@@ -109,6 +108,7 @@ void play_song_menu(char* fbp, ScreenInput *si)
 		printf("End compare notes\n");
 		j -= m;
 		i -= m;
+		notes -= m;
 		waveDestroy(wave);
 	}
 	worstBar = find_worst_bar(song, actuals);

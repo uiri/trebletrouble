@@ -507,27 +507,6 @@ void clear_all_notes(Note* notes, Bar* fbar, int* actuals, char* fbp, char key, 
 	draw_staff(fbp);
 	load_start_song(fbp, key, timeSignature);	
 		
-/*	for (i=0, j=0; get_xnote(i) < END; i++, j++, notes++) {
-		if (j == fbar -> notes){
-			j = 0;
-			fbar++;
-			if (get_xnote(i+fbar->notes-1)>= END-30)
-				break;
-			BARSP+=10;
-			fbar->barspace = BARSP;
-		}
-		time = getNoteValue(notes);
-		actual_ynote = get_ynote(actuals[i]);
-
-		draw_note(i, actual_ynote, fbp, WHITE, time);
-		
-		freq = getFrequency(notes);
-		
-		note = find_freq(freq);
-		ynote  = get_ynote(note);
-		draw_note(i, ynote, fbp, WHITE, time);
-
-	}*/
 	draw_staff_lines(fbp);
 	//NOTESP = 0;
 	//BARSP = 0;
